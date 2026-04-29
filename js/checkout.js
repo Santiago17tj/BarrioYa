@@ -1,6 +1,7 @@
 /* ==========================================================
    BarrioYa — Checkout JavaScript
    Payment method selection, card formatting, simulated payment
+   Reads cart from CartManager (localStorage)
    ========================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +16,68 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutHeader = document.querySelector('.checkout-header');
 
   let selectedMethod = 'nequi';
+
+  // ══════════════════════════════════════
+  // RENDER ORDER FROM CART (localStorage)
+  // ══════════════════════════════════════
+
+  function formatPrice(price) {
+    return '$' + price.toLocaleString('es-CO');
+  }
+
+  function renderOrderFromCart() {
+    const cart = window.cartManager;
+    if (!cart || cart.isEmpty()) return; // Fall back to static HTML
+
+    const orderCard = document.querySelector('.order-card');
+    if (!orderCard) return;
+
+    const subtotal = cart.getSubtotal();
+    const total = cart.getTotal();
+
+    // Build items HTML
+    const itemsHTML = cart.items.map(item => `
+      <div class="checkout-item">
+        <div class="item-name">
+          <span class="item-qty">${item.qty}x</span> ${item.emoji} ${item.name}
+        </div>
+        <div>${formatPrice(item.price * item.qty)}</div>
+      </div>
+    `).join('');
+
+    // Render full order card
+    orderCard.innerHTML = `
+      <h2>🛒 Tu pedido</h2>
+      ${cart.businessName ? `<div class="shop-name">🏪 ${cart.businessName}</div>` : ''}
+      ${itemsHTML}
+      <div class="summary-divider"></div>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>${formatPrice(subtotal)}</span>
+      </div>
+      <div class="summary-row">
+        <span>Envío</span>
+        <span>${formatPrice(CartManager.DELIVERY_FEE)}</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span id="checkoutTotal">${formatPrice(total)}</span>
+      </div>
+      <div class="delivery-info">
+        📍 Dirección se confirma al pagar
+      </div>
+    `;
+
+    // Update pay button text
+    payBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      Pagar ${formatPrice(total)}
+    `;
+  }
+
+  renderOrderFromCart();
 
   // ── Payment Method Selection ──
   paymentMethods.forEach(method => {
@@ -118,11 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     await new Promise(resolve => setTimeout(resolve, 1200));
 
+    // Clear cart after successful payment
+    if (window.cartManager) {
+      window.cartManager.clear();
+    }
+
     // Show success
     paymentForm.style.display = 'none';
     if (orderSidebar) orderSidebar.style.display = 'none';
     if (checkoutHeader) checkoutHeader.style.display = 'none';
     checkoutSuccess.classList.add('show');
+
+    // Generate order ID for success screen
+    const orderId = `BY-${Date.now().toString().slice(-8)}`;
+    const successP = checkoutSuccess.querySelector('p');
+    if (successP) {
+      successP.textContent = `Tu pedido #${orderId} ha sido confirmado. Carlos está preparándose para recogerlo.`;
+    }
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });

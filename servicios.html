@@ -14,6 +14,7 @@
   <title>Servicios — BarrioYa | La Superapp del Barrio</title>
   <link rel="icon" type="image/png" href="BarrioYalogo.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/cart.css">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -167,7 +168,18 @@
         </div>
       </div>
     </div>
-  </main>
+
+    <!-- ═══════════════════ PRODUCT GRID (Menú Interactivo) ═══════════════════ -->
+    <div class="menu-section" id="menuSection">
+      <h2 class="section-title fade-in">Explora el <span class="highlight">menú</span></h2>
+      <p class="section-subtitle fade-in">Elige tus productos favoritos y agrégalos al carrito 🛒</p>
+
+      <div class="menu-tabs" id="menuTabs"></div>
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+
+  </div>
+</main>
 
   <!-- CTA Section -->
   <section class="whatsapp-section section">
@@ -260,6 +272,8 @@
   </a>
 
   <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/menu-page.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

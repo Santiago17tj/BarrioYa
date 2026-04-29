@@ -460,15 +460,51 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Initial Bot Greeting ──
-  setTimeout(async () => {
-    await botReply('¡Hola! 👋 Bienvenido a <strong>BarrioYa</strong>. Soy tu asistente de pedidos del barrio.', 600, true);
-    await botReply('¿Qué te gustaría pedir hoy? Escríbelo naturalmente o elige una opción 👇', 1000);
+  async function initGreeting() {
+    // Check if coming from cart panel
+    const params = new URLSearchParams(window.location.search);
+    const fromCart = params.get('fromCart');
 
-    showQuickReplies([
-      { label: '🛒 Pedir un domicilio', value: 'quiero pedir un domicilio' },
-      { label: '📋 Ver negocios', value: 'ver negocios' },
-      { label: '🐾 Paseador de mascotas', value: 'necesito un paseador' }
-    ]);
-  }, 500);
+    if (fromCart && window.cartManager && !window.cartManager.isEmpty()) {
+      const cm = window.cartManager;
+
+      await botReply('¡Hola! 👋 Veo que ya tienes productos en tu carrito. Déjame preparar tu pedido.', 600, true);
+
+      // Build cart summary
+      let cartHtml = `🛒 <strong>Tu pedido de ${cm.businessName}:</strong>\n<ul class="menu-list">`;
+      let subtotal = 0;
+      cm.items.forEach(item => {
+        const t = item.price * item.qty;
+        subtotal += t;
+        cartHtml += `<li>${item.emoji} ${item.qty}x ${item.name} — $${t.toLocaleString('es-CO')}</li>`;
+      });
+      cartHtml += `</ul>\n<strong>Subtotal: $${subtotal.toLocaleString('es-CO')}</strong>\n<strong>Envío: $2.500</strong>\n<strong>Total: $${(subtotal + 2500).toLocaleString('es-CO')}</strong>`;
+
+      await botReply(cartHtml, 1200, true);
+
+      // Pre-populate state
+      selectedBusiness = { name: cm.businessName, items: cm.items };
+      cart = cm.items.map(i => ({ ...i }));
+      state = 'ADD_MORE';
+
+      await botReply('¿Quieres confirmar este pedido o modificar algo? 🤔', 800);
+      showQuickReplies([
+        { label: '✅ Confirmar pedido', value: 'confirmar' },
+        { label: '✏️ Modificar', value: 'agregar mas' },
+        { label: '🗑️ Vaciar', value: 'vaciar' }
+      ]);
+    } else {
+      await botReply('¡Hola! 👋 Bienvenido a <strong>BarrioYa</strong>. Soy tu asistente de pedidos del barrio.', 600, true);
+      await botReply('¿Qué te gustaría pedir hoy? Escríbelo naturalmente o elige una opción 👇', 1000);
+
+      showQuickReplies([
+        { label: '🛒 Pedir un domicilio', value: 'quiero pedir un domicilio' },
+        { label: '📋 Ver negocios', value: 'ver negocios' },
+        { label: '🐾 Paseador de mascotas', value: 'necesito un paseador' }
+      ]);
+    }
+  }
+
+  setTimeout(initGreeting, 500);
 
 });
