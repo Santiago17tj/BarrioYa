@@ -1,8 +1,10 @@
 {
-  "name": "BarrioYa",
+  "name": "BarrioYa — La Superapp del Barrio",
   "short_name": "BarrioYa",
   "description": "La Superapp del Barrio — Domicilios, mascotas, mandados y servicios técnicos hiperlocales en Bucaramanga.",
   "start_url": "/index.html",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
   "background_color": "#FAFBF6",
   "theme_color": "#00C853",
@@ -12,10 +14,17 @@
       "src": "BarrioYalogo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "BarrioYalogo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["lifestyle", "shopping", "food"],
   "lang": "es",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false
 }

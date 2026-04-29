@@ -1,0 +1,389 @@
+/* ==========================================================
+   BarrioYa — Tracking Page Styles
+   Layout: split view (map + info panel)
+   ========================================================== */
+
+/* ── Page Layout ── */
+.tracking-page {
+  padding-top: 80px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tracking-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  flex: 1;
+  min-height: calc(100vh - 80px);
+}
+
+/* ── Map Container ── */
+.tracking-map {
+  position: relative;
+  min-height: 500px;
+}
+
+.tracking-map #map {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  z-index: 1;
+}
+
+.map-overlay-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.map-overlay-badge .live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #EF4444;
+  animation: livePulse 1.5s infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+/* ── Info Panel ── */
+.tracking-panel {
+  background: white;
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panel-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.panel-header h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.panel-header .order-id {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Status Timeline ── */
+.status-timeline {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.status-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.status-step:last-child { padding-bottom: 0; }
+
+.status-step::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.status-step:last-child::before { display: none; }
+
+.status-step.completed::before { background: var(--color-primary); }
+
+.status-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  background: var(--color-border);
+  color: var(--color-text-light);
+  transition: all 0.4s ease;
+}
+
+.status-step.completed .status-dot {
+  background: var(--color-primary);
+  color: white;
+}
+
+.status-step.active .status-dot {
+  background: var(--color-primary);
+  color: white;
+  animation: statusPulse 2s infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(0, 200, 83, 0); }
+}
+
+.status-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+.status-info p {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+.status-step.pending .status-info h4,
+.status-step.pending .status-info p {
+  opacity: 0.4;
+}
+
+/* ── ETA Card ── */
+.eta-card {
+  margin: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.eta-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2E7D32;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.eta-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1B5E20;
+}
+
+.eta-value span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ── Driver Card ── */
+.driver-card {
+  margin: 0 1.5rem 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.driver-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.driver-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+.driver-info p {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+.driver-rating {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* ── Order Summary ── */
+.order-summary {
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+}
+
+.order-summary h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.order-item .qty {
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 2px solid var(--color-text);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+/* ── Custom Map Markers ── */
+.marker-driver {
+  background: var(--color-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  border: 3px solid white;
+  box-shadow: 0 4px 15px rgba(0, 200, 83, 0.4);
+  animation: markerBounce 2s infinite;
+}
+
+@keyframes markerBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.marker-destination {
+  background: #EF4444;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 3px solid white;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.marker-origin {
+  background: var(--color-accent);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 3px solid white;
+  box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+}
+
+/* ── Demo Banner ── */
+.demo-banner {
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  padding: 0.6rem 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #E65100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .tracking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-map {
+    min-height: 350px;
+    max-height: 45vh;
+  }
+
+  .tracking-map #map {
+    min-height: 350px;
+  }
+
+  .tracking-panel {
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+@media (max-width: 480px) {
+  .tracking-map {
+    min-height: 280px;
+    max-height: 40vh;
+  }
+
+  .tracking-map #map {
+    min-height: 280px;
+  }
+
+  .panel-header {
+    padding: 1rem;
+  }
+
+  .status-timeline {
+    padding: 1rem;
+  }
+
+  .eta-card {
+    margin: 1rem;
+  }
+
+  .driver-card {
+    margin: 0 1rem 1rem;
+  }
+
+  .order-summary {
+    padding: 1rem;
+  }
+}

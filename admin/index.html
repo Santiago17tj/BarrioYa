@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de administración para negocios afiliados a BarrioYa.">
+  <title>Dashboard — BarrioYa Admin</title>
+  <link rel="icon" type="image/png" href="../BarrioYalogo.png">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../BarrioYalogo.png" alt="BarrioYa" class="sidebar-logo">
+      <span>BarrioYa <small>Admin</small></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="dashboard" id="navDashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="#" class="nav-item" data-section="orders" id="navOrders">
+        <span class="nav-icon">📦</span> Pedidos
+        <span class="nav-badge" id="ordersBadge">5</span>
+      </a>
+      <a href="#" class="nav-item" data-section="menu" id="navMenu">
+        <span class="nav-icon">📋</span> Mi Menú
+      </a>
+      <a href="#" class="nav-item" data-section="drivers" id="navDrivers">
+        <span class="nav-icon">🛵</span> Domiciliarios
+      </a>
+      <a href="#" class="nav-item" data-section="analytics" id="navAnalytics">
+        <span class="nav-icon">📈</span> Analítica
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">DJ</div>
+        <div>
+          <div class="user-name">Don José</div>
+          <div class="user-role">Panadería · Admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-title">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Bienvenido de vuelta, Don José 👋</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="notification-bell" id="notifBell">
+          🔔
+          <span class="notif-dot" id="notifDot"></span>
+        </div>
+        <a href="../index.html" class="topbar-link">← Volver al sitio</a>
+      </div>
+    </header>
+
+    <!-- ═══════════════════ DEMO BANNER ═══════════════════ -->
+    <div class="admin-demo-banner">
+      ⚙️ Dashboard de demostración — Datos simulados para ilustrar la experiencia del comercio
+    </div>
+
+    <!-- ═══════════════════ DASHBOARD SECTION ═══════════════════ -->
+    <section class="content-section active" id="sectionDashboard">
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card" id="metricOrders">
+          <div class="metric-icon">📦</div>
+          <div class="metric-body">
+            <div class="metric-value" id="totalOrders">23</div>
+            <div class="metric-label">Pedidos hoy</div>
+          </div>
+          <div class="metric-trend up">↑ 12%</div>
+        </div>
+        <div class="metric-card" id="metricRevenue">
+          <div class="metric-icon">💰</div>
+          <div class="metric-body">
+            <div class="metric-value" id="totalRevenue">$345.000</div>
+            <div class="metric-label">Ingresos hoy</div>
+          </div>
+          <div class="metric-trend up">↑ 8%</div>
+        </div>
+        <div class="metric-card" id="metricAvg">
+          <div class="metric-icon">📊</div>
+          <div class="metric-body">
+            <div class="metric-value" id="avgOrder">$15.000</div>
+            <div class="metric-label">Ticket promedio</div>
+          </div>
+          <div class="metric-trend neutral">→ 0%</div>
+        </div>
+        <div class="metric-card" id="metricDrivers">
+          <div class="metric-icon">🛵</div>
+          <div class="metric-body">
+            <div class="metric-value" id="activeDrivers">3</div>
+            <div class="metric-label">Domiciliarios activos</div>
+          </div>
+          <div class="metric-trend up">● Online</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>📈 Pedidos por hora</h3>
+          <canvas id="ordersChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>🥧 Productos más vendidos</h3>
+          <canvas id="productsChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3>📋 Pedidos recientes</h3>
+          <div class="table-filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="nuevo">Nuevos</button>
+            <button class="filter-btn" data-filter="preparando">En preparación</button>
+            <button class="filter-btn" data-filter="enviado">Enviados</button>
+          </div>
+        </div>
+        <div class="orders-table-wrapper">
+          <table class="orders-table" id="ordersTable">
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ORDERS SECTION ═══════════════════ -->
+    <section class="content-section" id="sectionOrders">
+      <div class="orders-board">
+        <div class="board-column" id="boardNuevo">
+          <div class="board-column-header">
+            <h3>🆕 Nuevos</h3>
+            <span class="board-count" id="countNuevo">0</span>
+          </div>
+          <div class="board-cards" id="cardsNuevo"></div>
+        </div>
+        <div class="board-column" id="boardPreparando">
+          <div class="board-column-header">
+            <h3>👨‍🍳 Preparando</h3>
+            <span class="board-count" id="countPreparando">0</span>
+          </div>
+          <div class="board-cards" id="cardsPreparando"></div>
+        </div>
+        <div class="board-column" id="boardEnviado">
+          <div class="board-column-header">
+            <h3>🛵 Enviados</h3>
+            <span class="board-count" id="countEnviado">0</span>
+          </div>
+          <div class="board-cards" id="cardsEnviado"></div>
+        </div>
+        <div class="board-column" id="boardEntregado">
+          <div class="board-column-header">
+            <h3>✅ Entregados</h3>
+            <span class="board-count" id="countEntregado">0</span>
+          </div>
+          <div class="board-cards" id="cardsEntregado"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ MENU SECTION ═══════════════════ -->
+    <section class="content-section" id="sectionMenu">
+      <div class="menu-management">
+        <div class="menu-header-row">
+          <h3>📋 Gestionar mi menú</h3>
+          <button class="btn-add" id="addProductBtn">+ Agregar producto</button>
+        </div>
+        <div class="menu-grid" id="menuGrid">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ DRIVERS SECTION ═══════════════════ -->
+    <section class="content-section" id="sectionDrivers">
+      <div class="drivers-grid" id="driversGrid">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ANALYTICS SECTION ═══════════════════ -->
+    <section class="content-section" id="sectionAnalytics">
+      <div class="analytics-grid">
+        <div class="chart-card full-width">
+          <h3>📊 Ingresos últimos 7 días</h3>
+          <canvas id="revenueChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>🕐 Horas pico</h3>
+          <canvas id="peakChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>⭐ Satisfacción del cliente</h3>
+          <div class="satisfaction-display">
+            <div class="sat-score">4.8</div>
+            <div class="sat-stars">⭐⭐⭐⭐⭐</div>
+            <div class="sat-label">Basado en 156 calificaciones</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+      <div class="toast-icon">🔔</div>
+      <div class="toast-content">
+        <div class="toast-title" id="toastTitle">Nuevo pedido</div>
+        <div class="toast-msg" id="toastMsg">Pedido #BY-0430 recibido</div>
+      </div>
+      <button class="toast-close" id="toastClose">✕</button>
+    </div>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

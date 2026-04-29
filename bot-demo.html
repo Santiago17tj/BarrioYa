@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Prueba la experiencia del Bot de WhatsApp de BarrioYa. Pide domicilios con lenguaje natural.">
+
+  <meta property="og:title" content="Bot WhatsApp Demo — BarrioYa">
+  <meta property="og:description" content="Prueba cómo funciona nuestro bot inteligente de pedidos por WhatsApp.">
+  <meta property="og:type" content="website">
+
+  <title>Bot WhatsApp Demo — BarrioYa</title>
+  <link rel="icon" type="image/png" href="BarrioYalogo.png">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00C853">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="BarrioYa">
+  <link rel="apple-touch-icon" href="BarrioYalogo.png">
+
+  <style>
+    /* ── Bot Demo Page ── */
+    .bot-page {
+      padding-top: 80px;
+      min-height: 100vh;
+      background: #0B141A;
+    }
+
+    .bot-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      max-width: 1100px;
+      margin: 0 auto;
+      min-height: calc(100vh - 80px);
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ── Sidebar ── */
+    .bot-sidebar {
+      background: #111B21;
+      border-right: 1px solid #2A3942;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #2A3942;
+    }
+
+    .sidebar-header h3 {
+      color: #E9EDEF;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .sidebar-info {
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+    }
+
+    .sidebar-info .bot-avatar-large {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      overflow: hidden;
+      border: 3px solid #00C853;
+    }
+
+    .sidebar-info .bot-avatar-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .sidebar-info h4 {
+      color: #E9EDEF;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-info p {
+      color: #8696A0;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .sidebar-features {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid #2A3942;
+      flex: 1;
+    }
+
+    .sidebar-features h5 {
+      color: #00C853;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0;
+      color: #D1D7DB;
+      font-size: 0.85rem;
+    }
+
+    .feature-item span:first-child {
+      font-size: 1.1rem;
+    }
+
+    /* ── Chat Area ── */
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      background: #0B141A;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cpattern id='p' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 20h40M20 0v40' stroke='%23ffffff' stroke-width='0.3' opacity='0.03'/%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23p)' width='200' height='200'/%3E%3C/svg%3E");
+    }
+
+    .chat-topbar {
+      background: #202C33;
+      padding: 0.7rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid #2A3942;
+    }
+
+    .chat-topbar .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .chat-topbar .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .chat-topbar .contact-info h4 {
+      color: #E9EDEF;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .chat-topbar .contact-info p {
+      color: #8696A0;
+      font-size: 0.75rem;
+    }
+
+    .typing-indicator {
+      display: none;
+      color: #00C853;
+      font-size: 0.75rem;
+    }
+
+    .typing-indicator.show { display: block; }
+
+    /* ── Messages ── */
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 4rem 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .msg {
+      max-width: 75%;
+      padding: 0.5rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      position: relative;
+      animation: msgIn 0.3s ease;
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .msg.bot {
+      background: #202C33;
+      color: #E9EDEF;
+      align-self: flex-start;
+      border-top-left-radius: 0;
+    }
+
+    .msg.user {
+      background: #005C4B;
+      color: #E9EDEF;
+      align-self: flex-end;
+      border-top-right-radius: 0;
+    }
+
+    .msg .time {
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+
+    .msg strong { color: #00C853; }
+
+    .msg .menu-list {
+      margin: 0.5rem 0 0.25rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .msg .menu-list li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.85rem;
+    }
+
+    .msg .menu-list li:last-child { border-bottom: none; }
+
+    .msg .order-json {
+      background: #0B141A;
+      border-radius: 6px;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      color: #00C853;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Quick reply buttons */
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      animation: msgIn 0.3s ease;
+    }
+
+    .quick-reply-btn {
+      background: transparent;
+      border: 1px solid #00C853;
+      color: #00C853;
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .quick-reply-btn:hover {
+      background: #00C853;
+      color: #0B141A;
+    }
+
+    /* ── Input Area ── */
+    .chat-input-area {
+      padding: 0.75rem 1rem;
+      background: #202C33;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #2A3942;
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      color: #E9EDEF;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .chat-input::placeholder { color: #8696A0; }
+
+    .send-btn {
+      background: #00C853;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+      background: #00B848;
+      transform: scale(1.05);
+    }
+
+    .send-btn svg { fill: #0B141A; }
+
+    /* ── Demo Banner ── */
+    .demo-banner {
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      padding: 0.6rem 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #E65100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .bot-layout {
+        grid-template-columns: 1fr;
+      }
+      .bot-sidebar { display: none; }
+      .messages-container {
+        padding: 1rem;
+      }
+      .msg { max-width: 85%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ NAVBAR ═══════════════════ -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="container">
+      <a href="index.html" aria-label="BarrioYa - Inicio">
+        <img src="BarrioYalogo.png" alt="BarrioYa Logo" class="navbar-logo">
+      </a>
+      <div class="navbar-links" id="navbarLinks">
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#negocios">Para negocios</a>
+        <a href="index.html#como-funciona">¿Cómo funciona?</a>
+        <a href="index.html#cobertura">Cobertura</a>
+      </div>
+      <a href="#" class="btn btn-primary navbar-cta" id="navbarCta" onclick="event.preventDefault(); document.getElementById('waitlistModal').classList.add('active'); document.body.style.overflow='hidden';">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+        App Próximamente
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#servicios" class="mobile-link">Servicios</a>
+    <a href="index.html#negocios" class="mobile-link">Para negocios</a>
+    <a href="index.html#como-funciona" class="mobile-link">¿Cómo funciona?</a>
+    <a href="index.html#cobertura" class="mobile-link">Cobertura</a>
+  </div>
+
+  <!-- Demo Banner -->
+  <div class="demo-banner">
+    🤖 Demo interactiva — Prueba el Bot de WhatsApp de BarrioYa (simulación)
+  </div>
+
+  <!-- ═══════════════════ BOT CHAT ═══════════════════ -->
+  <main class="bot-page">
+    <div class="bot-layout">
+      <!-- Sidebar -->
+      <aside class="bot-sidebar">
+        <div class="sidebar-header">
+          <h3>BarrioYa Bot</h3>
+        </div>
+        <div class="sidebar-info">
+          <div class="bot-avatar-large">
+            <img src="BarrioYalogo.png" alt="BarrioYa Bot">
+          </div>
+          <h4>BarrioYa Bot</h4>
+          <p>Bot inteligente para pedidos hiperlocales en tu barrio</p>
+        </div>
+        <div class="sidebar-features">
+          <h5>Capacidades del Bot</h5>
+          <div class="feature-item"><span>🗣️</span> Entiende lenguaje natural</div>
+          <div class="feature-item"><span>🛒</span> Arma tu carrito de compras</div>
+          <div class="feature-item"><span>📍</span> Autocompletado de dirección</div>
+          <div class="feature-item"><span>💳</span> Confirma costo total</div>
+          <div class="feature-item"><span>📦</span> Enlace de seguimiento</div>
+          <div class="feature-item"><span>🤖</span> Powered by NLP/LLM</div>
+        </div>
+      </aside>
+
+      <!-- Chat -->
+      <div class="chat-area">
+        <div class="chat-topbar">
+          <div class="avatar">
+            <img src="BarrioYalogo.png" alt="BarrioYa">
+          </div>
+          <div class="contact-info">
+            <h4>BarrioYa Bot</h4>
+            <p class="typing-indicator" id="typingIndicator">escribiendo...</p>
+            <p class="status-text" id="statusText">● en línea</p>
+          </div>
+        </div>
+
+        <div class="messages-container" id="messagesContainer">
+          <!-- Messages injected by JS -->
+        </div>
+
+        <div id="quickRepliesContainer"></div>
+
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Escribe tu mensaje..." autocomplete="off">
+          <button class="send-btn" id="sendBtn" aria-label="Enviar mensaje">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Waitlist Modal -->
+  <div class="modal-overlay" id="waitlistModal">
+    <div class="modal">
+      <div class="modal-icon">🚀</div>
+      <h2>¡La App viene pronto!</h2>
+      <p>Estamos construyendo algo increíble para tu barrio. Mientras tanto, pide todo lo que necesites por WhatsApp.</p>
+      <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20unirme%20a%20la%20lista%20de%20espera%20de%20la%20App"
+         class="btn btn-whatsapp" target="_blank" rel="noopener" style="margin-bottom: var(--space-md); width: 100%;">
+        Unirme a la lista de espera
+      </a>
+      <button class="btn btn-secondary" id="closeWaitlist" style="width: 100%;">Cerrar</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/bot-demo.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

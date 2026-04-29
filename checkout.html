@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Paga tu pedido de BarrioYa de forma segura con PSE, Nequi, Daviplata o tarjeta de crédito.">
+
+  <meta property="og:title" content="Pagar pedido — BarrioYa">
+  <meta property="og:description" content="Checkout seguro para tu pedido de BarrioYa.">
+  <meta property="og:type" content="website">
+
+  <title>Checkout — BarrioYa</title>
+  <link rel="icon" type="image/png" href="BarrioYalogo.png">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00C853">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="BarrioYa">
+  <link rel="apple-touch-icon" href="BarrioYalogo.png">
+
+  <style>
+    .checkout-page {
+      padding-top: 100px;
+      padding-bottom: 4rem;
+      min-height: 100vh;
+      background: var(--color-bg);
+    }
+
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    .checkout-header {
+      grid-column: 1 / -1;
+      margin-bottom: 0.5rem;
+    }
+
+    .checkout-header h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .checkout-header h1 span { color: var(--color-primary); }
+
+    .checkout-header p {
+      color: var(--color-text-light);
+      margin-top: 0.25rem;
+    }
+
+    /* ── Payment Form ── */
+    .payment-form {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .payment-form h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .payment-method {
+      border: 2px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .payment-method:hover {
+      border-color: var(--color-primary);
+      background: rgba(0, 200, 83, 0.03);
+    }
+
+    .payment-method.selected {
+      border-color: var(--color-primary);
+      background: rgba(0, 200, 83, 0.06);
+      box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.15);
+    }
+
+    .payment-method .method-icon {
+      font-size: 1.8rem;
+    }
+
+    .payment-method .method-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .payment-method .method-desc {
+      font-size: 0.7rem;
+      color: var(--color-text-light);
+    }
+
+    .payment-method .check-mark {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+    }
+
+    .payment-method.selected .check-mark {
+      display: flex;
+    }
+
+    /* Buyer Info */
+    .buyer-section { margin-bottom: 2rem; }
+
+    .buyer-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkout-field {
+      margin-bottom: 1rem;
+    }
+
+    .checkout-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--color-text);
+    }
+
+    .checkout-field input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 2px solid var(--color-border);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+      outline: none;
+    }
+
+    .checkout-field input:focus {
+      border-color: var(--color-primary);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Card fields */
+    .card-fields {
+      display: none;
+      animation: fadeSlide 0.3s ease;
+    }
+
+    .card-fields.show { display: block; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Security badges */
+    .security-badges {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(0, 200, 83, 0.05);
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .security-badges span {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+    }
+
+    .pay-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: inherit;
+    }
+
+    .pay-btn:hover {
+      background: #00B848;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 200, 83, 0.35);
+    }
+
+    .pay-btn:active { transform: translateY(0); }
+
+    .pay-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Order Summary Sidebar ── */
+    .order-sidebar {
+      position: sticky;
+      top: 100px;
+      align-self: start;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .order-card h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .order-card .shop-name {
+      background: rgba(0, 200, 83, 0.08);
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkout-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.9rem;
+    }
+
+    .checkout-item:last-of-type { border-bottom: none; }
+
+    .checkout-item .item-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkout-item .item-qty {
+      background: var(--color-bg-secondary);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .summary-divider {
+      height: 2px;
+      background: var(--color-border);
+      margin: 0.75rem 0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0;
+      font-size: 0.9rem;
+    }
+
+    .summary-row.total {
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding-top: 0.75rem;
+      border-top: 2px solid var(--color-text);
+      margin-top: 0.5rem;
+    }
+
+    .delivery-info {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(255, 179, 0, 0.08);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ── Success State ── */
+    .checkout-success {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1rem;
+      animation: fadeSlide 0.5s ease;
+    }
+
+    .checkout-success.show { display: block; }
+
+    .success-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .checkout-success h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .checkout-success p {
+      color: var(--color-text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-banner {
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      padding: 0.6rem 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #E65100;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .checkout-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .order-sidebar {
+        position: static;
+        order: -1;
+      }
+
+      .payment-methods {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ NAVBAR ═══════════════════ -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="container">
+      <a href="index.html" aria-label="BarrioYa - Inicio">
+        <img src="BarrioYalogo.png" alt="BarrioYa Logo" class="navbar-logo">
+      </a>
+      <div class="navbar-links" id="navbarLinks">
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#negocios">Para negocios</a>
+        <a href="index.html#como-funciona">¿Cómo funciona?</a>
+        <a href="index.html#cobertura">Cobertura</a>
+      </div>
+      <a href="#" class="btn btn-primary navbar-cta" id="navbarCta" onclick="event.preventDefault(); document.getElementById('waitlistModal').classList.add('active'); document.body.style.overflow='hidden';">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+        App Próximamente
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#servicios" class="mobile-link">Servicios</a>
+    <a href="index.html#negocios" class="mobile-link">Para negocios</a>
+    <a href="index.html#como-funciona" class="mobile-link">¿Cómo funciona?</a>
+    <a href="index.html#cobertura" class="mobile-link">Cobertura</a>
+  </div>
+
+  <div class="demo-banner">
+    💳 Demo interactiva — Simulación de pago (no se procesan transacciones reales)
+  </div>
+
+  <!-- ═══════════════════ CHECKOUT ═══════════════════ -->
+  <main class="checkout-page">
+    <div class="checkout-layout" id="checkoutLayout">
+      <div class="checkout-header">
+        <h1>Pagar <span>pedido</span></h1>
+        <p>Elige tu método de pago y completa la transacción de forma segura</p>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="payment-form" id="paymentForm">
+        <h2>💳 Método de pago</h2>
+
+        <div class="payment-methods" id="paymentMethods">
+          <div class="payment-method selected" data-method="nequi" id="methodNequi">
+            <div class="check-mark">✓</div>
+            <div class="method-icon">📱</div>
+            <div class="method-name">Nequi</div>
+            <div class="method-desc">Pago instantáneo</div>
+          </div>
+          <div class="payment-method" data-method="daviplata" id="methodDaviplata">
+            <div class="check-mark">✓</div>
+            <div class="method-icon">💚</div>
+            <div class="method-name">Daviplata</div>
+            <div class="method-desc">Transferencia directa</div>
+          </div>
+          <div class="payment-method" data-method="pse" id="methodPse">
+            <div class="check-mark">✓</div>
+            <div class="method-icon">🏦</div>
+            <div class="method-name">PSE</div>
+            <div class="method-desc">Débito bancario</div>
+          </div>
+          <div class="payment-method" data-method="card" id="methodCard">
+            <div class="check-mark">✓</div>
+            <div class="method-icon">💳</div>
+            <div class="method-name">Tarjeta</div>
+            <div class="method-desc">Crédito o débito</div>
+          </div>
+        </div>
+
+        <!-- Buyer Info -->
+        <div class="buyer-section">
+          <h3>👤 Datos del comprador</h3>
+          <div class="checkout-field">
+            <label for="buyerName">Nombre completo</label>
+            <input type="text" id="buyerName" placeholder="Ej: María García" value="María García">
+          </div>
+          <div class="field-row">
+            <div class="checkout-field">
+              <label for="buyerPhone">Celular</label>
+              <input type="tel" id="buyerPhone" placeholder="300 123 4567" value="304 627 9171">
+            </div>
+            <div class="checkout-field">
+              <label for="buyerEmail">Email (opcional)</label>
+              <input type="email" id="buyerEmail" placeholder="correo@ejemplo.com">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Fields (shown only when card selected) -->
+        <div class="card-fields" id="cardFields">
+          <h3>💳 Datos de la tarjeta</h3>
+          <div class="checkout-field">
+            <label for="cardNumber">Número de tarjeta</label>
+            <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" maxlength="19">
+          </div>
+          <div class="field-row">
+            <div class="checkout-field">
+              <label for="cardExpiry">Vencimiento</label>
+              <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5">
+            </div>
+            <div class="checkout-field">
+              <label for="cardCvv">CVV</label>
+              <input type="text" id="cardCvv" placeholder="123" maxlength="4">
+            </div>
+          </div>
+        </div>
+
+        <div class="security-badges">
+          <span>🔒</span>
+          <span>Tus datos están protegidos. Este pago es procesado de forma segura con encriptación SSL.</span>
+        </div>
+
+        <button class="pay-btn" id="payBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Pagar $17.500
+        </button>
+      </div>
+
+      <!-- Order Sidebar -->
+      <div class="order-sidebar">
+        <div class="order-card">
+          <h2>🛒 Tu pedido</h2>
+          <div class="shop-name">🏪 Panadería Don José</div>
+
+          <div class="checkout-item">
+            <div class="item-name">
+              <span class="item-qty">3x</span> Empanada de carne
+            </div>
+            <div>$6.000</div>
+          </div>
+          <div class="checkout-item">
+            <div class="item-name">
+              <span class="item-qty">2x</span> Jugo de lulo
+            </div>
+            <div>$5.000</div>
+          </div>
+          <div class="checkout-item">
+            <div class="item-name">
+              <span class="item-qty">4x</span> Pan de bono
+            </div>
+            <div>$4.000</div>
+          </div>
+
+          <div class="summary-divider"></div>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>$15.000</span>
+          </div>
+          <div class="summary-row">
+            <span>Envío</span>
+            <span>$2.500</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>$17.500</span>
+          </div>
+
+          <div class="delivery-info">
+            📍 Calle 45 #28-30, Cabecera, Bucaramanga
+          </div>
+        </div>
+      </div>
+
+      <!-- Success State -->
+      <div class="checkout-success" id="checkoutSuccess">
+        <div class="success-icon">✅</div>
+        <h2>¡Pago exitoso!</h2>
+        <p>Tu pedido #BY-2026-0429 ha sido confirmado. Carlos está preparándose para recogerlo.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="tracking.html" class="btn btn-primary" id="successTrackingBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Ver seguimiento en vivo
+          </a>
+          <a href="index.html" class="btn btn-secondary" id="successHomeBtn">Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Waitlist Modal -->
+  <div class="modal-overlay" id="waitlistModal">
+    <div class="modal">
+      <div class="modal-icon">🚀</div>
+      <h2>¡La App viene pronto!</h2>
+      <p>Estamos construyendo algo increíble para tu barrio. Mientras tanto, pide todo lo que necesites por WhatsApp.</p>
+      <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20unirme%20a%20la%20lista%20de%20espera%20de%20la%20App"
+         class="btn btn-whatsapp" target="_blank" rel="noopener" style="margin-bottom: var(--space-md); width: 100%;">
+        Unirme a la lista de espera
+      </a>
+      <button class="btn btn-secondary" id="closeWaitlist" style="width: 100%;">Cerrar</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/checkout.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
