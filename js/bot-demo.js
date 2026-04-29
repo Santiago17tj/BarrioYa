@@ -461,28 +461,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Initial Bot Greeting ──
   async function initGreeting() {
-    // Check if coming from cart panel
     const params = new URLSearchParams(window.location.search);
+    const textParam = params.get('text');
     const fromCart = params.get('fromCart');
 
+    // ── Mode 1: WhatsApp handoff with encoded text ──
+    if (textParam) {
+      const orderText = decodeURIComponent(textParam);
+
+      // Show the user message as if they typed it
+      addMessage(orderText.replace(/\*/g, '').replace(/\n/g, '<br>'), 'user');
+
+      // Bot processes the order
+      await botReply('¡Hola! 👋 Recibí tu pedido. Déjame revisarlo...', 800, true);
+
+      // Parse and confirm
+      await botReply('✅ <strong>¡Pedido recibido correctamente!</strong><br><br>He registrado todos los artículos de tu orden. Un domiciliario será asignado en los próximos minutos.<br><br>📍 Te enviaremos el <a href="tracking.html" style="color:var(--color-primary)">enlace de seguimiento</a> cuando el domiciliario salga.', 1500, true);
+
+      state = 'CONFIRMED';
+
+      showQuickReplies([
+        { label: '📍 Ver seguimiento', value: 'ver seguimiento' },
+        { label: '✏️ Modificar pedido', value: 'modificar' },
+        { label: '🏠 Volver al inicio', value: 'inicio' }
+      ]);
+      return;
+    }
+
+    // ── Mode 2: fromCart (localStorage) ──
     if (fromCart && window.cartManager && !window.cartManager.isEmpty()) {
       const cm = window.cartManager;
 
       await botReply('¡Hola! 👋 Veo que ya tienes productos en tu carrito. Déjame preparar tu pedido.', 600, true);
 
-      // Build cart summary
       let cartHtml = `🛒 <strong>Tu pedido de ${cm.businessName}:</strong>\n<ul class="menu-list">`;
       let subtotal = 0;
       cm.items.forEach(item => {
         const t = item.price * item.qty;
         subtotal += t;
-        cartHtml += `<li>${item.emoji} ${item.qty}x ${item.name} — $${t.toLocaleString('es-CO')}</li>`;
+        const isService = item.type === 'service';
+        let detail = `${item.emoji} ${item.qty}x ${item.name} — $${t.toLocaleString('es-CO')}`;
+        if (isService && item.schedule) detail += ` 🕐 ${item.schedule}`;
+        if (isService && item.duration) detail += ` ⏱️ ${item.duration}`;
+        cartHtml += `<li>${detail}</li>`;
       });
-      cartHtml += `</ul>\n<strong>Subtotal: $${subtotal.toLocaleString('es-CO')}</strong>\n<strong>Envío: $2.500</strong>\n<strong>Total: $${(subtotal + 2500).toLocaleString('es-CO')}</strong>`;
+      cartHtml += `</ul>\n<strong>Subtotal: $${subtotal.toLocaleString('es-CO')}</strong>`;
+      const hasProducts = cm.items.some(i => (i.type || 'product') === 'product');
+      if (hasProducts) cartHtml += `\n<strong>Envío: $2.500</strong>`;
+      const total = subtotal + (hasProducts ? 2500 : 0);
+      cartHtml += `\n<strong>Total: $${total.toLocaleString('es-CO')}</strong>`;
 
       await botReply(cartHtml, 1200, true);
 
-      // Pre-populate state
       selectedBusiness = { name: cm.businessName, items: cm.items };
       cart = cm.items.map(i => ({ ...i }));
       state = 'ADD_MORE';
@@ -493,16 +523,18 @@ document.addEventListener('DOMContentLoaded', () => {
         { label: '✏️ Modificar', value: 'agregar mas' },
         { label: '🗑️ Vaciar', value: 'vaciar' }
       ]);
-    } else {
-      await botReply('¡Hola! 👋 Bienvenido a <strong>BarrioYa</strong>. Soy tu asistente de pedidos del barrio.', 600, true);
-      await botReply('¿Qué te gustaría pedir hoy? Escríbelo naturalmente o elige una opción 👇', 1000);
-
-      showQuickReplies([
-        { label: '🛒 Pedir un domicilio', value: 'quiero pedir un domicilio' },
-        { label: '📋 Ver negocios', value: 'ver negocios' },
-        { label: '🐾 Paseador de mascotas', value: 'necesito un paseador' }
-      ]);
+      return;
     }
+
+    // ── Mode 3: Normal greeting ──
+    await botReply('¡Hola! 👋 Bienvenido a <strong>BarrioYa</strong>. Soy tu asistente de pedidos del barrio.', 600, true);
+    await botReply('¿Qué te gustaría pedir hoy? Escríbelo naturalmente o elige una opción 👇', 1000);
+
+    showQuickReplies([
+      { label: '🛒 Pedir un domicilio', value: 'quiero pedir un domicilio' },
+      { label: '📋 Ver negocios', value: 'ver negocios' },
+      { label: '🐾 Paseador de mascotas', value: 'necesito un paseador' }
+    ]);
   }
 
   setTimeout(initGreeting, 500);

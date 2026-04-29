@@ -20,8 +20,8 @@
   <link rel="icon" type="image/png" href="BarrioYalogo.png">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/styles.css?v=2">
+  <link rel="stylesheet" href="css/cart.css?v=2">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -120,36 +120,88 @@
     </div>
   </section>
 
-  <!-- ═══════════════════ SERVICIOS ═══════════════════ -->
+  <!-- ═══════════════════ SUPERAPP DASHBOARD ═══════════════════ -->
   <section class="services section" id="servicios">
     <div class="container">
-      <h2 class="section-title fade-in">¿Qué puedes <span class="highlight">pedir</span>?</h2>
+      <div class="superapp-header fade-in">
+        <h2 class="section-title">¿Qué puedes <span class="highlight">pedir</span>?</h2>
+        <div class="hiperlocal-badge" id="hiperlocalBadge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Mostrando servicios a máx. 2 km
+        </div>
+      </div>
       <p class="section-subtitle fade-in">Todo lo que necesitas de tu barrio, al alcance de un toque o un mensaje de WhatsApp</p>
 
-      <div class="services-grid">
-        <div class="service-card fade-in" id="service-delivery">
-          <div class="service-icon delivery">🛒</div>
-          <h3>Domicilios</h3>
-          <p>Panaderías, tiendas, restaurantes y todo lo que tu barrio tiene para ofrecer, directo a tu puerta.</p>
-        </div>
+      <div class="superapp-grid">
 
-        <div class="service-card fade-in" id="service-pets">
-          <div class="service-icon pets">🐾</div>
-          <h3>Mascotas</h3>
-          <p>Paseo y cuidado de tu mascota con paseadores cercanos, confiables y verificados de tu zona.</p>
-        </div>
+        <a href="servicios.html#domicilios" class="superapp-card fade-in" id="superappDelivery">
+          <div class="superapp-card-glow delivery-glow"></div>
+          <div class="superapp-card-icon">🛒</div>
+          <div class="superapp-card-body">
+            <h3>Domicilios</h3>
+            <p>Panaderías, tiendas, restaurantes y todo tu barrio directo a tu puerta.</p>
+            <div class="superapp-card-tags">
+              <span class="superapp-tag">🧀 Panadería Don José</span>
+              <span class="superapp-tag">🍛 La Sazón</span>
+              <span class="superapp-tag">🛒 Doña Carmen</span>
+            </div>
+          </div>
+          <div class="superapp-card-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </a>
 
-        <div class="service-card fade-in" id="service-errands">
-          <div class="service-icon errands">🏃</div>
-          <h3>Mandados</h3>
-          <p>Pagos, diligencias y vueltas locales que no puedes hacer. Nosotros vamos por ti, rapidito.</p>
-        </div>
+        <a href="servicios.html#mascotas" class="superapp-card fade-in" id="superappPets">
+          <div class="superapp-card-glow pets-glow"></div>
+          <div class="superapp-card-icon">🐾</div>
+          <div class="superapp-card-body">
+            <h3>Mascotas</h3>
+            <p>Paseo, cuidado y baño para tu peludo con cuidadores verificados de tu zona.</p>
+            <div class="superapp-card-tags">
+              <span class="superapp-tag">🐕 Paseo</span>
+              <span class="superapp-tag">🛁 Baño</span>
+              <span class="superapp-tag">🎓 Entrenamiento</span>
+            </div>
+          </div>
+          <div class="superapp-card-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </a>
 
-        <div class="service-card fade-in" id="service-tech">
-          <div class="service-icon tech">🔧</div>
-          <h3>Técnicos & Tutores</h3>
-          <p>Plomeros, electricistas, refuerzo escolar y más. Profesionales de tu barrio, listos para ayudarte.</p>
-        </div>
+        <a href="servicios.html#mandados" class="superapp-card fade-in" id="superappErrands">
+          <div class="superapp-card-glow errands-glow"></div>
+          <div class="superapp-card-icon">🏃</div>
+          <div class="superapp-card-body">
+            <h3>Mandados</h3>
+            <p>Pagos, diligencias, filas y vueltas locales. Nosotros vamos por ti, rapidito.</p>
+            <div class="superapp-card-tags">
+              <span class="superapp-tag">📄 Recibos</span>
+              <span class="superapp-tag">📦 Paquetes</span>
+              <span class="superapp-tag">🛍️ Compras</span>
+            </div>
+          </div>
+          <div class="superapp-card-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </a>
+
+        <a href="servicios.html#tecnicos" class="superapp-card fade-in" id="superappTech">
+          <div class="superapp-card-glow tech-glow"></div>
+          <div class="superapp-card-icon">🔧</div>
+          <div class="superapp-card-body">
+            <h3>Técnicos & Tutores</h3>
+            <p>Plomeros, electricistas, refuerzo escolar y más. Profesionales del barrio.</p>
+            <div class="superapp-card-tags">
+              <span class="superapp-tag">⚡ Electricista</span>
+              <span class="superapp-tag">📐 Matemáticas</span>
+              <span class="superapp-tag">🔑 Cerrajero</span>
+            </div>
+          </div>
+          <div class="superapp-card-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </a>
+
       </div>
     </div>
   </section>
@@ -438,8 +490,8 @@
   </a>
 
   <!-- Scripts -->
-  <script src="js/main.js"></script>
-  <script src="js/cart.js"></script>
+  <script src="js/main.js?v=2"></script>
+  <script src="js/cart.js?v=2"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

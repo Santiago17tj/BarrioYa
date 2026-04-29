@@ -436,6 +436,71 @@
   pointer-events: none;
 }
 
+/* ── Service Item in Cart ── */
+.cart-item--service {
+  grid-template-columns: 36px 1fr auto auto 28px;
+}
+
+.cart-item-meta {
+  font-size: 0.72rem;
+  color: var(--color-text-light, #7A7A8A);
+  margin-top: 0.15rem;
+}
+
+.cart-service-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.service-select {
+  padding: 0.3rem 0.5rem;
+  border: 1.5px solid var(--color-border, #E0E0E0);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-family: inherit;
+  color: var(--color-text, #1A1A2E);
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  min-width: 100px;
+  outline: none;
+}
+
+.service-select:focus {
+  border-color: var(--color-primary, #00C853);
+}
+
+/* ── Product Card — Service variant ── */
+.product-card--service {
+  border-left: 3px solid var(--color-primary, #00C853);
+}
+
+.product-provider {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #4A4A5A);
+  margin: 0.15rem 0;
+}
+
+.product-zone {
+  font-size: 0.72rem;
+  color: var(--color-text-light, #7A7A8A);
+  margin: 0.1rem 0;
+}
+
+/* ── Tab Zone Label ── */
+.tab-zone {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--color-text-light, #7A7A8A);
+  margin-top: 0.1rem;
+}
+
+.menu-tab.active .tab-zone {
+  color: rgba(255,255,255,0.8);
+}
+
 /* ── Responsive ── */
 @media (max-width: 480px) {
   .cart-panel {
@@ -452,5 +517,15 @@
   .cart-item {
     grid-template-columns: 30px 1fr auto auto 24px;
     gap: 0.5rem;
+  }
+
+  .cart-service-options {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .service-select {
+    min-width: 80px;
+    font-size: 0.68rem;
   }
 }
