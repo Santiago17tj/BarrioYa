@@ -14,6 +14,10 @@
   <title>Afiliar mi negocio — BarrioYa</title>
   <link rel="icon" type="image/png" href="BarrioYalogo.png">
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00C853">
 </head>
 <body>
 
@@ -31,9 +35,9 @@
         <a href="index.html#cobertura">Cobertura</a>
       </div>
 
-      <a href="#" class="btn btn-primary navbar-cta" id="navbarCta">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Descargar App
+      <a href="#" class="btn btn-primary navbar-cta" id="navbarCta" onclick="event.preventDefault(); document.getElementById('waitlistModal').classList.add('active'); document.body.style.overflow='hidden';">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+        App Próximamente
       </a>
 
       <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">
@@ -50,7 +54,7 @@
     <a href="index.html#negocios" class="mobile-link">Para negocios</a>
     <a href="index.html#como-funciona" class="mobile-link">¿Cómo funciona?</a>
     <a href="index.html#cobertura" class="mobile-link">Cobertura</a>
-    <a href="#" class="btn btn-primary">Descargar App</a>
+    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); document.getElementById('waitlistModal').classList.add('active'); document.body.style.overflow='hidden';">App Próximamente</a>
   </div>
 
   <!-- ═══════════════════ FORM ═══════════════════ -->
@@ -62,16 +66,16 @@
           <p>Completa el formulario y te contactaremos por WhatsApp para activar tu cuenta.</p>
         </div>
 
-        <form id="affiliationForm" novalidate>
+        <form action="https://formspree.io/f/mbdqvdbd" method="POST" id="affiliationForm">
           <div class="form-group">
             <label for="businessName">Nombre del negocio <span class="required">*</span></label>
-            <input type="text" id="businessName" class="form-input" placeholder="Ej: Panadería Don José" required>
+            <input type="text" id="businessName" name="businessName" class="form-input" placeholder="Ej: Panadería Don José" required>
             <span class="form-error">Este campo es obligatorio</span>
           </div>
 
           <div class="form-group">
             <label for="businessType">Tipo de negocio <span class="required">*</span></label>
-            <select id="businessType" class="form-select" required>
+            <select id="businessType" name="businessType" class="form-select" required>
               <option value="" disabled selected>Selecciona una opción</option>
               <option value="panaderia">Panadería</option>
               <option value="tienda">Tienda / Minimercado</option>
@@ -87,20 +91,26 @@
 
           <div class="form-group">
             <label for="contactName">Nombre del contacto <span class="required">*</span></label>
-            <input type="text" id="contactName" class="form-input" placeholder="Tu nombre completo" required>
+            <input type="text" id="contactName" name="contactName" class="form-input" placeholder="Tu nombre completo" required>
             <span class="form-error">Este campo es obligatorio</span>
           </div>
 
           <div class="form-group">
             <label for="phone">Teléfono / WhatsApp <span class="required">*</span></label>
-            <input type="tel" id="phone" class="form-input" placeholder="Ej: 304 627 9171" required>
+            <input type="tel" id="phone" name="phone" class="form-input" placeholder="Ej: 304 627 9171" required>
             <span class="form-error">Ingresa un número de teléfono</span>
           </div>
 
           <div class="form-group">
             <label for="neighborhood">Barrio / Comuna <span class="required">*</span></label>
-            <input type="text" id="neighborhood" class="form-input" placeholder="Ej: Cabecera, Comuna 14" required>
-            <span class="form-error">Este campo es obligatorio</span>
+            <select id="neighborhood" name="neighborhood" class="form-select" required>
+              <option value="" disabled selected>Selecciona tu zona</option>
+              <option value="comuna5">Comuna 5 (García Rovira)</option>
+              <option value="comuna14">Comuna 14 (Cabecera)</option>
+              <option value="comuna15">Comuna 15 (Centro)</option>
+              <option value="otro">Otro sector</option>
+            </select>
+            <span class="form-error">Selecciona una zona</span>
           </div>
 
           <div class="form-group">
@@ -119,7 +129,7 @@
 
           <div class="form-group">
             <label for="message">Mensaje opcional</label>
-            <textarea id="message" class="form-textarea" placeholder="Cuéntanos más sobre tu negocio o servicio..."></textarea>
+            <textarea id="message" name="message" class="form-textarea" placeholder="Cuéntanos más sobre tu negocio o servicio..."></textarea>
           </div>
 
           <div class="form-submit">
@@ -204,6 +214,20 @@
       </div>
     </div>
   </footer>
+
+  <!-- Waitlist Modal -->
+  <div class="modal-overlay" id="waitlistModal">
+    <div class="modal">
+      <div class="modal-icon">🚀</div>
+      <h2>¡La App viene pronto!</h2>
+      <p>Estamos construyendo algo increíble para tu barrio. Mientras tanto, pide todo lo que necesites por WhatsApp.</p>
+      <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20unirme%20a%20la%20lista%20de%20espera%20de%20la%20App" 
+         class="btn btn-whatsapp" target="_blank" rel="noopener" style="margin-bottom: var(--space-md); width: 100%;">
+        Unirme a la lista de espera
+      </a>
+      <button class="btn btn-secondary" id="closeWaitlist" style="width: 100%;">Cerrar</button>
+    </div>
+  </div>
 
   <!-- WhatsApp Float -->
   <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20pedir%20un%20domicilio" 

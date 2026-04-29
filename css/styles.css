@@ -500,9 +500,28 @@ button {
 
 .hero-description {
   font-size: clamp(1rem, 2vw, 1.15rem);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   margin-bottom: var(--space-xl);
   line-height: 1.7;
+}
+
+.hero-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+  flex-wrap: wrap;
+}
+
+.hero-trust svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--color-primary);
 }
 
 .hero-ctas {
@@ -1222,7 +1241,7 @@ button {
 }
 
 .whatsapp-float:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
   box-shadow: var(--shadow-xl), 0 0 30px rgba(37,211,102,0.6);
 }
 
@@ -1553,6 +1572,10 @@ button {
 
   .hero-ctas {
     flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .hero-trust {
     justify-content: flex-start;
   }
 

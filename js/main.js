@@ -130,8 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (affiliationForm) {
     affiliationForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
       // Simple validation
       let isValid = true;
       const requiredFields = affiliationForm.querySelectorAll('[required]');
@@ -149,7 +147,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      if (isValid && successModal) {
+      if (!isValid) {
+        e.preventDefault();
+        return;
+      }
+
+      // If using Formspree (form has action attribute), let it submit natively
+      if (affiliationForm.getAttribute('action') && affiliationForm.getAttribute('action').includes('formspree')) {
+        // Allow native form submission to Formspree
+        return;
+      }
+
+      // Fallback: show success modal for non-Formspree forms
+      e.preventDefault();
+      if (successModal) {
         successModal.classList.add('active');
         document.body.style.overflow = 'hidden';
         affiliationForm.reset();
@@ -166,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Modal Close ──
+  // ── Modal Close (Success Modal) ──
   if (closeModalBtn && successModal) {
     closeModalBtn.addEventListener('click', () => {
       successModal.classList.remove('active');
@@ -181,6 +192,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ── Waitlist Modal Handling ──
+  const waitlistModal = document.getElementById('waitlistModal');
+  const closeWaitlistBtn = document.getElementById('closeWaitlist');
+
+  if (closeWaitlistBtn && waitlistModal) {
+    closeWaitlistBtn.addEventListener('click', () => {
+      waitlistModal.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    waitlistModal.addEventListener('click', (e) => {
+      if (e.target === waitlistModal) {
+        waitlistModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+
   // ── Keyboard Accessibility ──
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -190,9 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.classList.remove('active');
         document.body.style.overflow = '';
       }
-      // Close modal
+      // Close success modal
       if (successModal && successModal.classList.contains('active')) {
         successModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      // Close waitlist modal
+      if (waitlistModal && waitlistModal.classList.contains('active')) {
+        waitlistModal.classList.remove('active');
         document.body.style.overflow = '';
       }
     }
