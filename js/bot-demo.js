@@ -61,26 +61,53 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Message Rendering ──
+  function smoothScrollToBottom() {
+    messagesContainer.scrollTo({
+      top: messagesContainer.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+
   function addMessage(text, type = 'bot', html = false) {
     const msg = document.createElement('div');
     msg.className = `msg ${type}`;
     msg.innerHTML = `${html ? text : escapeHtml(text)}<div class="time">${getTime()}</div>`;
     messagesContainer.appendChild(msg);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    smoothScrollToBottom();
   }
 
   function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function showTyping() {
+  // ── Typing Bubble with 3 animated dots ──
+  let typingBubble = null;
+
+  function showTypingBubble() {
+    // Show topbar indicator
     typingIndicator.classList.add('show');
     statusText.style.display = 'none';
+
+    // Create visible bubble in chat
+    if (!typingBubble) {
+      typingBubble = document.createElement('div');
+      typingBubble.className = 'msg bot typing-bubble';
+      typingBubble.innerHTML = `
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>`;
+    }
+    messagesContainer.appendChild(typingBubble);
+    smoothScrollToBottom();
   }
 
-  function hideTyping() {
+  function hideTypingBubble() {
     typingIndicator.classList.remove('show');
     statusText.style.display = 'block';
+
+    if (typingBubble && typingBubble.parentNode) {
+      typingBubble.parentNode.removeChild(typingBubble);
+    }
   }
 
   function showQuickReplies(options) {
@@ -100,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     quickRepliesContainer.appendChild(wrapper);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    smoothScrollToBottom();
   }
 
   function clearQuickReplies() {
@@ -109,9 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function botReply(text, delay = 1200, html = false) {
     return new Promise(resolve => {
-      showTyping();
+      showTypingBubble();
       setTimeout(() => {
-        hideTyping();
+        hideTypingBubble();
         addMessage(text, 'bot', html);
         resolve();
       }, delay);

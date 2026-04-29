@@ -1,6 +1,6 @@
 /* ==========================================================
-   BarrioYa — Tracking JavaScript
-   Leaflet.js map with simulated real-time driver tracking
+   BarrioYa — Tracking JavaScript (v2 — Premium Animations)
+   Leaflet.js map with smooth real-time driver tracking
    ========================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,28 +11,60 @@ document.addEventListener('DOMContentLoaded', () => {
   // Destination: Customer (Sotomayor area)
   const DESTINATION = { lat: 7.1095, lng: -73.1060 };
 
-  // Simulated route waypoints through Bucaramanga streets
+  // Simulated route waypoints through Bucaramanga streets (densified for smoothness)
   const ROUTE_POINTS = [
     { lat: 7.1180, lng: -73.1140 },
-    { lat: 7.1175, lng: -73.1135 },
-    { lat: 7.1170, lng: -73.1128 },
-    { lat: 7.1165, lng: -73.1122 },
-    { lat: 7.1158, lng: -73.1118 },
-    { lat: 7.1150, lng: -73.1112 },
-    { lat: 7.1145, lng: -73.1108 },
-    { lat: 7.1138, lng: -73.1105 },
-    { lat: 7.1132, lng: -73.1100 },
+    { lat: 7.11785, lng: -73.11385 },
+    { lat: 7.1177, lng: -73.1137 },
+    { lat: 7.11755, lng: -73.11345 },
+    { lat: 7.1174, lng: -73.1132 },
+    { lat: 7.1172, lng: -73.1129 },
+    { lat: 7.1170, lng: -73.1126 },
+    { lat: 7.1168, lng: -73.1124 },
+    { lat: 7.1166, lng: -73.1122 },
+    { lat: 7.1163, lng: -73.1120 },
+    { lat: 7.1160, lng: -73.1118 },
+    { lat: 7.1157, lng: -73.1116 },
+    { lat: 7.1154, lng: -73.1114 },
+    { lat: 7.1151, lng: -73.1112 },
+    { lat: 7.1148, lng: -73.1110 },
+    { lat: 7.1146, lng: -73.1108 },
+    { lat: 7.1143, lng: -73.1106 },
+    { lat: 7.1140, lng: -73.1105 },
+    { lat: 7.1138, lng: -73.1103 },
+    { lat: 7.1135, lng: -73.1101 },
+    { lat: 7.1132, lng: -73.1099 },
+    { lat: 7.1130, lng: -73.1097 },
     { lat: 7.1128, lng: -73.1095 },
-    { lat: 7.1122, lng: -73.1090 },
+    { lat: 7.1126, lng: -73.1093 },
+    { lat: 7.1124, lng: -73.1091 },
+    { lat: 7.1122, lng: -73.1089 },
+    { lat: 7.1120, lng: -73.1087 },
     { lat: 7.1118, lng: -73.1085 },
-    { lat: 7.1112, lng: -73.1080 },
+    { lat: 7.1116, lng: -73.1083 },
+    { lat: 7.1114, lng: -73.1081 },
+    { lat: 7.1112, lng: -73.1079 },
+    { lat: 7.1110, lng: -73.1077 },
     { lat: 7.1108, lng: -73.1075 },
+    { lat: 7.1106, lng: -73.1072 },
+    { lat: 7.1104, lng: -73.1070 },
     { lat: 7.1102, lng: -73.1068 },
+    { lat: 7.1100, lng: -73.1065 },
     { lat: 7.1098, lng: -73.1063 },
+    { lat: 7.1096, lng: -73.1061 },
     { lat: 7.1095, lng: -73.1060 }
   ];
 
-  // ── Initialize Leaflet Map ──
+  // ── Custom SVG Motorcycle Icon ──
+  const MOTO_SVG = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18.5" cy="17.5" r="3.5"/>
+      <circle cx="5.5" cy="17.5" r="3.5"/>
+      <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
+      <path d="M5.5 17.5h0"/>
+    </svg>`;
+
+  // ── Initialize Leaflet Map (centered on Bucaramanga) ──
   const map = L.map('map', {
     zoomControl: true,
     attributionControl: true
@@ -45,10 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }).addTo(map);
 
   // ── Custom Icon Factory ──
-  function createDivIcon(className, emoji) {
+  function createDivIcon(className, content) {
     return L.divIcon({
       className: '',
-      html: `<div class="${className}">${emoji}</div>`,
+      html: `<div class="${className}">${content}</div>`,
       iconSize: [40, 40],
       iconAnchor: [20, 20],
       popupAnchor: [0, -25]
@@ -66,26 +98,26 @@ document.addEventListener('DOMContentLoaded', () => {
     icon: createDivIcon('marker-destination', '📍')
   }).addTo(map).bindPopup('<strong>Tu ubicación</strong><br>Punto de entrega');
 
-  // Driver marker (animated)
+  // Driver marker — uses custom SVG motorcycle
   const driverMarker = L.marker([ROUTE_POINTS[0].lat, ROUTE_POINTS[0].lng], {
-    icon: createDivIcon('marker-driver', '🛵'),
+    icon: createDivIcon('marker-driver', MOTO_SVG),
     zIndexOffset: 1000
   }).addTo(map).bindPopup('<strong>Carlos Ramírez</strong><br>Tu domiciliario');
 
-  // ── Draw Route Line ──
+  // ── Draw Route Line (remaining path — dashed) ──
   const routeLatLngs = ROUTE_POINTS.map(p => [p.lat, p.lng]);
   const routeLine = L.polyline(routeLatLngs, {
     color: '#00C853',
     weight: 5,
-    opacity: 0.8,
+    opacity: 0.35,
     dashArray: '10, 8',
     lineCap: 'round'
   }).addTo(map);
 
-  // Traveled path (solid line)
+  // Traveled path (solid, glowing)
   const traveledLine = L.polyline([], {
     color: '#00C853',
-    weight: 5,
+    weight: 6,
     opacity: 1,
     lineCap: 'round'
   }).addTo(map);
@@ -94,11 +126,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const bounds = L.latLngBounds(routeLatLngs);
   map.fitBounds(bounds.pad(0.15));
 
+  // ── Smooth Interpolation Helper ──
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function smoothMove(marker, from, to, duration, onComplete) {
+    const startTime = performance.now();
+
+    function animate(now) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+
+      const lat = lerp(from.lat, to.lat, eased);
+      const lng = lerp(from.lng, to.lng, eased);
+      marker.setLatLng([lat, lng]);
+
+      if (t < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        if (onComplete) onComplete();
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+
   // ── Tracking Simulation ──
   let currentPointIndex = 0;
   const totalPoints = ROUTE_POINTS.length;
-  const MOVE_INTERVAL = 2500; // ms between movements
-  const ETA_START = 8; // minutes
+  const MOVE_INTERVAL = 2000; // ms between movements
+  const SMOOTH_DURATION = 1600; // ms for smooth animation
+  const ETA_START = 12; // minutes
 
   const etaValueEl = document.getElementById('etaValue');
   const statusTimeline = document.getElementById('statusTimeline');
@@ -153,27 +213,38 @@ document.addEventListener('DOMContentLoaded', () => {
         deliveredStep.querySelector('.status-dot').textContent = '✓';
         deliveredStep.querySelector('.status-info p').textContent = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
       }
+
+      // Confetti-like celebration pulse
+      const etaCard = document.querySelector('.eta-card');
+      if (etaCard) {
+        etaCard.style.background = 'linear-gradient(135deg, #C8E6C9, #A5D6A7)';
+        etaCard.style.animation = 'celebratePulse 0.6s ease';
+      }
       return;
     }
 
+    const fromPoint = ROUTE_POINTS[currentPointIndex];
     currentPointIndex++;
-    const point = ROUTE_POINTS[currentPointIndex];
+    const toPoint = ROUTE_POINTS[currentPointIndex];
 
-    // Smooth movement with Leaflet
-    driverMarker.setLatLng([point.lat, point.lng]);
+    // Smooth CSS-like movement via requestAnimationFrame
+    smoothMove(driverMarker, fromPoint, toPoint, SMOOTH_DURATION, () => {
+      // Update traveled path
+      const traveled = ROUTE_POINTS.slice(0, currentPointIndex + 1).map(p => [p.lat, p.lng]);
+      traveledLine.setLatLngs(traveled);
 
-    // Update traveled path
-    const traveled = ROUTE_POINTS.slice(0, currentPointIndex + 1).map(p => [p.lat, p.lng]);
-    traveledLine.setLatLngs(traveled);
+      // Softly center map on driver if near edge
+      const driverLatLng = driverMarker.getLatLng();
+      const mapBounds = map.getBounds();
+      const padded = mapBounds.pad(-0.2); // Inner bounds
+      if (!padded.contains(driverLatLng)) {
+        map.panTo(driverLatLng, { animate: true, duration: 0.8 });
+      }
 
-    // Center map on driver if far from view
-    if (!map.getBounds().contains(driverMarker.getLatLng())) {
-      map.panTo(driverMarker.getLatLng());
-    }
+      updateETA();
+    });
 
-    updateETA();
-
-    // Continue animation
+    // Schedule next movement
     setTimeout(animateDriver, MOVE_INTERVAL);
   }
 

@@ -459,6 +459,11 @@ body {
   transform: translateY(-1px);
 }
 
+.action-btn:active {
+  transform: scale(0.94);
+  background: #00B848;
+}
+
 .action-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
@@ -513,11 +518,18 @@ body {
   border: 1px solid var(--admin-border);
   border-radius: 10px;
   padding: 1rem;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  cursor: pointer;
 }
 
 .board-card:hover {
   border-color: var(--admin-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.1);
+}
+
+.board-card:active {
+  transform: scale(0.97);
 }
 
 .board-card .card-header {
@@ -777,6 +789,47 @@ body {
   font-size: 1rem;
   cursor: pointer;
   margin-left: 0.5rem;
+}
+
+/* ── Skeleton Loaders ── */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--admin-surface-2);
+  border-radius: 8px;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-row {
+  height: 16px;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+}
+
+.skeleton-row.short { width: 60%; }
+.skeleton-row.medium { width: 80%; }
+.skeleton-row.full { width: 100%; }
+
+.skeleton-card {
+  height: 100px;
+  border-radius: var(--admin-radius);
 }
 
 /* ── Responsive ── */

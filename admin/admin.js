@@ -43,6 +43,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════
+  // NOTIFICATION SOUND (Web Audio API)
+  // ══════════════════════════════════════
+
+  function playNotificationPing() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, ctx.currentTime); // A5
+      oscillator.frequency.setValueAtTime(1100, ctx.currentTime + 0.1); // C#6
+      
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.4);
+    } catch(e) { /* Audio not supported */ }
+  }
+
+  // ══════════════════════════════════════
+  // SKELETON LOADERS
+  // ══════════════════════════════════════
+
+  function showSkeletonTable() {
+    const tbody = document.getElementById('ordersTableBody');
+    tbody.innerHTML = Array(5).fill('').map(() => `
+      <tr>
+        <td><div class="skeleton skeleton-row short" style="height:14px;width:80px"></div></td>
+        <td><div class="skeleton skeleton-row medium" style="height:14px;width:110px"></div></td>
+        <td><div class="skeleton skeleton-row full" style="height:14px;width:160px"></div></td>
+        <td><div class="skeleton skeleton-row short" style="height:14px;width:70px"></div></td>
+        <td><div class="skeleton skeleton-row" style="height:22px;width:90px;border-radius:50px"></div></td>
+        <td><div class="skeleton skeleton-row" style="height:26px;width:70px;border-radius:6px"></div></td>
+      </tr>
+    `).join('');
+  }
+
+  function showSkeletonKanban() {
+    const statuses = ['Nuevo', 'Preparando', 'Enviado', 'Entregado'];
+    statuses.forEach(status => {
+      const container = document.getElementById(`cards${status}`);
+      if (container) {
+        container.innerHTML = Array(2).fill('').map(() => `
+          <div class="skeleton skeleton-card"></div>
+        `).join('');
+      }
+    });
+  }
+
+  // ══════════════════════════════════════
   // SIDEBAR NAVIGATION
   // ══════════════════════════════════════
 
@@ -150,11 +205,16 @@ document.addEventListener('DOMContentLoaded', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFilter = btn.dataset.filter;
-      renderOrdersTable(currentFilter);
+
+      // Show skeleton then render
+      showSkeletonTable();
+      setTimeout(() => renderOrdersTable(currentFilter), 800);
     });
   });
 
-  renderOrdersTable();
+  // Initial load with skeleton
+  showSkeletonTable();
+  setTimeout(() => renderOrdersTable(), 1500);
 
   // ══════════════════════════════════════
   // KANBAN BOARD (Orders Section)
@@ -188,7 +248,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  renderKanbanBoard();
+  // Initial load with skeleton
+  showSkeletonKanban();
+  setTimeout(() => renderKanbanBoard(), 1500);
 
   // ══════════════════════════════════════
   // MENU MANAGEMENT
@@ -388,10 +450,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastMsg = document.getElementById('toastMsg');
   const toastClose = document.getElementById('toastClose');
 
-  function showToast(title, msg) {
+  function showToast(title, msg, withSound = false) {
     toastTitle.textContent = title;
     toastMsg.textContent = msg;
     toast.classList.add('show');
+
+    if (withSound) playNotificationPing();
 
     setTimeout(() => toast.classList.remove('show'), 4000);
   }
@@ -448,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
       totalRevenueEl.textContent = formatPrice(current + newOrder.total);
     }
 
-    showToast('🔔 Nuevo pedido', `#${newOrder.id} — ${newOrder.customer} (${formatPrice(newOrder.total)})`);
+    showToast('🔔 Nuevo pedido', `#${newOrder.id} — ${newOrder.customer} (${formatPrice(newOrder.total)})`, true);
 
     // Flash notification bell
     const notifDot = document.getElementById('notifDot');

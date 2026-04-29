@@ -277,27 +277,44 @@
 }
 
 /* ── Custom Map Markers ── */
+
+/* Smooth Leaflet marker transitions */
+.leaflet-marker-icon {
+  transition: transform 0.15s ease-out;
+}
+
 .marker-driver {
-  background: var(--color-primary);
-  width: 40px;
-  height: 40px;
+  background: linear-gradient(135deg, #00C853, #009624);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
   border: 3px solid white;
-  box-shadow: 0 4px 15px rgba(0, 200, 83, 0.4);
-  animation: markerBounce 2s infinite;
+  box-shadow:
+    0 4px 15px rgba(0, 200, 83, 0.5),
+    0 0 0 0 rgba(0, 200, 83, 0.4);
+  animation: driverPulse 2.5s ease-in-out infinite;
 }
 
-@keyframes markerBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.marker-driver svg {
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes driverPulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(0, 200, 83, 0.5), 0 0 0 0 rgba(0, 200, 83, 0.35);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(0, 200, 83, 0.6), 0 0 0 12px rgba(0, 200, 83, 0);
+  }
 }
 
 .marker-destination {
-  background: #EF4444;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -307,10 +324,16 @@
   font-size: 1.1rem;
   border: 3px solid white;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  animation: destPing 3s ease-in-out infinite;
+}
+
+@keyframes destPing {
+  0%, 100% { box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3), 0 0 0 0 rgba(239, 68, 68, 0.2); }
+  50% { box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3), 0 0 0 10px rgba(239, 68, 68, 0); }
 }
 
 .marker-origin {
-  background: var(--color-accent);
+  background: linear-gradient(135deg, var(--color-accent), #FF8F00);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -320,6 +343,12 @@
   font-size: 1.1rem;
   border: 3px solid white;
   box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+}
+
+@keyframes celebratePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* ── Demo Banner ── */

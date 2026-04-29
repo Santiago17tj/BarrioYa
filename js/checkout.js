@@ -75,23 +75,48 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Simulate payment processing
+    // Simulate payment processing with premium feedback
     payBtn.disabled = true;
+    payBtn.style.transform = 'scale(0.96)';
+    payBtn.style.transition = 'all 0.3s ease';
+
+    // Phase 1: Spinner
     payBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      <svg class="checkout-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      </svg>
       Procesando pago...
     `;
 
-    // Add spin animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      .spin { animation: spin 1s linear infinite; }
-    `;
-    document.head.appendChild(style);
+    // Inject spin keyframe if not yet present
+    if (!document.getElementById('checkoutSpinStyle')) {
+      const style = document.createElement('style');
+      style.id = 'checkoutSpinStyle';
+      style.textContent = `
+        @keyframes checkoutSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .checkout-spin { animation: checkoutSpin 1s linear infinite; vertical-align: middle; margin-right: 0.4rem; }
+        @keyframes checkmarkDraw {
+          0% { stroke-dashoffset: 50; }
+          100% { stroke-dashoffset: 0; }
+        }
+        .checkmark-circle { animation: checkmarkDraw 0.5s ease forwards; stroke-dasharray: 50; stroke-dashoffset: 50; }
+      `;
+      document.head.appendChild(style);
+    }
 
-    // Simulate processing delay
+    // Phase 2: Success checkmark after delay
     await new Promise(resolve => setTimeout(resolve, 2500));
+
+    payBtn.style.background = '#00C853';
+    payBtn.style.transform = 'scale(1)';
+    payBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path class="checkmark-circle" d="M5 13l4 4L19 7"/>
+      </svg>
+      ¡Pago Exitoso!
+    `;
+
+    await new Promise(resolve => setTimeout(resolve, 1200));
 
     // Show success
     paymentForm.style.display = 'none';

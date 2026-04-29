@@ -197,6 +197,11 @@ button {
   box-shadow: var(--shadow-lg), 0 0 30px rgba(0,200,83,0.4);
 }
 
+.btn-primary:active {
+  transform: scale(0.96);
+  box-shadow: var(--shadow-sm);
+}
+
 .btn-secondary {
   background: var(--color-white);
   color: var(--color-primary-dark);
@@ -210,6 +215,10 @@ button {
   box-shadow: var(--shadow-md);
 }
 
+.btn-secondary:active {
+  transform: scale(0.96);
+}
+
 .btn-whatsapp {
   background: linear-gradient(135deg, var(--color-whatsapp), var(--color-whatsapp-dark));
   color: var(--color-white);
@@ -221,6 +230,10 @@ button {
   box-shadow: var(--shadow-lg), 0 0 25px rgba(37,211,102,0.4);
 }
 
+.btn-whatsapp:active {
+  transform: scale(0.96);
+}
+
 .btn-accent {
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
   color: var(--color-text);
@@ -230,6 +243,10 @@ button {
 .btn-accent:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg), 0 0 25px rgba(255,179,0,0.4);
+}
+
+.btn-accent:active {
+  transform: scale(0.96);
 }
 
 .btn-outline-white {
