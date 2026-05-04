@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
           label: 'Pedidos',
           data: [1, 3, 2, 5, 7, 8, 6, 4, 3, 5, 6, 4],
           backgroundColor: 'rgba(0, 200, 83, 0.6)',
-          borderColor: '#00C853',
+          borderColor: '#FF5A3C',
           borderWidth: 1,
           borderRadius: 6
         }]
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
         labels: ['Empanadas', 'Pan de bono', 'Jugos', 'Buñuelos', 'Arepas'],
         datasets: [{
           data: [35, 25, 20, 12, 8],
-          backgroundColor: ['#00C853', '#FFB300', '#3B82F6', '#A78BFA', '#EF4444'],
+          backgroundColor: ['#FF5A3C', '#FFB300', '#3B82F6', '#A78BFA', '#EF4444'],
           borderWidth: 0
         }]
       },
@@ -376,11 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
         datasets: [{
           label: 'Ingresos',
           data: [280000, 320000, 290000, 345000, 410000, 520000, 380000],
-          borderColor: '#00C853',
+          borderColor: '#FF5A3C',
           backgroundColor: 'rgba(0, 200, 83, 0.1)',
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: '#00C853',
+          pointBackgroundColor: '#FF5A3C',
           pointBorderWidth: 2,
           pointRadius: 4
         }]

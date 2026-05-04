@@ -1,0 +1,14 @@
+:root {
+  --primary: #FF5A3C;
+  --secondary: #0F1B2E;
+  --accent: #FFB347;
+  --mint: #22B39A;
+  --text-primary: #333333;
+  --text-secondary: #6B7280;
+  --background: #F2F4F7;
+  --white: #FFFFFF;
+}
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+}

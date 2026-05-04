@@ -4,14 +4,14 @@
    ========================================================== */
 
 :root {
-  --admin-bg: #0F1117;
-  --admin-surface: #1A1D27;
+  --admin-bg: #0B1423;
+  --admin-surface: #0F1B2E;
   --admin-surface-2: #232733;
   --admin-border: #2D3140;
   --admin-text: #E4E6EB;
   --admin-text-muted: #8B8FA3;
-  --admin-primary: #00C853;
-  --admin-accent: #FFB300;
+  --admin-primary: #FF5A3C;
+  --admin-accent: #FFB347;
   --admin-danger: #EF4444;
   --admin-info: #3B82F6;
   --admin-sidebar-width: 260px;
