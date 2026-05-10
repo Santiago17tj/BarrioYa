@@ -4,7 +4,7 @@ POST /api/pedidos — Recibe y valida el JSON generado por CartManager.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 from models.pedidos import OrderCreate, OrderResponse, OrderStatusUpdate
 from config.db import supabase_client, SUPABASE_AVAILABLE
@@ -80,7 +80,7 @@ async def create_pedido(order: OrderCreate):
 
     # ── Almacenar pedido ──
     order_data = order.model_dump()
-    order_data["received_at"] = datetime.now().isoformat()
+    order_data["received_at"] = datetime.now(timezone.utc).isoformat()
     order_data["internal_status"] = "received"
     
     if supabase_client and SUPABASE_AVAILABLE:
@@ -164,28 +164,31 @@ async def update_pedido_status(order_id: str, update: OrderStatusUpdate):
     Actualiza el estado de un pedido específico.
     """
     new_status = update.status
-    
+    updated_in_db = False
+
     # 1. Actualizar en Supabase si está disponible
     if supabase_client and SUPABASE_AVAILABLE:
         try:
             res = supabase_client.table("pedidos").update({"estado": new_status}).eq("id", order_id).execute()
-            if not res.data:
-                raise HTTPException(status_code=404, detail=f"Pedido {order_id} no encontrado en DB")
-            logger.info("✅ Estado de pedido %s actualizado a %s en Supabase", order_id, new_status)
+            if res.data:
+                updated_in_db = True
+                logger.info("✅ Estado de pedido %s actualizado a %s en Supabase", order_id, new_status)
+            else:
+                logger.warning("⚠️  Pedido %s no encontrado en Supabase, intentando fallback", order_id)
         except Exception as e:
             logger.error("❌ Error actualizando pedido en Supabase: %s", e)
-            # Intentamos seguir con el fallback en memoria si falla la DB
-    
+
     # 2. Actualizar en memoria (fallback/local)
     found = False
     for order in orders_store:
         if order.get("order_id") == order_id or order.get("id") == order_id:
             order["internal_status"] = new_status
-            order["estado"] = new_status # Para consistencia con el esquema de DB
+            order["estado"] = new_status
             found = True
             break
-            
-    if not found and not (supabase_client and SUPABASE_AVAILABLE):
+
+    # 404 sólo si NO se actualizó en BD ni en memoria
+    if not updated_in_db and not found:
         raise HTTPException(status_code=404, detail=f"Pedido {order_id} no encontrado")
 
     return {"status": "success", "order_id": order_id, "new_status": new_status}

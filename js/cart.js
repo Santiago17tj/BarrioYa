@@ -3,7 +3,8 @@
    Hybrid cart: products + services, with WhatsApp handoff
    ========================================================== */
 
-window.BARYO_PHONE = '573046279171';
+// El número WhatsApp y el costo de envío vienen centralizados desde js/config.js
+// (window.BARYO_PHONE y window.DELIVERY_FEE). Ya no se redeclaran aquí.
 
 // ══════════════════════════════════════
 // CartManager — Singleton State Manager
@@ -11,7 +12,7 @@ window.BARYO_PHONE = '573046279171';
 
 class CartManager {
   static STORAGE_KEY = 'barrioya_cart';
-  static DELIVERY_FEE = 2500;
+  static get DELIVERY_FEE() { return window.DELIVERY_FEE || 2500; }
 
   constructor() {
     this.items = [];

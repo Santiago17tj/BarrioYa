@@ -1,43 +1,30 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "builds": [
-    {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**/*",
-      "use": "@vercel/static"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/backend/main.py" },
+    { "source": "/docs", "destination": "/backend/main.py" },
+    { "source": "/redoc", "destination": "/backend/main.py" },
+    { "source": "/openapi.json", "destination": "/backend/main.py" }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/api/(.*)",
-      "dest": "backend/main.py"
+      "source": "/(.*)\\.(js|css|svg|png|jpg|jpeg|webp|woff2)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/docs",
-      "dest": "backend/main.py"
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
     },
     {
-      "src": "/redoc",
-      "dest": "backend/main.py"
-    },
-    {
-      "src": "/openapi.json",
-      "dest": "backend/main.py"
+      "source": "/manifest.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
     }
   ]
 }

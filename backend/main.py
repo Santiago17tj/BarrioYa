@@ -100,6 +100,16 @@ async def health_check():
     }
 
 
+@app.get(
+    "/api/health",
+    tags=["Health"],
+    summary="Health check expuesto vía ingress",
+)
+async def api_health_check():
+    """Health check accesible desde la URL pública (el ingress enruta /api/* al backend)."""
+    return {"status": "ok", "app": APP_TITLE, "version": APP_VERSION}
+
+
 # ═══════════════════════════════════════════
 #  Arranque del servidor
 # ═══════════════════════════════════════════

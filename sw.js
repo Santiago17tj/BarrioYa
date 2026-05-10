@@ -1,18 +1,39 @@
 /* ==========================================================
-   BarrioYa — Service Worker
+   BarrioYa — Service Worker (v2)
    Estrategias: Cache First (assets), Network First (HTML)
    ========================================================== */
 
-const CACHE_NAME = 'barrioYa-v1';
+const CACHE_NAME = 'barrioYa-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/servicios.html',
   '/afiliados.html',
+  '/checkout.html',
+  '/tracking.html',
+  '/bot-demo.html',
   '/offline.html',
+  // CSS
   '/css/styles.css',
+  '/css/cart.css',
+  '/css/profile.css',
+  '/css/tracking.css',
+  '/css/bot-demo.css',
+  // JS
+  '/js/config.js',
   '/js/main.js',
-  '/BarrioYalogo.png',
+  '/js/router.js',
+  '/js/cart.js',
+  '/js/checkout.js',
+  '/js/menu-page.js',
+  '/js/tracking.js',
+  '/js/bot-demo.js',
+  // PWA icons (livianos)
+  '/assets/icon-192.png',
+  '/assets/icon-512.png',
+  '/assets/apple-touch-icon.png',
+  '/assets/favicon-barrioya.svg',
+  '/assets/logo-barrioya-horizontal.svg',
   '/manifest.json'
 ];
 
@@ -22,7 +43,12 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Pre-caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        // addAll falla si UN solo recurso falla → usamos add() individual con catch
+        return Promise.all(
+          STATIC_ASSETS.map((url) =>
+            cache.add(url).catch((err) => console.warn('[SW] No se pudo cachear:', url, err))
+          )
+        );
       })
       .then(() => self.skipWaiting())
   );
@@ -48,22 +74,21 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
-  // Skip non-GET and external requests
+  // Skip non-GET, external requests, y llamadas a API (siempre red)
   if (request.method !== 'GET') return;
   if (!request.url.startsWith(self.location.origin)) return;
+  if (request.url.includes('/api/')) return;
 
   // HTML pages → Network First
   if (request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          // Clone and cache the fresh response
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return response;
         })
         .catch(() => {
-          // Try cache, fallback to offline page
           return caches.match(request).then((cached) => {
             return cached || caches.match('/offline.html');
           });
@@ -78,14 +103,12 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached;
 
       return fetch(request).then((response) => {
-        // Cache new static assets
         if (response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
         return response;
       }).catch(() => {
-        // For images, return a placeholder if offline
         if (request.url.match(/\.(png|jpg|jpeg|svg|gif|webp)$/)) {
           return new Response(
             '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect fill="#f0f0f0" width="200" height="200"/><text fill="#999" font-family="sans-serif" font-size="14" x="50%" y="50%" text-anchor="middle" dy=".3em">Offline</text></svg>',

@@ -1,1 +1,57 @@
+# ── Vercel ──
 .vercel
+.vercel_build_output
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+.python-version
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Node / Frontend ──
+node_modules/
+yarn-error.log
+npm-debug.log*
+.pnp.*
+.yarn/
+
+# ── Entornos / secretos ──
+.env
+.env.local
+.env.*.local
+*.env.bak
+
+# ── Editor / OS ──
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*~
+
+# ── Archivos temporales / backup ──
+*.bak
+*.tmp
+*.log
+
+# ── Build outputs ──
+dist/
+build/
+*.tsbuildinfo
+
+# ── Tests ──
+coverage/
+htmlcov/
+.coverage
+test_reports/

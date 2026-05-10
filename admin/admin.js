@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Notification.permission === "granted") {
               new Notification("BarrioYa: Nuevo Pedido", {
                 body: `${order.customer} ha realizado un pedido de ${formatPrice(order.total)}`,
-                icon: "../BarrioYalogo.png"
+                icon: "/assets/icon-192.png"
               });
             }
           }

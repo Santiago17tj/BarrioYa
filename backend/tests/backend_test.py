@@ -40,6 +40,28 @@ class TestHealth:
         r = requests.get(f"{PUBLIC_URL}/", allow_redirects=True)
         assert r.status_code == 200
 
+    def test_api_health_public(self, api):
+        """NEW Phase 2: /api/health must be reachable through public ingress."""
+        r = api.get(f"{PUBLIC_URL}/api/health")
+        assert r.status_code == 200, r.text
+        data = r.json()
+        assert data.get("status") == "ok"
+        assert data.get("app") == "BarrioYa API"
+        assert "version" in data and isinstance(data["version"], str)
+
+    def test_received_at_is_utc_timezone_aware(self, api):
+        """Verify pedidos use datetime.now(timezone.utc)."""
+        r = api.get(f"{PUBLIC_URL}/api/pedidos")
+        assert r.status_code == 200
+        data = r.json()
+        if isinstance(data, list) and data:
+            for o in data:
+                ra = o.get("received_at") or o.get("fecha_creacion")
+                if ra:
+                    # ISO with timezone offset (Z, +00:00, etc.)
+                    assert ("+" in ra) or ra.endswith("Z") or "T" in ra, f"received_at not ISO/UTC: {ra}"
+                    break
+
 
 # ── Catalogo ──────────────────────────────────────────────
 class TestCatalogo:
@@ -130,6 +152,24 @@ class TestPedidos:
         assert data["new_status"] == "preparando"
         assert data["order_id"] == "BY-10000001"
 
+    def test_patch_pedido_nonexistent_returns_404(self, api):
+        """Phase 2 FIX: PATCH on a non-existent order_id must return 404
+        (was 200 silently when Supabase returned empty)."""
+        r = api.patch(
+            f"{PUBLIC_URL}/api/pedidos/BY-99999999",
+            json={"status": "preparando"},
+        )
+        assert r.status_code == 404, r.text
+
+    def test_create_pedido_invalid_item_total(self, api):
+        bad = json.loads(json.dumps(VALID_ORDER))
+        bad["order_id"] = "BY-10000004"
+        bad["items"][0]["total"] = 99999  # mismatch with unit_price * quantity
+        bad["subtotal"] = bad["items"][0]["total"] + bad["items"][1]["total"]
+        bad["total"] = bad["subtotal"] + bad["delivery_fee"]
+        r = api.post(f"{PUBLIC_URL}/api/pedidos", json=bad)
+        assert r.status_code == 422, r.text
+
 
 # ── WhatsApp Webhook ──────────────────────────────────────
 class TestWhatsAppWebhook:
@@ -207,3 +247,52 @@ class TestCORS:
         allow_origin = r.headers.get("access-control-allow-origin", "")
         assert allow_origin == "http://localhost:3000"
         assert allow_origin != "*"
+
+
+
+# ── Static Frontend Assets (Phase 2/3 cleanup) ────────────
+class TestStaticAssets:
+    """The static HTML site is served from the same preview URL on port 3000.
+    Public ingress only sends /api/* to backend; everything else is frontend."""
+
+    def test_pwa_icon_192(self):
+        r = requests.get(f"{PUBLIC_URL}/assets/icon-192.png", timeout=15)
+        assert r.status_code == 200
+        size = int(r.headers.get("content-length", "0") or len(r.content))
+        assert size < 300_000
+
+    def test_pwa_icon_512(self):
+        r = requests.get(f"{PUBLIC_URL}/assets/icon-512.png", timeout=15)
+        assert r.status_code == 200
+        size = int(r.headers.get("content-length", "0") or len(r.content))
+        assert size < 300_000
+
+    def test_apple_touch_icon(self):
+        r = requests.get(f"{PUBLIC_URL}/assets/apple-touch-icon.png", timeout=15)
+        assert r.status_code == 200
+        size = int(r.headers.get("content-length", "0") or len(r.content))
+        assert size < 300_000
+
+    def test_barrioya_logo_optimized(self):
+        r = requests.get(f"{PUBLIC_URL}/assets/BarrioYalogo.png", timeout=15)
+        assert r.status_code == 200
+        size = int(r.headers.get("content-length", "0") or len(r.content))
+        assert size < 1_000_000, f"BarrioYalogo.png too large: {size} bytes"
+
+    def test_manifest_points_to_optimized_icons(self):
+        r = requests.get(f"{PUBLIC_URL}/manifest.json", timeout=15)
+        assert r.status_code == 200
+        data = r.json()
+        srcs = [i["src"] for i in data.get("icons", [])]
+        assert "/assets/icon-192.png" in srcs
+        assert "/assets/icon-512.png" in srcs
+        assert not any("BarrioYalogo.png" in s for s in srcs)
+
+    def test_sw_cache_name_v2(self):
+        r = requests.get(f"{PUBLIC_URL}/sw.js", timeout=15)
+        assert r.status_code == 200
+        assert "barrioYa-v2" in r.text
+        assert "/css/cart.css" in r.text
+        assert "/js/cart.js" in r.text
+        assert "/js/checkout.js" in r.text
+        assert "/js/router.js" in r.text

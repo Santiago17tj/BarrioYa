@@ -239,7 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 3. WhatsApp Deep Link
       const waMessage = encodeURIComponent(`Hola BarrioYa! 👋 Acabo de realizar mi pedido #${orderId}. ¿Me confirman recepción?`);
-      const waURL = `https://wa.me/573046279171?text=${waMessage}`;
+      const waPhone = window.BARYO_PHONE || '573046279171';
+      const waURL = `https://wa.me/${waPhone}?text=${waMessage}`;
       
       setTimeout(() => {
         window.open(waURL, '_blank');
