@@ -274,7 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
         heroImage.style.transform = `translateY(${scrolled * 0.1}px)`;
       }
     }, { passive: true });
+  }
+
   // ── Checkout Reset Function ──
+  // Definida SIEMPRE (antes estaba dentro del if del parallax → no existía en mobile)
   window.limpiarCheckout = function() {
     // 1. Vaciar el carrito (localStorage y memoria)
     if (window.cartManager) {

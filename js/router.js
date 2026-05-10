@@ -155,7 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function validatePin() {
     const pin = pinDigits.map(d => d.value).join('');
-    if (pin === '1234') {
+    // ⚠️  TODO PRODUCCIÓN: este PIN está hardcodeado por ser una demo.
+    // Migrar a auth real con backend (JWT + endpoint /api/auth/login) antes de salir.
+    // Permite sobreescribir vía window.BARYO_ADMIN_PIN para staging/dev distintos.
+    const validPin = (typeof window.BARYO_ADMIN_PIN === 'string' && window.BARYO_ADMIN_PIN) || '1234';
+    if (pin === validPin) {
       // Success!
       window.adminUnlocked = true;
       pinModal.classList.remove('active');

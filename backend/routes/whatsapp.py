@@ -1,17 +1,39 @@
 """
 BarrioYa — Ruta: Webhook de WhatsApp (Omnicanalidad)
 GET  /api/webhook/whatsapp — Verificación del token de Meta
-POST /api/webhook/whatsapp — Recepción de mensajes entrantes
+POST /api/webhook/whatsapp — Recepción de mensajes entrantes (con validación HMAC)
 """
 
+import hmac
+import hashlib
 import logging
 from fastapi import APIRouter, Query, Request, HTTPException
-from config.settings import WHATSAPP_VERIFY_TOKEN
+from config.settings import WHATSAPP_VERIFY_TOKEN, WHATSAPP_APP_SECRET
 from services.whatsapp import extract_message_data, process_incoming_message
 
 logger = logging.getLogger("barrioya.webhook")
 
 router = APIRouter(prefix="/api/webhook", tags=["WhatsApp Webhook"])
+
+
+def _verify_signature(raw_body: bytes, signature_header: str) -> bool:
+    """
+    Verifica la firma X-Hub-Signature-256 de Meta usando el App Secret.
+    Si WHATSAPP_APP_SECRET no está configurado, se omite la validación
+    (modo desarrollo). En producción SIEMPRE debe estar configurado.
+    """
+    if not WHATSAPP_APP_SECRET:
+        logger.warning("⚠️  WHATSAPP_APP_SECRET no configurado — firma NO validada (solo dev)")
+        return True
+    if not signature_header or not signature_header.startswith("sha256="):
+        return False
+    expected = hmac.new(
+        WHATSAPP_APP_SECRET.encode("utf-8"),
+        raw_body,
+        hashlib.sha256,
+    ).hexdigest()
+    received = signature_header.split("=", 1)[1]
+    return hmac.compare_digest(expected, received)
 
 
 @router.get(
@@ -68,9 +90,22 @@ async def receive_message(request: Request):
     SIEMPRE debemos responder 200, incluso si hay un error interno.
     De lo contrario, Meta reintentará la entrega y eventualmente
     desactivará el webhook.
+
+    Seguridad: validamos la firma HMAC X-Hub-Signature-256 de Meta
+    antes de procesar el payload (evita webhooks falsificados).
     """
+    # Leemos el cuerpo crudo PRIMERO para poder validar la firma HMAC
+    raw_body = await request.body()
+    signature = request.headers.get("x-hub-signature-256", "")
+
+    if not _verify_signature(raw_body, signature):
+        logger.warning("❌ Firma X-Hub-Signature-256 inválida en webhook de WhatsApp")
+        # Devolvemos 200 igual (Meta espera 200) pero NO procesamos el payload
+        return {"status": "ok"}
+
     try:
-        payload = await request.json()
+        import json
+        payload = json.loads(raw_body.decode("utf-8")) if raw_body else {}
     except Exception:
         logger.error("❌ Payload inválido recibido en webhook de WhatsApp")
         return {"status": "ok"}

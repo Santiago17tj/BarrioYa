@@ -23,8 +23,26 @@ DEBUG: bool = os.getenv("DEBUG", "true").lower() == "true"
 # ═══════════════════════════════════════════
 # CORS — Orígenes permitidos
 # ═══════════════════════════════════════════
-# Incluye Live Server (VS Code), file://, y localhost variantes
-CORS_ORIGINS: list[str] = ["*"]
+# Lista explícita de orígenes (NO usar "*" con allow_credentials=True; los
+# navegadores bloquean esa combinación según la spec CORS).
+# En .env se puede sobreescribir con CORS_ORIGINS=https://barrioya.vercel.app,https://...
+_default_origins = (
+    "http://localhost:3000,"
+    "http://localhost:5500,"
+    "http://localhost:8000,"
+    "http://127.0.0.1:3000,"
+    "http://127.0.0.1:5500,"
+    "http://127.0.0.1:8000,"
+    "https://barrioya.vercel.app"
+)
+CORS_ORIGINS: list[str] = [
+    o.strip() for o in os.getenv("CORS_ORIGINS", _default_origins).split(",") if o.strip()
+]
+
+# ═══════════════════════════════════════════
+# WhatsApp App Secret (para validar firma X-Hub-Signature-256)
+# ═══════════════════════════════════════════
+WHATSAPP_APP_SECRET: str = os.getenv("WHATSAPP_APP_SECRET", "")
 
 
 # ═══════════════════════════════════════════

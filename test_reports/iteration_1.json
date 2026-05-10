@@ -1,0 +1,46 @@
+{
+  "summary": "Validación E2E de BarrioYa tras Fase 1 (5 bugs críticos corregidos). 15/15 tests backend pasaron (Health, Catalogo, Pedidos CRUD + validaciones, WhatsApp webhook GET/POST, CORS local). Frontend: window.limpiarCheckout definida, bot-demo greeting renderiza ('¡Hola! 👋 Bienvenido a BarrioYa...'), checkout view carga con todos los campos (buyerName, buyerPhone, buyerEmail, cardNumber, etc.), admin con PIN de 4 dígitos visible, polling a /api/pedidos funcionando. Integración frontend↔backend confirmada (200 en /api/catalogo y /api/pedidos).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /", "issue": "El health check raíz ('/') solo es accesible vía localhost:8001 — el ingress público enruta '/' al frontend. No es un bug, pero conviene exponer un health check bajo prefijo /api (ej. /api/health) para monitoreo externo."},
+      {"endpoint": "Public ingress CORS", "issue": "Cloudflare/ingress sobrescribe Access-Control-Allow-Origin con '*' y mantiene allow-credentials: true en respuestas públicas — combinación inválida según spec CORS. El backend FastAPI sí devuelve el origen específico correcto en localhost:8001. Esto es infra, no código de la app, pero podría romper credentials en navegador para preview URL."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Hash routing #servicios", "issue": "Navegar a '#servicios' deja visible 'home-view' (es ancla de sección en index, no una spa-view). Sólo /#checkout, /#bot-demo, /admin/ levantan vistas SPA. Documentar esto o renombrar para evitar confusión.", "affected_selectors": ["#home-view", "#servicios"]}
+    ],
+    "design_issues": [
+      {"screen": "Consola JS", "issues": ["Errores 'Unexpected token <' repetidos: `serve --single` reescribe rutas de JS no encontradas a index.html y el navegador intenta parsearlas como JS. Revisar referencias a scripts inexistentes (cache-bust ?v=21) o cambiar a un servidor que devuelva 404 para assets estáticos."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Opcional) Exponer /api/health para monitoreo externo (raíz '/' es servida por frontend en preview).",
+    "(Infra) Verificar por qué Cloudflare/ingress reemplaza CORS con '*' + allow-credentials: true en preview — combinación rechazada por navegadores.",
+    "Limpiar referencias a JS/CSS inexistentes que generan 'Unexpected token <' (probablemente algún <script src> apunta a un archivo que no existe; serve --single devuelve index.html).",
+    "(Opcional) Agregar `data-testid` a botones críticos (payBtn, add-to-cart, admin pin-submit) para hacer los tests más robustos."
+  ],
+  "critical_code_review_comments": [
+    "settings.py: PORT por defecto es 8000 pero supervisor levanta uvicorn en 8001 — el .env del backend no fija PORT, así que actualmente el binding lo controla supervisor. Documentarlo o consolidar.",
+    "routes/pedidos.py update_pedido_status: si Supabase está activo y el pedido NO existe ahí, el endpoint puede devolver 200 silenciosamente (no levanta 404 cuando la respuesta de Supabase está vacía y luego se cae al fallback en memoria). Lógica de `found` se evalúa solo si `not (supabase_client and SUPABASE_AVAILABLE)`. Bug latente para producción.",
+    "routes/whatsapp.py _verify_signature: en modo dev (sin secret) devuelve True sin chequear nada — correcto para dev pero asegurarse en CI/prod que WHATSAPP_APP_SECRET se valide en startup (fail fast si está vacío).",
+    "routes/pedidos.py orders_store es global en memoria — se resetea con cada reinicio. OK como fallback pero no para multi-worker."
+  ],
+  "updated_files": [
+    "/app/backend/tests/__init__.py",
+    "/app/backend/tests/backend_test.py"
+  ],
+  "success_rate": {"backend": "100% (15/15)", "frontend": "~90% (flujos críticos verificados; submit de pago E2E no ejecutado por falta de item en carrito durante el headless run)"},
+  "test_credentials": "PIN admin frontend: 1234 | WhatsApp verify token: barrioya_verify_2026 | Sin Supabase (orders_store en memoria)",
+  "seed_data_creation": "Se crearon órdenes de prueba en memoria con order_id BY-10000001 (status: preparando). Persisten hasta el próximo reinicio de uvicorn.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "El frontend es SPA basada en hash routing servida por `serve --single` desde /app. Las rutas SPA reales son: /#bot-demo, /admin/, /servicios (URL re-escrita), /checkout. La preview pública sólo enruta /api/* al backend (8001); el resto va a frontend (3000). CORS público es sobrescrito por ingress (no es bug del código). Backend tests están en /app/backend/tests/backend_test.py — usar REACT_APP_BACKEND_URL si se define o caerá al preview URL embebido. localhost:8001 sigue siendo necesario para tests de CORS y health check raíz.",
+  "rca of the issue": "N/A — no se encontraron regresiones tras los 5 fixes de Fase 1. Los 5 fixes están verificados: (1) window.limpiarCheckout es función, (2) regex bot-demo funciona (greeting renderizado), (3) PIN admin 4-dígitos visible, (4) backend Pydantic validations devuelven 422 correctamente, (5) HMAC bypass dev permite POST webhook sin firma → 200 OK."
+}

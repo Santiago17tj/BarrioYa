@@ -261,10 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemMentioned = nameWords.some(w => w.length > 3 && text.includes(w));
 
       if (itemMentioned || text.includes(item.name.toLowerCase())) {
-        // Try to extract quantity
-        const qtyMatch = text.match(/(\d+)\s*(?:de\s+)?(?:\w+\s+)*(?:${nameWords.join('|')})/i) ||
-                         text.match(/(\d+)/);
-        const qty = qtyMatch ? parseInt(qtyMatch[1]) : 1;
+        // Try to extract quantity (FIX: usar new RegExp() porque /.../ no interpola template literals)
+        const namePattern = nameWords.filter(w => w.length > 2).join('|') || '\\w+';
+        const dynamicRegex = new RegExp(`(\\d+)\\s*(?:de\\s+)?(?:\\w+\\s+)*(?:${namePattern})`, 'i');
+        const qtyMatch = text.match(dynamicRegex) || text.match(/(\d+)/);
+        const qty = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
 
         cart.push({ ...item, qty: Math.min(qty, 10) });
         matched = true;
