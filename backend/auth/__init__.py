@@ -1,0 +1,1 @@
+"""BarrioYa Auth — utilidades de password y JWT."""

@@ -5,13 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Panel de administración para negocios afiliados a BarrioYa.">
   <title>Dashboard — BarrioYa Admin</title>
-  <link rel="icon" type="image/png" href="assets/favicon-barrioya.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <link rel="stylesheet" href="../css/styles.css?v=20">
   <link rel="stylesheet" href="admin.css?v=20">
+
+  <!-- Auth: redirige a login.html si no hay sesión válida -->
+  <script src="../js/config.js?v=20"></script>
+  <script src="../js/auth.js?v=20"></script>
+  <script>
+    if (!window.barrioyaAuth.isAuthenticated()) {
+      window.location.href = '/admin/login.html';
+    }
+  </script>
 </head>
 <body>
 
@@ -46,10 +57,10 @@
 
     <div class="sidebar-footer">
       <div class="sidebar-user">
-        <div class="user-avatar">DJ</div>
+        <div class="user-avatar" id="userAvatar" data-testid="user-avatar">·</div>
         <div>
-          <div class="user-name">Don José</div>
-          <div class="user-role">Panadería · Admin</div>
+          <div class="user-name" id="userName" data-testid="user-name">—</div>
+          <div class="user-role" id="userRole" data-testid="user-role">—</div>
         </div>
       </div>
     </div>
@@ -71,6 +82,10 @@
           🔔
           <span class="notif-dot" id="notifDot"></span>
         </div>
+        <button class="btn btn-secondary" id="logoutBtn" data-testid="logout-btn"
+                style="padding: 0.5rem 1rem; font-size: 0.8rem; border: none; cursor: pointer;">
+          ⏻ Cerrar sesión
+        </button>
         <a href="../index.html" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">← Volver a la App</a>
       </div>
     </header>
@@ -248,7 +263,6 @@
     </div>
   </main>
 
-  <script src="../js/config.js?v=20"></script>
   <script src="admin.js?v=20"></script>
 </body>
 </html>

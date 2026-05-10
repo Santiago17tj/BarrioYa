@@ -20,11 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const navbar = document.getElementById('navbar');
 
   // Views where we hide main nav and bottom bar
-  const fullscreenViews = ['admin', 'bot-demo'];
-  // Views that require PIN auth
-  const protectedViews = ['admin', 'bot-demo'];
-
-  window.adminUnlocked = false;
+  const fullscreenViews = ['bot-demo'];
+  // El admin ahora es una página real con auth JWT (/admin/login.html → /admin/),
+  // ya no se accede vía hash routing #admin. Lo dejamos como redirect por compatibilidad.
 
   function updateNav(activeId) {
     navItems.forEach(item => {
@@ -40,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderView(hash) {
     let viewId = hash.replace('#', '').split('?')[0];
 
+    // #admin ahora redirige a la página real con auth
+    if (viewId === 'admin') {
+      window.location.href = '/admin/login.html';
+      return;
+    }
+
     // Mapeo especial para categorías de servicios
     const validViews = Object.keys(views);
     const serviceCategories = ['domicilios', 'mascotas', 'mandados', 'tecnicos'];
@@ -48,12 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
       viewId = 'services';
     } else if (!validViews.includes(viewId)) {
       viewId = 'home';
-    }
-
-    // Protected view guard
-    if (protectedViews.includes(viewId) && !window.adminUnlocked) {
-      viewId = 'profile';
-      history.replaceState(null, '', '#profile');
     }
 
     // Ocultar todas las vistas
@@ -123,83 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderView(window.location.hash);
   });
 
-  // ═══════════════════ PIN MODAL LOGIC ═══════════════════
-  const pinModal = document.getElementById('pinModal');
-  const pinDigits = [
-    document.getElementById('pin1'),
-    document.getElementById('pin2'),
-    document.getElementById('pin3'),
-    document.getElementById('pin4')
-  ];
-  const pinError = document.getElementById('pinError');
-  const pinSubmitBtn = document.getElementById('pinSubmitBtn');
-  const pinCancelBtn = document.getElementById('pinCancelBtn');
-
-  // Auto-focus next input on digit entry
-  pinDigits.forEach((input, idx) => {
-    if (!input) return;
-    input.addEventListener('input', (e) => {
-      const val = e.target.value;
-      if (val.length > 1) e.target.value = val.slice(-1);
-      if (val && idx < 3) pinDigits[idx + 1].focus();
-    });
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !e.target.value && idx > 0) {
-        pinDigits[idx - 1].focus();
-      }
-      if (e.key === 'Enter') {
-        validatePin();
-      }
-    });
-  });
-
-  function validatePin() {
-    const pin = pinDigits.map(d => d.value).join('');
-    // ⚠️  TODO PRODUCCIÓN: este PIN está hardcodeado por ser una demo.
-    // Migrar a auth real con backend (JWT + endpoint /api/auth/login) antes de salir.
-    // Permite sobreescribir vía window.BARYO_ADMIN_PIN para staging/dev distintos.
-    const validPin = (typeof window.BARYO_ADMIN_PIN === 'string' && window.BARYO_ADMIN_PIN) || '1234';
-    if (pin === validPin) {
-      // Success!
-      window.adminUnlocked = true;
-      pinModal.classList.remove('active');
-      pinDigits.forEach(d => { d.value = ''; d.classList.remove('error'); });
-      pinError.textContent = '';
-      history.pushState(null, '', '#admin');
-      renderView('#admin');
-    } else {
-      // Error
-      pinError.textContent = 'PIN incorrecto. Intenta de nuevo.';
-      pinDigits.forEach(d => {
-        d.classList.add('error');
-        d.value = '';
-      });
-      pinDigits[0].focus();
-      setTimeout(() => {
-        pinDigits.forEach(d => d.classList.remove('error'));
-      }, 600);
-    }
-  }
-
-  if (pinSubmitBtn) pinSubmitBtn.addEventListener('click', validatePin);
-  if (pinCancelBtn) {
-    pinCancelBtn.addEventListener('click', () => {
-      pinModal.classList.remove('active');
-      pinDigits.forEach(d => { d.value = ''; d.classList.remove('error'); });
-      pinError.textContent = '';
-    });
-  }
-
-  // Close pin modal on overlay click
-  if (pinModal) {
-    pinModal.addEventListener('click', (e) => {
-      if (e.target === pinModal) {
-        pinModal.classList.remove('active');
-        pinDigits.forEach(d => { d.value = ''; });
-        pinError.textContent = '';
-      }
-    });
-  }
+  // ═══════════════════ PIN MODAL — DEPRECADO ═══════════════════
+  // El acceso al panel admin migró a JWT real (/admin/login.html).
+  // El modal del PIN ya no se invoca desde el router, pero el HTML del modal
+  // puede seguir presente en index.html sin afectar (no se abre por nadie).
+  // Si quieres limpiar el HTML, elimina #pinModal de index.html.
 
   // Render inicial
   renderView(window.location.hash);

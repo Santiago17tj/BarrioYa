@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BarrioYa — Acceso administrador</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse at top left, rgba(0, 200, 83, 0.08), transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(255, 193, 7, 0.06), transparent 50%),
+        #0F1115;
+      color: #E6E8EE;
+      padding: 2rem 1rem;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(20, 23, 31, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+    .login-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.75rem;
+    }
+    .login-logo img { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 0.75rem; }
+    .login-logo h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #00C853 0%, #4DE17C 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .login-subtitle { font-size: 0.875rem; color: #8B92A0; margin-top: 0.25rem; text-align: center; }
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #8B92A0;
+      margin-bottom: 0.5rem;
+    }
+    .field input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba(15, 17, 21, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      color: #E6E8EE;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: #00C853;
+      box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.15);
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      background: linear-gradient(135deg, #00C853 0%, #00A744 100%);
+      color: #0F1115;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      margin-top: 0.5rem;
+    }
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(0, 200, 83, 0.25);
+    }
+    .submit-btn:active:not(:disabled) { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .error-msg {
+      background: rgba(244, 67, 54, 0.1);
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      color: #FF8A80;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #8B92A0;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #00C853; }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(15, 17, 21, 0.3);
+      border-top-color: #0F1115;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: -2px;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main class="login-card" data-testid="login-card">
+    <div class="login-logo">
+      <img src="/assets/icon-192.png" alt="BarrioYa">
+      <h1>BarrioYa</h1>
+      <p class="login-subtitle">Panel de administración</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg" data-testid="login-error" role="alert"></div>
+
+    <form id="loginForm" autocomplete="on" data-testid="login-form">
+      <div class="field">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" required autocomplete="username"
+               placeholder="tu@negocio.co" data-testid="login-email-input">
+      </div>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password"
+               placeholder="••••••••" data-testid="login-password-input">
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn" data-testid="login-submit-btn">
+        Ingresar al panel
+      </button>
+    </form>
+
+    <a href="/index.html" class="back-link" data-testid="back-home-link">← Volver al inicio</a>
+  </main>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Si ya hay sesión, redirigir al admin directamente
+    if (window.barrioyaAuth.isAuthenticated()) {
+      window.location.href = '/admin/';
+    }
+
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('show');
+    }
+    function hideError() {
+      errorMsg.classList.remove('show');
+      errorMsg.textContent = '';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      submitBtn.disabled = true;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner"></span>Ingresando...';
+
+      try {
+        const user = await window.barrioyaAuth.login(email, password);
+        // Redirigir según rol
+        window.location.href = '/admin/';
+      } catch (err) {
+        showError(err.message || 'No se pudo iniciar sesión');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  </script>
+</body>
+</html>

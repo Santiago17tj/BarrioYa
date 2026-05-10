@@ -5,7 +5,8 @@ POST /api/pedidos — Recibe y valida el JSON generado por CartManager.
 
 import logging
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from auth.dependencies import AuthUser, require_roles
 from models.pedidos import OrderCreate, OrderResponse, OrderStatusUpdate
 from config.db import supabase_client, SUPABASE_AVAILABLE
 
@@ -82,13 +83,32 @@ async def create_pedido(order: OrderCreate):
     order_data = order.model_dump()
     order_data["received_at"] = datetime.now(timezone.utc).isoformat()
     order_data["internal_status"] = "received"
-    
+
     if supabase_client and SUPABASE_AVAILABLE:
         try:
+            # FIX: el frontend envía business=NOMBRE ("Panadería Don José"), pero la columna
+            # id_comercio en Supabase es FK al campo id de comercios ("panaderia"). Resolvemos
+            # el nombre → id antes del insert para preservar la integridad referencial.
+            comercio_id = order.business  # fallback al nombre si no lo encontramos
+            try:
+                lookup = (
+                    supabase_client.table("comercios")
+                    .select("id")
+                    .eq("nombre", order.business)
+                    .limit(1)
+                    .execute()
+                )
+                if lookup.data:
+                    comercio_id = lookup.data[0]["id"]
+                else:
+                    logger.warning("⚠️  Comercio '%s' no encontrado en BD; guardando nombre como id_comercio", order.business)
+            except Exception as e:
+                logger.error("❌ Error resolviendo id_comercio: %s", e)
+
             # 1. Insertar orden
             supabase_client.table("pedidos").insert({
                 "id": order.order_id,
-                "id_comercio": order.business,
+                "id_comercio": comercio_id,
                 "subtotal": order.subtotal,
                 "costo_envio": order.delivery_fee,
                 "total": order.total,
@@ -137,20 +157,35 @@ async def create_pedido(order: OrderCreate):
 
 @router.get(
     "/pedidos",
-    summary="Listar pedidos recibidos (Admin)",
+    summary="Listar pedidos recibidos (Admin/Comercio)",
     tags=["Admin"],
 )
-async def list_pedidos():
-    """Endpoint para el panel de administración."""
+async def list_pedidos(
+    user: AuthUser = Depends(require_roles("admin", "comercio")),
+):
+    """
+    Endpoint para el panel de administración.
+    - admin: ve TODOS los pedidos.
+    - comercio: solo ve pedidos asignados a su id_comercio.
+    """
     if supabase_client and SUPABASE_AVAILABLE:
         try:
-            # Traer pedidos con sus items
-            res = supabase_client.table("pedidos").select("*, pedido_items(*)").order("fecha_creacion", desc=True).execute()
+            q = supabase_client.table("pedidos").select("*, pedido_items(*)")
+            if user.rol == "comercio":
+                if not user.id_comercio:
+                    return []
+                q = q.eq("id_comercio", user.id_comercio)
+            res = q.order("fecha_creacion", desc=True).execute()
             return res.data
         except Exception as e:
             logger.error("❌ Error consultando pedidos en Supabase: %s", e)
+            # Fallback memoria, filtrado por id_comercio si es comercio
+            if user.rol == "comercio" and user.id_comercio:
+                return [o for o in orders_store if o.get("id_comercio") == user.id_comercio]
             return orders_store
-            
+
+    if user.rol == "comercio" and user.id_comercio:
+        return [o for o in orders_store if o.get("id_comercio") == user.id_comercio]
     return orders_store
 
 
@@ -159,12 +194,35 @@ async def list_pedidos():
     summary="Actualizar estado de un pedido",
     tags=["Admin"],
 )
-async def update_pedido_status(order_id: str, update: OrderStatusUpdate):
+async def update_pedido_status(
+    order_id: str,
+    update: OrderStatusUpdate,
+    user: AuthUser = Depends(require_roles("admin", "comercio")),
+):
     """
     Actualiza el estado de un pedido específico.
+    - admin: puede actualizar cualquier pedido.
+    - comercio: solo puede actualizar pedidos de su id_comercio.
     """
     new_status = update.status
     updated_in_db = False
+
+    # Si es comercio, verificamos que el pedido sea suyo
+    if user.rol == "comercio" and supabase_client and SUPABASE_AVAILABLE:
+        try:
+            check = (
+                supabase_client.table("pedidos")
+                .select("id_comercio")
+                .eq("id", order_id)
+                .limit(1)
+                .execute()
+            )
+            if check.data and check.data[0].get("id_comercio") != user.id_comercio:
+                raise HTTPException(status_code=403, detail="No autorizado para este pedido")
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.warning("No se pudo validar ownership del pedido: %s", e)
 
     # 1. Actualizar en Supabase si está disponible
     if supabase_client and SUPABASE_AVAILABLE:

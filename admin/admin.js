@@ -6,6 +6,43 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ══════════════════════════════════════
+  // AUTH GUARD + USER INFO
+  // ══════════════════════════════════════
+
+  if (!window.barrioyaAuth || !window.barrioyaAuth.requireAuth(['admin', 'comercio'])) {
+    return; // requireAuth ya redirige
+  }
+
+  const currentUser = window.barrioyaAuth.getUser();
+
+  // Mostrar datos del usuario en sidebar
+  const userAvatar = document.getElementById('userAvatar');
+  const userName = document.getElementById('userName');
+  const userRole = document.getElementById('userRole');
+  if (userAvatar && currentUser) {
+    const initials = (currentUser.nombre || currentUser.email || '?')
+      .split(/\s+/).map(s => s[0]).slice(0, 2).join('').toUpperCase();
+    userAvatar.textContent = initials || '·';
+  }
+  if (userName) userName.textContent = currentUser.nombre || currentUser.email;
+  if (userRole) {
+    const rolLabel = currentUser.rol === 'admin' ? '🛡️ BarrioYa Admin' : '🏪 Comercio';
+    userRole.textContent = currentUser.id_comercio
+      ? `${currentUser.id_comercio} · ${rolLabel}`
+      : rolLabel;
+  }
+
+  // Logout button
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      if (!confirm('¿Cerrar sesión?')) return;
+      await window.barrioyaAuth.logout();
+      window.location.href = '/admin/login.html';
+    });
+  }
+
+  // ══════════════════════════════════════
   // REAL DATA FROM API (Supabase via FastAPI)
   // ══════════════════════════════════════
 
@@ -14,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchOrders() {
     try {
-      const response = await fetch(`${API_BASE}/api/pedidos`);
+      const response = await window.barrioyaAuth.authFetch(`${API_BASE}/api/pedidos`);
       if (!response.ok) throw new Error('Error al cargar pedidos');
       const data = await response.json();
       
@@ -208,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const nextStatus = flow[currentIndex + 1];
       
       try {
-        const response = await fetch(`${API_BASE}/api/pedidos/${orderId}`, {
+        const response = await window.barrioyaAuth.authFetch(`${API_BASE}/api/pedidos/${orderId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: nextStatus })
