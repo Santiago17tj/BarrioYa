@@ -59,15 +59,24 @@ def main():
         print(f"✅ Admin creado: {admin_email} (id={ins.data[0]['id']})")
     else:
         existing = res.data[0]
-        if not verify_password(admin_password, existing["password_hash"]):
+        force_reset = os.environ.get("FORCE_ADMIN_PASSWORD_RESET", "").lower() in ("1", "true", "yes")
+
+        if verify_password(admin_password, existing["password_hash"]):
+            print(f"✅ Admin ya existe con la password correcta: {admin_email}")
+        elif force_reset:
             supabase_client.table("usuarios_admin").update({
                 "password_hash": hash_password(admin_password),
                 "rol": "admin",
                 "activo": True,
             }).eq("id", existing["id"]).execute()
-            print(f"♻️  Admin existente — password actualizada: {admin_email}")
+            print(f"♻️  Admin existente — password ROTADA (FORCE_ADMIN_PASSWORD_RESET=1): {admin_email}")
         else:
-            print(f"✅ Admin ya existe con la password correcta: {admin_email}")
+            print(
+                f"⚠️  Admin {admin_email} ya existe pero la password en .env NO coincide.\n"
+                f"   No se sobrescribe automáticamente para no pisar passwords manuales en producción.\n"
+                f"   Si realmente quieres rotar la contraseña, corre con:\n"
+                f"     FORCE_ADMIN_PASSWORD_RESET=1 python scripts/seed_admin.py"
+            )
 
 
 if __name__ == "__main__":

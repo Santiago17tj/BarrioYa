@@ -1,8 +1,8 @@
 """
 BarrioYa — Auth Router
-POST /api/auth/login    — email + password → access_token + refresh_token
-POST /api/auth/refresh  — refresh_token → new access_token
-POST /api/auth/logout   — revoca refresh_token actual
+POST /api/auth/login    — email + password → access_token (JSON) + refresh_token (httpOnly cookie)
+POST /api/auth/refresh  — lee refresh_token de cookie → new access_token
+POST /api/auth/logout   — revoca refresh_token actual y limpia la cookie
 GET  /api/auth/me       — devuelve usuario del JWT
 """
 
@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timezone
 
 import jwt
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
 
 from auth.dependencies import AuthUser, get_current_user
 from auth.jwt_utils import (
@@ -21,13 +21,13 @@ from auth.jwt_utils import (
     hash_refresh_token,
     verify_password,
     _access_minutes,
+    _refresh_days,
 )
 from auth.rate_limit import is_locked, record_attempt
 from config.db import SUPABASE_AVAILABLE, supabase_client
 from models.auth import (
     AccessTokenResponse,
     LoginRequest,
-    RefreshRequest,
     TokenResponse,
     UserPublic,
 )
@@ -35,13 +35,40 @@ from models.auth import (
 logger = logging.getLogger("barrioya.auth.router")
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
+REFRESH_COOKIE = "barrioya_refresh"
+
 
 def _client_ip(request: Request) -> str:
-    # Respeta X-Forwarded-For si está detrás de proxy/ingress
     fwd = request.headers.get("x-forwarded-for")
     if fwd:
         return fwd.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
+
+
+def _cookie_secure() -> bool:
+    """En producción/HTTPS: True. En dev local: False (lo controla env var)."""
+    return os.environ.get("JWT_COOKIE_SECURE", "false").lower() == "true"
+
+
+def _set_refresh_cookie(response: Response, token: str) -> None:
+    response.set_cookie(
+        key=REFRESH_COOKIE,
+        value=token,
+        httponly=True,                     # ← Mitiga XSS: JS no puede leerla
+        secure=_cookie_secure(),           # True en HTTPS prod
+        samesite="lax",                    # same-site (frontend y /api/* mismo dominio)
+        max_age=_refresh_days() * 24 * 60 * 60,
+        path="/api/auth",                  # solo enviada a /api/auth/*
+    )
+
+
+def _clear_refresh_cookie(response: Response) -> None:
+    response.delete_cookie(
+        key=REFRESH_COOKIE,
+        path="/api/auth",
+        samesite="lax",
+        secure=_cookie_secure(),
+    )
 
 
 def _require_db():
@@ -53,12 +80,11 @@ def _require_db():
 
 
 @router.post("/login", response_model=TokenResponse, summary="Login con email + password")
-async def login(payload: LoginRequest, request: Request):
+async def login(payload: LoginRequest, request: Request, response: Response):
     _require_db()
     ip = _client_ip(request)
     email = payload.email.lower().strip()
 
-    # Rate limit BEFORE doing crypto work
     if is_locked(ip, email):
         raise HTTPException(
             status_code=429,
@@ -83,13 +109,10 @@ async def login(payload: LoginRequest, request: Request):
 
     if not user or not valid_password or not is_active:
         record_attempt(ip, email, success=False)
-        # Mensaje genérico para evitar user enumeration
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
-    # Login OK
     record_attempt(ip, email, success=True)
 
-    # Emitir tokens
     access = create_access_token(
         user_id=user["id"],
         email=user["email"],
@@ -98,7 +121,6 @@ async def login(payload: LoginRequest, request: Request):
     )
     refresh_raw, refresh_hash, refresh_exp = create_refresh_token_and_hash(user["id"])
 
-    # Guardar hash del refresh en BD
     try:
         supabase_client.table("refresh_tokens").insert({
             "user_id": user["id"],
@@ -110,7 +132,6 @@ async def login(payload: LoginRequest, request: Request):
         logger.error("Error guardando refresh_token: %s", e)
         raise HTTPException(status_code=500, detail="No se pudo emitir el refresh token")
 
-    # Actualizar last_login_at (best-effort)
     try:
         supabase_client.table("usuarios_admin").update({
             "last_login_at": datetime.now(timezone.utc).isoformat(),
@@ -118,6 +139,11 @@ async def login(payload: LoginRequest, request: Request):
     except Exception:
         pass
 
+    # ★ Seteamos refresh_token como cookie httpOnly (mitigación XSS)
+    _set_refresh_cookie(response, refresh_raw)
+
+    # Por compatibilidad (y para tests CLI con curl) seguimos devolviendo el refresh
+    # en JSON. El frontend NO lo persistirá; usará la cookie.
     return TokenResponse(
         access_token=access,
         refresh_token=refresh_raw,
@@ -133,12 +159,18 @@ async def login(payload: LoginRequest, request: Request):
 
 
 @router.post("/refresh", response_model=AccessTokenResponse, summary="Renueva el access token")
-async def refresh(payload: RefreshRequest):
+async def refresh(
+    response: Response,
+    barrioya_refresh: str | None = Cookie(default=None),
+):
     _require_db()
 
-    # 1. Validar firma + expiración del JWT
+    refresh_token = barrioya_refresh
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Refresh token ausente")
+
     try:
-        data = decode_token(payload.refresh_token)
+        data = decode_token(refresh_token)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Refresh token expirado")
     except jwt.InvalidTokenError:
@@ -151,8 +183,7 @@ async def refresh(payload: RefreshRequest):
     if not user_id:
         raise HTTPException(status_code=401, detail="Refresh token sin subject")
 
-    # 2. Verificar que NO esté revocado en BD
-    token_hash = hash_refresh_token(payload.refresh_token)
+    token_hash = hash_refresh_token(refresh_token)
     try:
         rt = (
             supabase_client.table("refresh_tokens")
@@ -170,7 +201,6 @@ async def refresh(payload: RefreshRequest):
     if rt.data[0]["revoked"]:
         raise HTTPException(status_code=401, detail="Refresh token revocado")
 
-    # 3. Cargar usuario actualizado
     user_res = (
         supabase_client.table("usuarios_admin")
         .select("id, email, rol, id_comercio, activo")
@@ -182,7 +212,6 @@ async def refresh(payload: RefreshRequest):
         raise HTTPException(status_code=401, detail="Usuario no disponible")
     user = user_res.data[0]
 
-    # 4. Emitir nuevo access token
     access = create_access_token(
         user_id=user["id"],
         email=user["email"],
@@ -192,17 +221,23 @@ async def refresh(payload: RefreshRequest):
     return AccessTokenResponse(access_token=access, expires_in=_access_minutes() * 60)
 
 
-@router.post("/logout", summary="Revoca el refresh token actual")
-async def logout(payload: RefreshRequest, user: AuthUser = Depends(get_current_user)):
+@router.post("/logout", summary="Revoca el refresh token actual y limpia la cookie")
+async def logout(
+    response: Response,
+    user: AuthUser = Depends(get_current_user),
+    barrioya_refresh: str | None = Cookie(default=None),
+):
     _require_db()
-    token_hash = hash_refresh_token(payload.refresh_token)
-    try:
-        supabase_client.table("refresh_tokens").update({"revoked": True}).eq(
-            "token_hash", token_hash
-        ).eq("user_id", user.id).execute()
-    except Exception as e:
-        logger.error("Error revocando refresh token: %s", e)
-        raise HTTPException(status_code=500, detail="No se pudo cerrar la sesión")
+    if barrioya_refresh:
+        token_hash = hash_refresh_token(barrioya_refresh)
+        try:
+            supabase_client.table("refresh_tokens").update({"revoked": True}).eq(
+                "token_hash", token_hash
+            ).eq("user_id", user.id).execute()
+        except Exception as e:
+            logger.error("Error revocando refresh token: %s", e)
+
+    _clear_refresh_cookie(response)
     return {"ok": True}
 
 

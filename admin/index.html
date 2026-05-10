@@ -9,15 +9,20 @@
   <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 
+  <!-- Tipografía: Outfit (no genérica como Inter) + JetBrains Mono para datos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <link rel="stylesheet" href="../css/styles.css?v=20">
-  <link rel="stylesheet" href="admin.css?v=20">
+  <link rel="stylesheet" href="../css/styles.css?v=21">
+  <link rel="stylesheet" href="admin.css?v=21">
 
   <!-- Auth: redirige a login.html si no hay sesión válida -->
-  <script src="../js/config.js?v=20"></script>
-  <script src="../js/auth.js?v=20"></script>
+  <script src="../js/config.js?v=21"></script>
+  <script src="../js/auth.js?v=21"></script>
   <script>
     if (!window.barrioyaAuth.isAuthenticated()) {
       window.location.href = '/admin/login.html';
@@ -75,85 +80,165 @@
       </button>
       <div class="topbar-title">
         <h1 id="pageTitle">Dashboard</h1>
-        <p id="pageSubtitle">Bienvenido de vuelta, Don José 👋</p>
+        <p id="pageSubtitle" data-testid="page-subtitle">Centro de control en tiempo real</p>
       </div>
       <div class="topbar-actions">
-        <div class="notification-bell" id="notifBell" title="Notificaciones">
-          🔔
-          <span class="notif-dot" id="notifDot"></span>
+        <div class="topbar-clock" id="topbarClock" data-testid="topbar-clock">
+          <span class="clock-time" id="clockTime">--:--</span>
+          <span class="clock-date" id="clockDate">—</span>
         </div>
-        <button class="btn btn-secondary" id="logoutBtn" data-testid="logout-btn"
-                style="padding: 0.5rem 1rem; font-size: 0.8rem; border: none; cursor: pointer;">
-          ⏻ Cerrar sesión
+        <button class="btn btn-ghost" id="logoutBtn" data-testid="logout-btn">
+          <span class="btn-icon">⏻</span> Cerrar sesión
         </button>
-        <a href="../index.html" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">← Volver a la App</a>
+        <a href="../index.html" class="btn btn-ghost">← App</a>
       </div>
     </header>
 
-    <!-- ═══════════════════ DEMO BANNER ═══════════════════ -->
-    <div class="admin-demo-banner">
-      ⚙️ Dashboard de demostración — Datos simulados para ilustrar la experiencia del comercio
-    </div>
-
     <!-- ═══════════════════ DASHBOARD SECTION ═══════════════════ -->
     <section class="content-section active" id="sectionDashboard">
-      <!-- Metric Cards -->
-      <div class="metrics-grid">
-        <div class="metric-card" id="metricOrders">
-          <div class="metric-icon">📦</div>
-          <div class="metric-body">
-            <div class="metric-value" id="totalOrders">23</div>
-            <div class="metric-label">Pedidos hoy</div>
-          </div>
-          <div class="metric-trend up">↑ 12%</div>
+
+      <!-- Welcome Banner (full-width hero) -->
+      <div class="welcome-banner" data-testid="welcome-banner">
+        <div class="welcome-text">
+          <span class="welcome-greeting" id="welcomeGreeting">Buenos días</span>
+          <h2 class="welcome-name" id="welcomeName">—</h2>
+          <p class="welcome-subtext" id="welcomeSubtext">Cargando datos en tiempo real…</p>
         </div>
-        <div class="metric-card" id="metricRevenue">
-          <div class="metric-icon">💰</div>
-          <div class="metric-body">
-            <div class="metric-value" id="totalRevenue">$345.000</div>
-            <div class="metric-label">Ingresos hoy</div>
-          </div>
-          <div class="metric-trend up">↑ 8%</div>
-        </div>
-        <div class="metric-card" id="metricAvg">
-          <div class="metric-icon">📊</div>
-          <div class="metric-body">
-            <div class="metric-value" id="avgOrder">$15.000</div>
-            <div class="metric-label">Ticket promedio</div>
-          </div>
-          <div class="metric-trend neutral">→ 0%</div>
-        </div>
-        <div class="metric-card" id="metricDrivers">
-          <div class="metric-icon">🛵</div>
-          <div class="metric-body">
-            <div class="metric-value" id="activeDrivers">3</div>
-            <div class="metric-label">Domiciliarios activos</div>
-          </div>
-          <div class="metric-trend up">● Online</div>
+        <div class="welcome-pulse">
+          <span class="pulse-dot"></span>
+          <span class="pulse-label">LIVE</span>
         </div>
       </div>
 
-      <!-- Charts Row -->
-      <div class="charts-grid">
-        <div class="chart-card">
-          <h3>📈 Pedidos por hora</h3>
-          <canvas id="ordersChart"></canvas>
+      <!-- KPI Cards (4 columnas, count-up al cargar) -->
+      <div class="kpi-grid">
+        <div class="kpi-card" data-testid="kpi-revenue">
+          <div class="kpi-label">Ingresos totales</div>
+          <div class="kpi-value" id="kpiRevenue" data-target="0" data-prefix="$" data-format="money">$0</div>
+          <div class="kpi-meta">
+            <span class="kpi-meta-dot kpi-meta-dot--green"></span>
+            <span id="kpiRevenueMeta">—</span>
+          </div>
         </div>
-        <div class="chart-card">
-          <h3>🥧 Productos más vendidos</h3>
-          <canvas id="productsChart"></canvas>
+        <div class="kpi-card" data-testid="kpi-orders">
+          <div class="kpi-label">Pedidos totales</div>
+          <div class="kpi-value" id="kpiOrders" data-target="0">0</div>
+          <div class="kpi-meta">
+            <span class="kpi-meta-dot kpi-meta-dot--blue"></span>
+            <span id="kpiOrdersMeta">—</span>
+          </div>
+        </div>
+        <div class="kpi-card" data-testid="kpi-avg-ticket">
+          <div class="kpi-label">Ticket promedio</div>
+          <div class="kpi-value" id="kpiAvgTicket" data-target="0" data-prefix="$" data-format="money">$0</div>
+          <div class="kpi-meta">
+            <span class="kpi-meta-dot kpi-meta-dot--yellow"></span>
+            <span>Por pedido</span>
+          </div>
+        </div>
+        <div class="kpi-card" data-testid="kpi-active">
+          <div class="kpi-label">Pedidos activos</div>
+          <div class="kpi-value" id="kpiActive" data-target="0">0</div>
+          <div class="kpi-meta">
+            <span class="kpi-meta-dot kpi-meta-dot--orange pulse"></span>
+            <span>En curso ahora</span>
+          </div>
         </div>
       </div>
 
-      <!-- Recent Orders -->
-      <div class="table-card">
-        <div class="table-header">
-          <h3>📋 Pedidos recientes</h3>
+      <!-- Main Charts Row: Revenue (8col) + Podium (4col) -->
+      <div class="dashboard-row dashboard-row--8-4">
+        <div class="surface-card" data-testid="chart-revenue-card">
+          <div class="surface-card-header">
+            <div>
+              <h3>Ingresos · últimos 7 días</h3>
+              <span class="surface-card-sub">Total semanal: <strong id="weekRevenueTotal">$0</strong></span>
+            </div>
+            <div class="chip chip--success" id="weekTrendChip">↗ tendencia</div>
+          </div>
+          <div class="chart-container chart-container--tall">
+            <canvas id="chartRevenueByDay" data-testid="chart-revenue-by-day"></canvas>
+          </div>
+        </div>
+
+        <div class="surface-card" data-testid="top-products-podium">
+          <div class="surface-card-header">
+            <div>
+              <h3>Top 3 productos</h3>
+              <span class="surface-card-sub">Más vendidos por unidades</span>
+            </div>
+          </div>
+          <div class="podium" id="topProductsPodium">
+            <div class="podium-step podium-step--2">
+              <div class="podium-rank">2</div>
+              <div class="podium-medal">🥈</div>
+              <div class="podium-name" id="podium2Name">—</div>
+              <div class="podium-qty" id="podium2Qty">0</div>
+              <div class="podium-bar"></div>
+            </div>
+            <div class="podium-step podium-step--1">
+              <div class="podium-rank">1</div>
+              <div class="podium-medal">🥇</div>
+              <div class="podium-name" id="podium1Name">—</div>
+              <div class="podium-qty" id="podium1Qty">0</div>
+              <div class="podium-bar"></div>
+            </div>
+            <div class="podium-step podium-step--3">
+              <div class="podium-rank">3</div>
+              <div class="podium-medal">🥉</div>
+              <div class="podium-name" id="podium3Name">—</div>
+              <div class="podium-qty" id="podium3Qty">0</div>
+              <div class="podium-bar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Charts Row: Hourly (8col) + Status Donut (4col) -->
+      <div class="dashboard-row dashboard-row--8-4">
+        <div class="surface-card">
+          <div class="surface-card-header">
+            <div>
+              <h3>Pedidos por hora · últimas 24h</h3>
+              <span class="surface-card-sub">Identifica tus horas pico</span>
+            </div>
+            <div class="chip" id="peakHourChip">⚡ pico —</div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartOrdersByHour" data-testid="chart-orders-by-hour"></canvas>
+          </div>
+        </div>
+
+        <div class="surface-card">
+          <div class="surface-card-header">
+            <div>
+              <h3>Estado de pedidos</h3>
+              <span class="surface-card-sub">Distribución actual</span>
+            </div>
+          </div>
+          <div class="donut-wrap">
+            <canvas id="chartStatusDonut" data-testid="chart-status-donut"></canvas>
+            <div class="donut-center">
+              <div class="donut-center-value" id="donutCenterValue">0</div>
+              <div class="donut-center-label">total</div>
+            </div>
+          </div>
+          <ul class="legend-list" id="statusLegend"></ul>
+        </div>
+      </div>
+
+      <!-- Recent Orders Feed -->
+      <div class="surface-card">
+        <div class="surface-card-header">
+          <div>
+            <h3>Pedidos recientes</h3>
+            <span class="surface-card-sub">Últimos 10 pedidos del sistema</span>
+          </div>
           <div class="table-filters">
             <button class="filter-btn active" data-filter="all">Todos</button>
-            <button class="filter-btn" data-filter="nuevo">Nuevos</button>
-            <button class="filter-btn" data-filter="preparando">En preparación</button>
-            <button class="filter-btn" data-filter="enviado">Enviados</button>
+            <button class="filter-btn" data-filter="recibido">Nuevos</button>
+            <button class="filter-btn" data-filter="preparando">Preparando</button>
+            <button class="filter-btn" data-filter="entregado">Entregados</button>
           </div>
         </div>
         <div class="orders-table-wrapper">
@@ -161,16 +246,14 @@
             <thead>
               <tr>
                 <th>Pedido</th>
-                <th>Cliente</th>
-                <th>Productos</th>
+                <th>Comercio</th>
+                <th>Items</th>
                 <th>Total</th>
                 <th>Estado</th>
-                <th>Acción</th>
+                <th>Fecha</th>
               </tr>
             </thead>
-            <tbody id="ordersTableBody">
-              <!-- Filled by JS -->
-            </tbody>
+            <tbody id="ordersTableBody"></tbody>
           </table>
         </div>
       </div>
@@ -263,6 +346,6 @@
     </div>
   </main>
 
-  <script src="admin.js?v=20"></script>
+  <script src="admin.js?v=21"></script>
 </body>
 </html>

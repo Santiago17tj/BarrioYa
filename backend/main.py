@@ -34,6 +34,7 @@ from routes.catalogo import router as catalogo_router
 from routes.pedidos import router as pedidos_router
 from routes.whatsapp import router as whatsapp_router
 from routes.auth import router as auth_router
+from routes.analytics import router as analytics_router
 
 # ── Logging ──
 logging.basicConfig(
@@ -75,6 +76,7 @@ app.include_router(catalogo_router)
 app.include_router(pedidos_router)
 app.include_router(whatsapp_router)
 app.include_router(auth_router)
+app.include_router(analytics_router)
 
 
 # ═══════════════════════════════════════════
