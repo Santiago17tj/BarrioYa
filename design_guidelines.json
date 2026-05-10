@@ -1,0 +1,168 @@
+{
+  "theme": "dark",
+  "archetype": "Archetype 4: Swiss & High-Contrast (Premium Control Room)",
+  "rationale": "To achieve a 'grandioso' and 'extremadamente hermosa' admin experience for BarrioYa, we are blending the precision of Vercel/Linear dashboards with the vibrant energy of the brand's Colombian roots. Deep obsidian backgrounds paired with BarrioYa Green (#00C853) create high-contrast, data-rich clarity. We avoid messy layouts and instead use strict, dense CSS grids, 1px borders, and micro-interactions.",
+  "colors": {
+    "primary": "#00C853",
+    "primary_glow": "rgba(0, 200, 83, 0.2)",
+    "secondary": "#FF6F00",
+    "background_base": "#070707",
+    "surface": "#0F0F11",
+    "surface_elevated": "#161618",
+    "border": "rgba(255, 255, 255, 0.08)",
+    "border_highlight": "rgba(0, 200, 83, 0.4)",
+    "text_primary": "#F8F8F8",
+    "text_secondary": "#A1A1AA",
+    "text_tertiary": "#71717A",
+    "status": {
+      "success": "#00C853",
+      "warning": "#FF6F00",
+      "info": "#3B82F6",
+      "danger": "#EF4444"
+    }
+  },
+  "typography": {
+    "imports": "<link href=\"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap\" rel=\"stylesheet\">",
+    "headings": "'Outfit', sans-serif",
+    "body": "'Outfit', sans-serif",
+    "data_numbers": "'Outfit', sans-serif",
+    "monospace": "'JetBrains Mono', monospace",
+    "scale": {
+      "h1": "2.25rem (tracking-tight)",
+      "h2": "1.5rem (tracking-tight, medium)",
+      "h3": "1.125rem (medium)",
+      "body": "0.875rem (text-secondary)",
+      "metric_value": "2.5rem (font-weight: 600, tracking-tighter)",
+      "metric_label": "0.75rem (uppercase, tracking-[0.1em], text-tertiary)"
+    }
+  },
+  "layout_grid": {
+    "strategy": "The 'Control Room' Grid",
+    "container": "display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding: 2rem;",
+    "rows": [
+      {
+        "name": "Welcome Banner",
+        "span": "col-span-12",
+        "description": "Full-width intro banner spanning across the top, showing Admin Name and dynamic greeting."
+      },
+      {
+        "name": "KPI Cards",
+        "span": "col-span-12 md:col-span-3",
+        "description": "4 equal-width cards for top-level metrics."
+      },
+      {
+        "name": "Main Charts & Podium",
+        "span": "Main Chart (Orders/Day): col-span-12 lg:col-span-8 | Podium (Top Products): col-span-12 lg:col-span-4",
+        "description": "Primary visual area. Main chart stretches left, Top 3 podium on the right."
+      },
+      {
+        "name": "Secondary Metrics",
+        "span": "Heatmap/Bar (Orders/Hour): col-span-12 lg:col-span-8 | Donut (Status): col-span-12 lg:col-span-4",
+        "description": "Lower section for granular insights."
+      }
+    ]
+  },
+  "components": {
+    "surface_cards": {
+      "css_rules": "background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease;",
+      "hover_state": "transform: translateY(-2px); border-color: rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.4);"
+    },
+    "kpi_metrics": {
+      "structure": "Label (uppercase, tracked out) -> Value (large, bold) -> Trend (small, green/red text with arrow).",
+      "interaction": "On hover, a subtle radial gradient glow of var(--primary_glow) appears at the top border."
+    },
+    "top_products_podium": {
+      "structure": "3 columns. Middle is #1 (tallest), Left is #2, Right is #3. Flexbox align-items flex-end.",
+      "visuals": "Rank #1 should have a subtle gold/green border highlight. Include product image (avatar circle), name, and order count. Background uses surface_elevated."
+    },
+    "welcome_banner": {
+      "structure": "Flex row. Left side: Text greeting (Good Morning, Admin) + subtext. Right side: Date/Time or small contextual graphic.",
+      "visuals": "Can use a very subtle dark green gradient background `linear-gradient(135deg, #070707 0%, #0a1f11 100%)`."
+    }
+  },
+  "chartjs_config": {
+    "global": {
+      "font": "Outfit",
+      "color": "#A1A1AA",
+      "plugins_legend_display": false,
+      "elements_line_tension": 0.4
+    },
+    "scales": {
+      "x": { "grid_display": false, "border_display": false },
+      "y": { "grid_color": "rgba(255,255,255,0.05)", "border_display": false, "borderDash": [4, 4] }
+    },
+    "revenue_by_day": {
+      "type": "line",
+      "fill": true,
+      "borderColor": "#00C853",
+      "backgroundColor": "Context gradient: (0,200,83, 0.3) to (0,200,83, 0)",
+      "pointRadius": 0,
+      "pointHoverRadius": 6
+    },
+    "orders_by_hour": {
+      "type": "bar",
+      "backgroundColor": "#27272A",
+      "hoverBackgroundColor": "#00C853",
+      "borderRadius": 4,
+      "barThickness": "flex"
+    },
+    "status_donut": {
+      "type": "doughnut",
+      "cutout": "75%",
+      "colors": ["#00C853", "#FF6F00", "#3B82F6", "#27272A"],
+      "borderWidth": 0
+    }
+  },
+  "animations": {
+    "page_load": {
+      "description": "Staggered fade-in up for all grid items.",
+      "css": "@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }"
+    },
+    "number_counter": {
+      "description": "Vanilla JS function to count up numbers in KPI cards from 0 to target value over 1.5 seconds on load."
+    }
+  },
+  "testing_attributes": {
+    "kpi_revenue": "data-testid=\"kpi-revenue\"",
+    "kpi_orders": "data-testid=\"kpi-orders\"",
+    "kpi_avg_ticket": "data-testid=\"kpi-avg-ticket\"",
+    "kpi_active": "data-testid=\"kpi-active\"",
+    "chart_revenue": "data-testid=\"chart-revenue-by-day\"",
+    "chart_hourly": "data-testid=\"chart-orders-by-hour\"",
+    "chart_status": "data-testid=\"chart-status-donut\"",
+    "top_products": "data-testid=\"top-products-podium\"",
+    "welcome_banner": "data-testid=\"welcome-banner\""
+  },
+  "image_urls": [
+    {
+      "description": "User Avatar (Admin profile picture)",
+      "category": "Avatar",
+      "url": "https://images.unsplash.com/photo-1764546373114-2d7a87221733?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjB1c2VyJTIwYXZhdGFyJTIwZGFyayUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzc4MzkxNTA0fDA&ixlib=rb-4.1.0&q=85"
+    },
+    {
+      "description": "Top Product 1 (Burger)",
+      "category": "Product",
+      "url": "https://images.unsplash.com/photo-1766589221067-36b22278ca52?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwzfHxkZWxpY2lvdXMlMjBidXJnZXIlMjBmb29kJTIwcGhvdG9ncmFwaHl8ZW58MHx8fHwxNzc4MzkxNTAzfDA&ixlib=rb-4.1.0&q=85"
+    },
+    {
+      "description": "Top Product 2 (Double Burger)",
+      "category": "Product",
+      "url": "https://images.unsplash.com/photo-1761315413256-e149b40f577b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwyfHxkZWxpY2lvdXMlMjBidXJnZXIlMjBmb29kJTIwcGhvdG9ncmFwaHl8ZW58MHx8fHwxNzc4MzkxNTAzfDA&ixlib=rb-4.1.0&q=85"
+    },
+    {
+      "description": "Top Product 3 (Classic Burger)",
+      "category": "Product",
+      "url": "https://images.unsplash.com/photo-1558250070-363aa42f9a00?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwxfHxkZWxpY2lvdXMlMjBidXJnZXIlMjBmb29kJTIwcGhvdG9ncmFwaHl8ZW58MHx8fHwxNzc4MzkxNTAzfDA&ixlib=rb-4.1.0&q=85"
+    }
+  ],
+  "instructions_to_main_agent": [
+    "You MUST use vanilla HTML, CSS, and JS (No React, No Tailwind unless specifically configured).",
+    "Append CSS styles to the existing `admin.css` safely or include them in a <style> block specific to the dashboard grid.",
+    "Do NOT use inline styles. Use CSS classes based on the design system provided (e.g., `.card`, `.kpi-value`).",
+    "Initialize Chart.js directly in a <script> tag. Ensure the canvas elements have the correct `data-testid` attributes.",
+    "Implement the 'number counter' animation in JS when the page loads.",
+    "Use the exact font families and CSS variables defined in this document to override/extend the dark mode.",
+    "Implement a CSS Grid layout for the main content area matching the 12-column setup described.",
+    "Ensure the Top 3 Podium is built using flexbox to visually rank items with heights corresponding to their rank (1 is tallest in center)."
+  ]
+}
