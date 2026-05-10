@@ -62,16 +62,36 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Scroll Animations (IntersectionObserver) ──
-  const animatedElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right');
-  
+  const animatedElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .animate-on-scroll');
+
+  // Counter animation helper
+  const animateCounter = (el) => {
+    const target = parseFloat(el.dataset.target || '0');
+    const suffix = el.dataset.suffix || '';
+    const duration = 1600;
+    const start = performance.now();
+    const startVal = 0;
+    const step = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const value = Math.floor(startVal + (target - startVal) * eased);
+      el.textContent = value + suffix;
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = target + suffix;
+    };
+    requestAnimationFrame(step);
+  };
+
   if ('IntersectionObserver' in window) {
     const animationObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Stagger animation delay for sibling elements
           const delay = entry.target.dataset.delay || 0;
           setTimeout(() => {
             entry.target.classList.add('visible');
+            // If this element contains counters, animate them
+            const counters = entry.target.querySelectorAll('.counter');
+            counters.forEach(c => animateCounter(c));
           }, delay);
           animationObserver.unobserve(entry.target);
         }
@@ -81,21 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
       rootMargin: '0px 0px -40px 0px'
     });
 
-    animatedElements.forEach((el, index) => {
-      // Add stagger delay for grid items
+    animatedElements.forEach((el) => {
       const parent = el.parentElement;
       if (parent) {
-        const siblings = parent.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right');
+        const siblings = parent.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .animate-on-scroll');
         if (siblings.length > 1) {
           const siblingIndex = Array.from(siblings).indexOf(el);
-          el.dataset.delay = siblingIndex * 100;
+          el.dataset.delay = siblingIndex * 120;
         }
       }
       animationObserver.observe(el);
     });
   } else {
-    // Fallback: show all elements immediately
     animatedElements.forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.counter').forEach(c => {
+      c.textContent = (c.dataset.target || '0') + (c.dataset.suffix || '');
+    });
   }
 
   // ── Active Navigation Link on Scroll ──

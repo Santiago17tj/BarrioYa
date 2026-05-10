@@ -20,13 +20,25 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
 
+  <!-- Fonts: Outfit (display + body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap">
+
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=21">
-  <link rel="stylesheet" href="css/cart.css?v=21">
-  <link rel="stylesheet" href="css/tracking.css?v=21">
-  <link rel="stylesheet" href="css/profile.css?v=21">
-  <link rel="stylesheet" href="admin/admin.css?v=21">
-  <link rel="stylesheet" href="css/bot-demo.css?v=21">
+  <link rel="stylesheet" href="css/styles.css?v=22">
+  <link rel="stylesheet" href="css/cart.css?v=22">
+  <link rel="stylesheet" href="css/tracking.css?v=22">
+  <link rel="stylesheet" href="css/profile.css?v=22">
+  <link rel="stylesheet" href="admin/admin.css?v=22">
+  <link rel="stylesheet" href="css/bot-demo.css?v=22">
+  <link rel="stylesheet" href="css/landing-revamp.css?v=22">
 
   <!-- Chart.js (for Admin Dashboard) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -44,24 +56,11 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin="" />
   <style>
-    /* Force Light Mode Overrides */
+    /* Light mode base override (kept for legacy classes; landing-revamp.css overrides further) */
     :root {
-      --color-bg-white: #FFFFFF !important;
-      --color-bg-light: #F8FAFC !important;
-      --color-bg-dark: #FFFFFF !important;
-    }
-    body, .hero, .services, .how-it-works, .coverage, .testimonials, .for-business, .whatsapp-section, .footer, .site-footer {
-      background-color: #FFFFFF !important;
-      color: #333333 !important;
-    }
-    .navbar {
-      background: rgba(255,255,255,0.9) !important;
-    }
-    .navbar-links a {
-      color: #6B7280 !important;
-    }
-    .navbar-links a:hover {
-      color: #FF5A3C !important;
+      --color-bg-white: #FFFFFF;
+      --color-bg-light: #FFFBF0;
+      --color-bg-dark: #FFFFFF;
     }
   </style>
 </head>
@@ -70,8 +69,8 @@
   <!-- ═══════════════════ NAVBAR ═══════════════════ -->
   <nav class="navbar" id="navbar">
     <div class="container">
-      <a href="index.html" aria-label="BarrioYa - Inicio">
-        <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa Logo" class="navbar-logo">
+      <a href="index.html" aria-label="BarrioYa - Inicio" data-testid="navbar-logo-link">
+        <img src="assets/logo-horizontal.png?v=22" alt="BarrioYa Logo" class="navbar-logo" data-testid="navbar-logo">
       </a>
 
       <div class="navbar-links" id="navbarLinks">
@@ -152,13 +151,100 @@
           </div>
         </div>
       </div>
-      <div class="hero-image fade-in">
-        <img src="assets/images/hero-mockup.png?v=21" alt="BarrioYa App - Mockup de la aplicación móvil de servicios del barrio" width="400" height="500">
+      <div class="phone-mockup-wrap animate-on-scroll" data-testid="hero-phone-mockup">
+        <!-- Floating bento card top -->
+        <div class="phone-floating card-top" aria-hidden="true">
+          <div class="pf-icon"><i class="ph-fill ph-storefront"></i></div>
+          <div class="pf-text">
+            <div class="pf-title">+35 Comercios</div>
+            <div class="pf-sub">a 2 km de tu casa</div>
+          </div>
+        </div>
+        <!-- Floating bento card bottom -->
+        <div class="phone-floating card-bottom" aria-hidden="true">
+          <div class="pf-icon"><i class="ph-bold ph-clock-countdown"></i></div>
+          <div class="pf-text">
+            <div class="pf-title">15 min</div>
+            <div class="pf-sub">tiempo promedio</div>
+          </div>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-mockup-screen">
+            <div class="phone-notch"></div>
+            <div class="phone-status-bar">
+              <div class="phone-avatar"><i class="ph-fill ph-storefront" style="color:#fff;font-size:18px;"></i></div>
+              <div class="phone-contact">
+                <div class="phone-contact-name">BarrioYa Bot</div>
+                <div class="phone-contact-status">● en línea</div>
+              </div>
+              <div class="phone-icons">
+                <i class="ph ph-phone"></i>
+                <i class="ph ph-dots-three-vertical"></i>
+              </div>
+            </div>
+            <div class="phone-chat">
+              <div class="phone-bubble user">
+                Hola, quiero un domicilio de la panadería 🍞
+                <span class="ph-time">10:42</span>
+              </div>
+              <div class="phone-bubble bot">
+                ¡Hola! 👋 Te muestro las panaderías cerca:<br>
+                🥐 Don José · 0.4 km<br>
+                🥖 La Espiga · 0.9 km
+                <span class="ph-time">10:42</span>
+              </div>
+              <div class="phone-bubble user">
+                Don José por favor 😋
+                <span class="ph-time">10:43</span>
+              </div>
+              <div class="phone-bubble bot">
+                Listo. ¿Pan de bono y café? Total: $8.500
+                <span class="ph-time">10:43</span>
+              </div>
+              <div class="phone-bubble bot">
+                ✅ Pedido confirmado · llega en ~15 min 🛵
+                <span class="ph-time">10:44</span>
+              </div>
+            </div>
+            <div class="phone-input-bar">
+              <i class="ph ph-smiley" style="color:#9CA3AF;"></i>
+              <div class="phone-input-fake">Escribe un mensaje...</div>
+              <div class="phone-send-btn"><i class="ph-fill ph-paper-plane-right"></i></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════════════ SUPERAPP DASHBOARD ═══════════════════ -->
+  <!-- ═══════════════════ MÉTRICAS DE IMPACTO ═══════════════════ -->
+  <section class="impact-strip" id="impacto" data-testid="impact-strip">
+    <div class="container">
+      <div class="impact-grid">
+        <div class="impact-item animate-on-scroll" data-testid="impact-comercios">
+          <div class="impact-icon"><i class="ph-duotone ph-storefront"></i></div>
+          <div class="impact-value"><span class="counter" data-target="35" data-suffix="">0</span><span class="impact-suffix">+</span></div>
+          <div class="impact-label">Comercios afiliados</div>
+        </div>
+        <div class="impact-item animate-on-scroll" data-testid="impact-pedidos">
+          <div class="impact-icon"><i class="ph-duotone ph-package"></i></div>
+          <div class="impact-value"><span class="counter" data-target="70" data-suffix="">0</span><span class="impact-suffix">+</span></div>
+          <div class="impact-label">Pedidos entregados</div>
+        </div>
+        <div class="impact-item animate-on-scroll" data-testid="impact-tiempo">
+          <div class="impact-icon"><i class="ph-duotone ph-timer"></i></div>
+          <div class="impact-value"><span class="counter" data-target="25" data-suffix=" min">0</span></div>
+          <div class="impact-label">Tiempo de entrega</div>
+        </div>
+        <div class="impact-item animate-on-scroll" data-testid="impact-cobertura">
+          <div class="impact-icon"><i class="ph-duotone ph-map-pin-line"></i></div>
+          <div class="impact-value"><span class="counter" data-target="2" data-suffix=" km">0</span></div>
+          <div class="impact-label">Radio hiperlocal</div>
+        </div>
+      </div>
+    </div>
+  </section>
   <section class="services section" id="servicios">
     <div class="container">
       <div class="superapp-header fade-in">
@@ -245,35 +331,55 @@
   </section>
 
   <!-- ═══════════════════ CÓMO FUNCIONA ═══════════════════ -->
-  <section class="how-it-works section" id="como-funciona">
+  <section class="how-it-works section" id="como-funciona" data-testid="how-it-works-section">
     <div class="container">
-      <h2 class="section-title fade-in">¿Cómo <span class="highlight">funciona</span>?</h2>
-      <p class="section-subtitle fade-in">Pedir es tan fácil como mandar un mensaje. Tres pasos y listo.</p>
+      <h2 class="section-title animate-on-scroll">¿Cómo <span class="highlight">funciona</span>?</h2>
+      <p class="section-subtitle animate-on-scroll">Pedir es tan fácil como mandar un mensaje. Tres pasos y tu barrio responde.</p>
 
-      <div class="steps-container">
-        <div class="step fade-in-left">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Abre la app o escribe por WhatsApp</h3>
-            <p>Descarga BarrioYa o simplemente envíanos un mensaje al WhatsApp. Tú eliges el canal que prefieras, sin complicaciones.</p>
+      <div class="steps-grid">
+        <article class="step-card animate-on-scroll" data-testid="step-card-1">
+          <div class="step-badge">PASO 01</div>
+          <div class="step-icon-wrap">
+            <i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i>
           </div>
-        </div>
+          <h3>Escribe por WhatsApp</h3>
+          <p>Sin descargas, sin registros. Solo abre WhatsApp y dile a nuestro bot qué necesitas en lenguaje natural.</p>
+          <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20probar%20el%20bot" target="_blank" rel="noopener" class="step-cta" data-testid="step-cta-whatsapp">
+            Abrir chat <i class="ph-bold ph-arrow-right"></i>
+          </a>
+        </article>
 
-        <div class="step fade-in-left">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>Elige tu servicio o negocio del barrio</h3>
-            <p>Explora domicilios, paseadores de mascotas, mandaderos o técnicos cercanos. Todo a menos de 2 km de tu casa.</p>
+        <article class="step-card animate-on-scroll" data-testid="step-card-2">
+          <div class="step-badge">PASO 02</div>
+          <div class="step-icon-wrap">
+            <i class="ph-duotone ph-storefront" aria-hidden="true"></i>
           </div>
-        </div>
+          <h3>Elige tu comercio del barrio</h3>
+          <p>El bot te muestra las opciones a menos de 2 km: panaderías, tiendas, mascotas, mandados o técnicos cercanos.</p>
+          <a href="#servicios" class="step-cta" data-testid="step-cta-servicios">
+            Ver servicios <i class="ph-bold ph-arrow-right"></i>
+          </a>
+        </article>
 
-        <div class="step fade-in-left">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Recibe en menos de 25 minutos</h3>
-            <p>Tu pedido o servicio llega rapidísimo porque todo es hiperlocal. ¡Así de fácil, así de barrial!</p>
+        <article class="step-card animate-on-scroll" data-testid="step-card-3">
+          <div class="step-badge">PASO 03</div>
+          <div class="step-icon-wrap">
+            <i class="ph-duotone ph-moped-front" aria-hidden="true"></i>
           </div>
-        </div>
+          <h3>Recibe en menos de 25 min</h3>
+          <p>Pagas al recibir o por Nequi/Daviplata/Bancolombia. Tu pedido llega rapidísimo porque todo es hiperlocal.</p>
+          <a href="#cobertura" class="step-cta" data-testid="step-cta-cobertura">
+            Ver cobertura <i class="ph-bold ph-arrow-right"></i>
+          </a>
+        </article>
+      </div>
+
+      <div class="steps-final-cta animate-on-scroll">
+        <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20pedir%20un%20domicilio"
+           class="btn btn-primary" target="_blank" rel="noopener" data-testid="how-final-cta">
+          <i class="ph-fill ph-whatsapp-logo" style="font-size:20px;"></i>
+          Probar el bot ahora
+        </a>
       </div>
     </div>
   </section>
@@ -453,7 +559,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="assets/logo-barrioya-white.svg" alt="BarrioYa Logo" class="footer-logo">
+          <img src="assets/logo-horizontal.png?v=22" alt="BarrioYa Logo" class="footer-logo" data-testid="footer-logo" style="filter: brightness(1.05) contrast(1.05); background:#fff; padding:8px 14px; border-radius:12px; max-height:54px;">
           <p>La Superapp del Barrio. Conectamos a tu comunidad con servicios hiperlocales en Bucaramanga.</p>
           <div class="footer-badges">
             <a href="#" class="footer-badge" aria-label="Descargar en App Store">

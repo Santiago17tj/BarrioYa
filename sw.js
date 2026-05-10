@@ -3,7 +3,7 @@
    Estrategias: Cache First (assets), Network First (HTML)
    ========================================================== */
 
-const CACHE_NAME = 'barrioYa-v2';
+const CACHE_NAME = 'barrioYa-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -19,6 +19,7 @@ const STATIC_ASSETS = [
   '/css/profile.css',
   '/css/tracking.css',
   '/css/bot-demo.css',
+  '/css/landing-revamp.css',
   // JS
   '/js/config.js',
   '/js/main.js',
@@ -34,6 +35,8 @@ const STATIC_ASSETS = [
   '/assets/apple-touch-icon.png',
   '/assets/favicon-barrioya.svg',
   '/assets/logo-barrioya-horizontal.svg',
+  '/assets/logo-horizontal.png',
+  '/assets/logo-square.png',
   '/manifest.json'
 ];
 

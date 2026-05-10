@@ -101,3 +101,22 @@ auth JWT con 2 roles, y dashboard analytics premium para presentación de proyec
 2. P0: configurar `JWT_COOKIE_SECURE=true` y rotar secrets antes del deploy
 3. (Para tesis) Documentar la arquitectura de seguridad: bcrypt rounds=12, JWT HS256,
    refresh httpOnly cookie + sha256 hash en BD, rate limit por IP+email, validación HMAC WhatsApp
+
+## Rediseño visual de Landing (Feb 2026) — DONE
+- ✅ Tipografía Outfit (300/400/500/600/700/800/900) + Phosphor Icons CDN
+- ✅ Nueva paleta verde #00C853 + amber #FFB400 sobre fondo cálido #FFFBF0
+- ✅ Navbar glassmorphism (backdrop-filter blur 14px) con logo nuevo (Gemini Nano Banana)
+- ✅ Hero rediseñado con phone mockup interactivo del bot de WhatsApp
+  - 5 burbujas de conversación con animación staggered (0.4s → 3.6s)
+  - Bento cards flotantes "+35 Comercios" y "15 min tiempo promedio"
+  - Glow radial verde-amber animado detrás del phone
+- ✅ Franja de impacto verde con 4 counters animados (35+, 70+, 25min, 2km)
+- ✅ "¿Cómo funciona?" rediseñado con 3 step cards (PASO 01/02/03)
+  - Iconos Phosphor (whatsapp-logo, storefront, moped-front) con gradient verde-amber
+  - Hover lift -8px + bottom border animation scaleX
+  - CTA propia por paso (Abrir chat / Ver servicios / Ver cobertura)
+  - CTA final "Probar el bot ahora" → WhatsApp
+- ✅ IntersectionObserver extendido en main.js para `.animate-on-scroll` + counters cubic-ease
+- ✅ Service Worker bumped a `barrioYa-v3` con nuevos assets cacheados
+- ✅ Footer-logo actualizado con el logo PNG nuevo en píldora blanca
+- ✅ Archivos modificados: `/app/css/landing-revamp.css` (nuevo), `/app/index.html`, `/app/js/main.js`, `/app/sw.js`
