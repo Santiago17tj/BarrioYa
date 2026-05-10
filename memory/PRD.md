@@ -1,109 +1,103 @@
 # BarrioYa — PRD (Product Requirements Document)
 
 ## Problema original
-Usuario solicitó conectar su repo de GitHub (BarrioYa: HTML/CSS/JS + FastAPI) y realizar
-revisión completa con búsqueda de errores y optimización. Se ejecutaron 3 fases de limpieza,
-luego se conectó Supabase real, y finalmente se migró el PIN admin a auth JWT con 2 roles.
+Conectar repo BarrioYa de GitHub al entorno + revisión completa, refactor, conexión a Supabase real,
+auth JWT con 2 roles, y dashboard analytics premium para presentación de proyecto de grado.
 
-## Arquitectura
-- **Frontend**: HTML/CSS/JS plano (vanilla) servido como sitio estático.
-  - Páginas: `/` (landing), `/servicios.html`, `/checkout.html`, `/tracking.html`,
-    `/bot-demo.html`, `/admin/login.html`, `/admin/`, `/afiliados.html`.
-  - SPA hash routing en `index.html` para `#checkout`, `#tracking`, `#bot-demo`.
-  - Static server: `serve` npm + `/app/serve.json` (cleanUrls:false + rewrites para `/admin*`).
+## Arquitectura final
+- **Frontend**: HTML/CSS/JS plano (vanilla) + Chart.js v4. Dark "Control Room" theme con Outfit + JetBrains Mono.
 - **Backend**: FastAPI 0.115 + Pydantic 2.13 + Supabase 2.30 + PyJWT + bcrypt.
-  - Endpoints públicos: `GET /api/health`, `GET /api/catalogo`, `POST /api/pedidos`,
-    `GET/POST /api/webhook/whatsapp`.
-  - Endpoints autenticados: `POST/GET /api/auth/*`, `GET /api/pedidos`, `PATCH /api/pedidos/{id}`.
-- **Persistencia**: Supabase Postgres (gxpyfvzwienmswstrfld). Fallback en memoria si BD cae.
-- **Deploy**: Vercel (rewrites en `vercel.json` modernizado).
-- **Entorno Emergent**: backend port 8001 (`server.py` re-exporta `app`),
-  frontend port 3000 (vía `serve` package).
+- **Auth**: JWT custom (HS256). Access token 15min en localStorage, refresh token 7d en cookie httpOnly.
+- **Persistencia**: Supabase Postgres (gxpyfvzwienmswstrfld). Fallback en memoria.
+- **Deploy**: Vercel (rewrites modernos).
+- **Entorno Emergent**: backend port 8001 (server.py adapter), frontend port 3000 (serve package).
 
 ## Personas
-1. **Cliente final** (público, sin auth): usa la PWA — catálogo, carrito, checkout, tracking, bot WhatsApp.
+1. **Cliente final** (público, sin auth): catálogo, carrito, checkout, tracking, bot WhatsApp.
 2. **Comerciante afiliado** (rol `comercio`, JWT): ve solo SUS pedidos en `/admin/`.
-3. **Admin BarrioYa** (rol `admin`, JWT): ve TODOS los pedidos en `/admin/`.
-4. **Operador BarrioYa**: recibe webhook de WhatsApp para procesar pedidos por chat.
+3. **Admin BarrioYa** (rol `admin`, JWT): ve TODOS los pedidos + dashboard analytics.
 
-## Lo implementado / corregido (10 ene 2026)
+## Lo implementado completo
 
 ### Fase 1 — Bugs críticos (5 fixes)
 - ✅ `js/main.js`: `if` cerrado, `window.limpiarCheckout` siempre definida
-- ✅ `backend/config/settings.py`: CORS específico (no `*` con credentials)
-- ✅ `js/bot-demo.js`: `new RegExp()` en lugar de literal con interpolación rota
-- ✅ `backend/routes/whatsapp.py`: validación HMAC `X-Hub-Signature-256`
-- ✅ `js/router.js`: PIN admin (luego REMOVIDO en migración a JWT)
+- ✅ CORS específico (no wildcard + credentials)
+- ✅ Regex con `new RegExp()` en lugar de literal interpolación rota
+- ✅ Validación HMAC `X-Hub-Signature-256` para WhatsApp webhook
+- ✅ PIN admin documentado para futura migración (luego REMOVIDO en JWT)
 
-### Fase 2 — Rendimiento + PWA (10 fixes)
-- ✅ Imágenes optimizadas: 4042 KB → 33 KB (192) / 225 KB (512) / 30 KB (apple-touch)
-- ✅ `manifest.json`: iconos optimizados (any + maskable)
-- ✅ `sw.js`: `barrioYa-v2`, pre-cache completo
-- ✅ `vercel.json`: formato moderno (`rewrites` + cache headers)
-- ✅ `pedidos.py`: `datetime.now(timezone.utc)` + fix PATCH 404
-- ✅ Nuevo `GET /api/health` accesible vía ingress público
-- ✅ Todos los HTMLs unificados con iconos optimizados
+### Fase 2 — Performance + PWA (10 fixes)
+- ✅ Imágenes optimizadas: 4042 KB → 33/225/30 KB (+ maskable variants)
+- ✅ Service Worker `barrioYa-v2` con pre-cache completo
+- ✅ `vercel.json` modernizado, datetime UTC, fix PATCH 404, /api/health
 
 ### Fase 3 — Limpieza (5 fixes)
-- ✅ Archivos `.bak` eliminados
-- ✅ Scripts Python movidos a `/app/scripts/` con README
-- ✅ Teléfono WhatsApp centralizado en `js/config.js`
-- ✅ `.gitignore` robusto
-- ✅ Originales movidos a `/app/assets/source/`
+- ✅ `.bak` eliminados, scripts a `/scripts/`, teléfono centralizado, `.gitignore` robusto
 
-### Conexión Supabase real (11 ene 2026)
-- ✅ `supabase` package upgraded 2.12 → 2.30 para soportar formato `sb_secret_*`
-- ✅ Catálogo se sirve desde Supabase (6 negocios, 14 items reales)
-- ✅ Pedidos se persisten en `pedidos` + `pedido_items` con FK
+### Conexión Supabase + Catálogo sincronizado
+- ✅ Supabase 2.30 (soporta formato `sb_secret_*`)
+- ✅ Catálogo sincronizado: **35 items** en 6 comercios via `scripts/sync_catalog.py`
 - ✅ FIX `id_comercio`: ahora guarda el `id` ('panaderia') en lugar del `nombre`
+- ✅ Pedidos persistidos en `pedidos` + `pedido_items` con FK
+- ✅ 28 pedidos demo via `scripts/seed_demo_orders.py` (distribución realista en 7 días)
 
-### Auth JWT con 2 roles (11 ene 2026)
+### Auth JWT con 2 roles + httpOnly cookies (mitigación XSS)
 - ✅ Tablas Supabase: `usuarios_admin`, `refresh_tokens`, `login_attempts`
-- ✅ Backend: `auth/jwt_utils.py` (PyJWT HS256 + bcrypt rounds=12)
-- ✅ Backend: `auth/dependencies.py` (`get_current_user`, `require_roles`)
-- ✅ Backend: `auth/rate_limit.py` (5 intentos / 15 min, BD + memoria fallback)
+- ✅ Backend: `auth/jwt_utils.py`, `auth/dependencies.py`, `auth/rate_limit.py`
 - ✅ Endpoints: `POST /api/auth/login`, `POST /api/auth/refresh`, `POST /api/auth/logout`, `GET /api/auth/me`
-- ✅ `GET /api/pedidos` filtra por `id_comercio` si rol es `comercio`
-- ✅ `PATCH /api/pedidos/{id}` valida ownership (comercio no puede tocar pedidos ajenos → 403)
-- ✅ `POST /api/pedidos` permanece público (lo usa el cliente final desde checkout)
-- ✅ Frontend: `js/auth.js` con `authFetch` (auto-refresh on 401)
-- ✅ Frontend: `/admin/login.html` con dark theme premium
-- ✅ Frontend: `/admin/index.html` con guard JS al inicio
-- ✅ Frontend: `admin.js` con `authFetch` + sidebar info de usuario + botón logout
-- ✅ PIN modal del SPA router eliminado (ya no hay 1234)
-- ✅ Seed admin idempotente: `scripts/seed_admin.py`
-- ✅ Static server config arreglada: `/app/serve.json` con cleanUrls:false + rewrites
+- ✅ **httpOnly cookie `barrioya_refresh`** (Path=/api/auth, SameSite=Lax, Max-Age=7d)
+- ✅ `js/auth.js` v2: ya NO guarda refresh_token en localStorage (sólo access_token + user)
+- ✅ `authFetch` con auto-refresh on 401 + `credentials: 'include'`
+- ✅ Rate limit 5 intentos / 15 min (BD + memoria fallback)
+- ✅ `seed_admin.py` idempotente con flag `FORCE_ADMIN_PASSWORD_RESET`
 
-### Testing
+### Dashboard Analytics premium (Chart.js)
+- ✅ Endpoint `GET /api/analytics/summary` (admin-only): total_revenue, total_orders, avg_ticket,
+  active_orders, revenue_by_day (7d), orders_by_hour (24h), top_products (top 3), status_distribution
+- ✅ Comercio usa fallback que computa resumen desde `/api/pedidos` filtrado
+- ✅ Diseño "Control Room": dark obsidian + verde BarrioYa + naranja, Outfit + JetBrains Mono
+- ✅ Welcome banner con saludo dinámico por hora + LIVE pulse
+- ✅ 4 KPI cards con count-up animations (1.5s ease-out)
+- ✅ Chart de ingresos con gradient verde fluido (línea + fill)
+- ✅ Top 3 podium visual con #1 destacado en verde
+- ✅ Bar chart pedidos por hora con highlight de pico
+- ✅ Donut chart de estados con leyenda interactiva
+- ✅ Recent orders feed con filtros por estado + status pills
+- ✅ Reloj en tiempo real, sidebar con info de usuario
+- ✅ Auto-refresh de datos cada 30s (sin animación de count-up)
+
+### Testing acumulado
 - ✅ Iteration 1: 15/15 backend
-- ✅ Iteration 2: 25/25 backend (post Fase 2+3)
-- ✅ Iteration 3: 19/19 backend auth + 25/25 regression (frontend bloqueado por static server)
-- ✅ Iteration 4: **9/9 frontend E2E con Playwright** (login admin/comercio, logout, role-based UI, error handling)
+- ✅ Iteration 2: 25/25 backend (Fase 2+3)
+- ✅ Iteration 3: 19/19 backend auth
+- ✅ Iteration 4: 9/9 frontend E2E (login, logout, role-based UI)
+- ✅ Iteration 5: **14/14 backend + 9/10 frontend = sin bugs**
 
 ## Backlog priorizado
 
 ### P0 — Antes de producción
-- [ ] Rotar `JWT_SECRET` en producción (el actual está versionado en .env de dev)
-- [ ] Migrar `refresh_token` a httpOnly cookie (en vez de localStorage) para mitigar XSS
-- [ ] Configurar `WHATSAPP_APP_SECRET` para validar firma HMAC en producción
-- [ ] `seed_admin.py`: que solo rote password si `FORCE_ADMIN_PASSWORD_RESET=1`
-- [ ] Sincronizar el catálogo (BD tiene 14 items, seed local 35) — script de sync
+- [ ] Setear `JWT_COOKIE_SECURE=true` en `.env` de producción (HTTPS)
+- [ ] Rotar `JWT_SECRET` (el actual está versionado en dev)
+- [ ] Configurar `WHATSAPP_APP_SECRET` para firma HMAC en producción
+- [ ] (Opcional hardening) gate del campo `refresh_token` en JSON body de login detrás de DEBUG flag
 
 ### P1 — Optimizaciones
-- [ ] Reemplazar polling 10s en `admin.js` por Supabase Realtime
-- [ ] Implementar payment gateway real (Wompi o MercadoPago — preparado en checkout.js)
-- [ ] Implementar tracking GPS real (actualmente 100% mock en `tracking.js`)
-- [ ] Webhook WhatsApp: integrar LLM en `services/whatsapp.py` (TODO marcado)
+- [ ] Reemplazar polling 30s en dashboard por Supabase Realtime
+- [ ] Implementar payment gateway real (Wompi o MercadoPago)
+- [ ] Implementar tracking GPS real (actualmente 100% mock)
+- [ ] Webhook WhatsApp: integrar LLM en `services/whatsapp.py`
 - [ ] CRUD comercios + asignación de comercio a usuario en panel admin
+- [ ] Whitelist explícito de estados en analytics.status_dist (defensivo)
 
 ### P2 — Mantenibilidad / UX
 - [ ] Reemplazar `window.confirm` del logout por modal in-app
 - [ ] Dividir `index.html` (72 KB) en parciales/componentes
 - [ ] Catálogo del bot consumir `/api/catalogo` en lugar de mock duplicado
-- [ ] Validación de teléfono/email en formularios
-- [ ] Cron job para limpiar `login_attempts` y `refresh_tokens` expirados (sugerencia ya en SQL)
+- [ ] Validación de teléfono/email en formularios de checkout
+- [ ] Cron job para limpiar `login_attempts` y `refresh_tokens` expirados
 
 ## Próximos action items sugeridos
-1. Push a GitHub usando "Save to GitHub" (cambios de auth + Supabase + serve.json)
-2. P0: rotar JWT_SECRET y mover refresh a httpOnly cookie antes de producción
-3. (Opcional pero alto impacto) sistema de cupones/descuentos primer pedido
+1. **Push a GitHub** con todos los cambios de Supabase + JWT + Dashboard (botón "Save to GitHub")
+2. P0: configurar `JWT_COOKIE_SECURE=true` y rotar secrets antes del deploy
+3. (Para tesis) Documentar la arquitectura de seguridad: bcrypt rounds=12, JWT HS256,
+   refresh httpOnly cookie + sha256 hash en BD, rate limit por IP+email, validación HMAC WhatsApp

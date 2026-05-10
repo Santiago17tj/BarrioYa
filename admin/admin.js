@@ -203,15 +203,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const elAvg = document.getElementById('kpiAvgTicket');
     const elAct = document.getElementById('kpiActive');
 
+    // Render INMEDIATO con el valor final (evita el race del count-up).
+    // La animación luego sobreescribe desde 0 hasta target con ease-out.
+    elRev.textContent = fmtMoney(s.total_revenue);
+    elOrd.textContent = s.total_orders.toLocaleString('es-CO');
+    elAvg.textContent = fmtMoney(s.avg_ticket);
+    elAct.textContent = s.active_orders.toLocaleString('es-CO');
+
     elRev.dataset.target = s.total_revenue;
     elOrd.dataset.target = s.total_orders;
     elAvg.dataset.target = s.avg_ticket;
     elAct.dataset.target = s.active_orders;
 
-    animateCounter(elRev, s.total_revenue);
-    animateCounter(elOrd, s.total_orders);
-    animateCounter(elAvg, s.avg_ticket);
-    animateCounter(elAct, s.active_orders);
+    // Pequeño delay para que el "fadeInUp" del card termine antes del count-up
+    setTimeout(() => {
+      animateCounter(elRev, s.total_revenue);
+      animateCounter(elOrd, s.total_orders);
+      animateCounter(elAvg, s.avg_ticket);
+      animateCounter(elAct, s.active_orders);
+    }, 250);
 
     document.getElementById('kpiRevenueMeta').textContent = `${s.total_orders} pedidos en total`;
     document.getElementById('kpiOrdersMeta').textContent = s.total_orders > 0 ? 'Histórico completo' : 'Sin pedidos aún';
