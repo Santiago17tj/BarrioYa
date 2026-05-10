@@ -179,11 +179,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     steps.forEach((s, i) => {
       s.classList.remove('completed', 'active', 'pending');
+      const timeP = s.querySelector('.status-info p');
+      
       if (i < idx) {
         s.classList.add('completed');
         s.querySelector('.status-dot').textContent = '✓';
+        if (timeP && timeP.textContent.includes('AM')) {
+           // Keep hardcoded times for past steps if they exist, or update them
+        }
       } else if (i === idx) {
         s.classList.add('active');
+        if (timeP && i === 2) timeP.textContent = 'Carlos está en camino';
       } else {
         s.classList.add('pending');
       }
@@ -211,7 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
         deliveredStep.classList.remove('pending', 'active');
         deliveredStep.classList.add('completed');
         deliveredStep.querySelector('.status-dot').textContent = '✓';
-        deliveredStep.querySelector('.status-info p').textContent = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+        const deliveredP = document.getElementById('deliveredTime');
+        if (deliveredP) deliveredP.textContent = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
       }
 
       // Confetti-like celebration pulse
@@ -251,6 +258,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Start simulation after a short delay
   updateStatus('onway');
   updateETA();
+
+  // FIX: Invalidate map size to prevent gray areas
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 500);
 
   setTimeout(() => {
     animateDriver();

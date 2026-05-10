@@ -10,86 +10,55 @@ document.addEventListener('DOMContentLoaded', () => {
   // FULL SUPERAPP CATALOG
   // ══════════════════════════════════════
 
-  const CATALOG = {
-    // ── Domicilios (Products) ──
-    panaderia: {
-      name: 'Panadería Don José',
-      emoji: '🧀', category: 'domicilios', zone: 'Cabecera del Llano',
-      items: [
-        { name: 'Pan de bono', price: 1000, emoji: '🧀' },
-        { name: 'Empanada de carne', price: 2000, emoji: '🥟' },
-        { name: 'Buñuelo', price: 1500, emoji: '🍩' },
-        { name: 'Arepa de huevo', price: 3000, emoji: '🌮' },
-        { name: 'Jugo de lulo', price: 2500, emoji: '🧃' },
-        { name: 'Almojábana', price: 1800, emoji: '🥐' },
-        { name: 'Pandebono especial', price: 2000, emoji: '🧀' },
-        { name: 'Café con leche', price: 2000, emoji: '☕' }
-      ]
-    },
-    restaurante: {
-      name: 'Restaurante La Sazón',
-      emoji: '🍛', category: 'domicilios', zone: 'La Ciudadela',
-      items: [
-        { name: 'Bandeja paisa', price: 15000, emoji: '🍛' },
-        { name: 'Arroz con pollo', price: 12000, emoji: '🍗' },
-        { name: 'Sancocho', price: 10000, emoji: '🍲' },
-        { name: 'Hamburguesa artesanal', price: 14000, emoji: '🍔' },
-        { name: 'Limonada de coco', price: 4000, emoji: '🥥' },
-        { name: 'Ceviche de camarón', price: 16000, emoji: '🦐' }
-      ]
-    },
-    tienda: {
-      name: 'Tienda Doña Carmen',
-      emoji: '🛒', category: 'domicilios', zone: 'Provenza',
-      items: [
-        { name: 'Leche entera 1L', price: 4500, emoji: '🥛' },
-        { name: 'Pan tajado', price: 6000, emoji: '🍞' },
-        { name: 'Huevos x12', price: 8000, emoji: '🥚' },
-        { name: 'Arroz 1kg', price: 4000, emoji: '🍚' },
-        { name: 'Gaseosa 1.5L', price: 5000, emoji: '🥤' },
-        { name: 'Aceite 500ml', price: 7000, emoji: '🫒' }
-      ]
-    },
+  let CATALOG = {};
+  
+  // Usamos la URL base definida en config.js
+  const API_BASE = window.API_BASE_URL || '';
 
-    // ── Mascotas (Services) ──
-    mascotas: {
-      name: 'Mascotas',
-      emoji: '🐾', category: 'mascotas', zone: 'Tu barrio',
-      items: [
-        { name: 'Paseo de perro', price: 8000, emoji: '🐕', type: 'service', provider: 'Andrea G.', zone: 'Cabecera del Llano', duration: '1 hora' },
-        { name: 'Cuidado diurno', price: 25000, emoji: '🏠', type: 'service', provider: 'Valentina S.', zone: 'Provenza', duration: '2 horas' },
-        { name: 'Baño canino', price: 20000, emoji: '🛁', type: 'service', provider: 'Carlos R.', zone: 'La Ciudadela' },
-        { name: 'Entrenamiento básico', price: 35000, emoji: '🎓', type: 'service', provider: 'Luis P.', zone: 'Cabecera del Llano', duration: '1.5 horas' }
-      ]
-    },
+  async function loadCatalog() {
+    const grid = document.getElementById('productGrid');
+    const tabs = document.getElementById('menuTabs');
+    
+    // Mostrar Skeletons
+    grid.innerHTML = Array(4).fill(0).map(() => `
+      <div class="product-card skeleton-card">
+        <div class="skeleton-emoji"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+        <div class="skeleton-btn"></div>
+      </div>
+    `).join('');
+    tabs.innerHTML = '<div class="skeleton-tabs"></div>';
 
-    // ── Mandados (Services) ──
-    mandados: {
-      name: 'Mandados',
-      emoji: '🏃', category: 'mandados', zone: 'Tu barrio',
-      items: [
-        { name: 'Pago de recibos', price: 3000, emoji: '📄', type: 'service', provider: 'Josué L.', zone: 'Cabecera del Llano' },
-        { name: 'Recogida de paquete', price: 5000, emoji: '📦', type: 'service', provider: 'Daniela R.', zone: 'La Ciudadela' },
-        { name: 'Compra de mercado', price: 8000, emoji: '🛍️', type: 'service', provider: 'Santiago M.', zone: 'Provenza' },
-        { name: 'Fila en banco/EPS', price: 10000, emoji: '🏦', type: 'service', provider: 'Camila O.', zone: 'Cabecera del Llano' },
-        { name: 'Envío de documentos', price: 4000, emoji: '✉️', type: 'service', provider: 'Pedro M.', zone: 'La Ciudadela' }
-      ]
-    },
-
-    // ── Técnicos & Tutores (Services) ──
-    tecnicos: {
-      name: 'Técnicos & Tutores',
-      emoji: '🔧', category: 'tecnicos', zone: 'Tu barrio',
-      items: [
-        { name: 'Plomería general', price: 25000, emoji: '🔧', type: 'service', provider: 'Miguel T.', zone: 'Cabecera del Llano', duration: '1 hora' },
-        { name: 'Electricista', price: 30000, emoji: '⚡', type: 'service', provider: 'Andrés V.', zone: 'La Ciudadela', duration: '1 hora' },
-        { name: 'Cerrajería', price: 20000, emoji: '🔑', type: 'service', provider: 'Paula C.', zone: 'Provenza' },
-        { name: 'Reparación electrodomésticos', price: 35000, emoji: '🔌', type: 'service', provider: 'Sofía H.', zone: 'Cabecera del Llano', duration: '1.5 horas' },
-        { name: 'Tutor de matemáticas', price: 20000, emoji: '📐', type: 'service', provider: 'Laura D.', zone: 'La Ciudadela', duration: '1 hora' },
-        { name: 'Tutor de inglés', price: 22000, emoji: '📚', type: 'service', provider: 'Ana R.', zone: 'Provenza', duration: '1 hora' }
-      ]
+    try {
+      const response = await fetch(`${API_BASE}/api/catalogo`);
+      if (!response.ok) throw new Error('Error cargando catálogo');
+      const data = await response.json();
+      
+      // Transformar array de businesses al formato object que usa el frontend
+      CATALOG = {}; // Reset
+      data.businesses.forEach(biz => {
+        CATALOG[biz.id] = {
+          name: biz.name,
+          emoji: biz.emoji,
+          category: biz.category,
+          zone: biz.zone,
+          items: biz.items
+        };
+      });
+      
+      renderTabs();
+      renderProducts();
+    } catch (error) {
+      console.error('Error:', error);
+      grid.innerHTML = `
+        <div class="error-container">
+          <p class="error-msg">⚠️ No pudimos conectar con el servidor.</p>
+          <button class="btn btn-secondary" onclick="location.reload()">Reintentar</button>
+        </div>
+      `;
     }
-  };
+  }
 
   function formatPrice(price) {
     return '$' + price.toLocaleString('es-CO');
@@ -188,8 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1200);
   };
 
-  renderTabs();
-  renderProducts();
+  // renderTabs();
+  // renderProducts();
+  loadCatalog();
 
   // Listen for hash changes
   window.addEventListener('hashchange', () => {

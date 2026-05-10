@@ -12,7 +12,7 @@
   <meta property="og:description" content="Todo tu barrio en una sola app. Domicilios, mascotas, mandados y más en Bucaramanga.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://barrioya.com">
-  <meta property="og:image" content="assets/images/hero-mockup.png?v=2">
+  <meta property="og:image" content="assets/images/hero-mockup.png?v=21">
 
   <title>BarrioYa — La Superapp del Barrio | Bucaramanga</title>
 
@@ -20,9 +20,15 @@
   <link rel="icon" type="image/png" href="assets/favicon-barrioya.png">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=5">
-  <link rel="stylesheet" href="css/cart.css?v=5">
-  <link rel="stylesheet" href="css/tracking.css?v=5">
+  <link rel="stylesheet" href="css/styles.css?v=21">
+  <link rel="stylesheet" href="css/cart.css?v=21">
+  <link rel="stylesheet" href="css/tracking.css?v=21">
+  <link rel="stylesheet" href="css/profile.css?v=21">
+  <link rel="stylesheet" href="admin/admin.css?v=21">
+  <link rel="stylesheet" href="css/bot-demo.css?v=21">
+
+  <!-- Chart.js (for Admin Dashboard) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -36,6 +42,27 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin="" />
+  <style>
+    /* Force Light Mode Overrides */
+    :root {
+      --color-bg-white: #FFFFFF !important;
+      --color-bg-light: #F8FAFC !important;
+      --color-bg-dark: #FFFFFF !important;
+    }
+    body, .hero, .services, .how-it-works, .coverage, .testimonials, .for-business, .whatsapp-section, .footer, .site-footer {
+      background-color: #FFFFFF !important;
+      color: #333333 !important;
+    }
+    .navbar {
+      background: rgba(255,255,255,0.9) !important;
+    }
+    .navbar-links a {
+      color: #6B7280 !important;
+    }
+    .navbar-links a:hover {
+      color: #FF5A3C !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -125,7 +152,7 @@
         </div>
       </div>
       <div class="hero-image fade-in">
-        <img src="assets/images/hero-mockup.png?v=2" alt="BarrioYa App - Mockup de la aplicación móvil de servicios del barrio" width="400" height="500">
+        <img src="assets/images/hero-mockup.png?v=21" alt="BarrioYa App - Mockup de la aplicación móvil de servicios del barrio" width="400" height="500">
       </div>
     </div>
   </section>
@@ -267,7 +294,7 @@
         <div class="whatsapp-mockup fade-in-right">
           <div class="chat-header">
             <div class="chat-avatar">
-              <img src="BarrioYalogo.png" alt="BarrioYa">
+              <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa">
             </div>
             <div>
               <div class="chat-name">BarrioYa</div>
@@ -425,7 +452,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa Logo" class="footer-logo">
+          <img src="assets/logo-barrioya-white.svg" alt="BarrioYa Logo" class="footer-logo">
           <p>La Superapp del Barrio. Conectamos a tu comunidad con servicios hiperlocales en Bucaramanga.</p>
           <div class="footer-badges">
             <a href="#" class="footer-badge" aria-label="Descargar en App Store">
@@ -446,6 +473,9 @@
           <a href="#como-funciona">¿Cómo funciona?</a>
           <a href="#negocios">Para negocios</a>
           <a href="#cobertura">Cobertura</a>
+          <a href="javascript:void(0)" onclick="openAdminLogin()" style="margin-top: 1rem; color: var(--color-primary-orange); font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+            🔒 Acceso para Negocios
+          </a>
         </div>
 
         <div class="footer-col">
@@ -605,7 +635,7 @@
     <div class="container">
       <div class="whatsapp-inner">
         <div>
-          <h2 class="section-title fade-in" style="color: white;">¿Listo para probar <span style="color: var(--color-accent);">BarrioYa</span>?</h2>
+          <h2 class="section-title fade-in" style="color: white;">¿Listo para probar <span style="color: var(--color-primary-orange);">BarrioYa</span>?</h2>
           <p class="section-subtitle fade-in">Escríbenos por WhatsApp y pide lo que necesites. Sin descargas, sin registro, sin complicaciones.</p>
           <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;" class="fade-in">
             <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20probar%20el%20servicio" 
@@ -872,10 +902,355 @@
     </div>
   
     </div>
+
+    <!-- PROFILE VIEW -->
+    <div id="profile-view" class="spa-view profile-page" style="display: none;">
+      <div class="container">
+        <div class="profile-header">
+          <div class="profile-avatar">U</div>
+          <div class="profile-name">Usuario Demo</div>
+          <div class="profile-email">usuario@barrioya.co</div>
+        </div>
+
+        <div class="profile-menu">
+          <div class="profile-menu-item">
+            <div class="profile-menu-icon orange">📦</div>
+            <div class="profile-menu-text">
+              <h4>Mis Pedidos</h4>
+              <p>Historial y seguimiento</p>
+            </div>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <div class="profile-menu-icon green">📍</div>
+            <div class="profile-menu-text">
+              <h4>Mis Direcciones</h4>
+              <p>Gestiona tus ubicaciones</p>
+            </div>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <div class="profile-menu-icon blue">💳</div>
+            <div class="profile-menu-text">
+              <h4>Métodos de Pago</h4>
+              <p>Nequi, Daviplata, PSE</p>
+            </div>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <div class="profile-menu-icon yellow">⚙️</div>
+            <div class="profile-menu-text">
+              <h4>Configuración</h4>
+              <p>Notificaciones y preferencias</p>
+            </div>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+
+          <!-- New Order / Clear Cart -->
+          <div class="profile-menu-item" onclick="startNewOrder()" style="border: 2px dashed var(--color-primary-orange); background: rgba(255, 90, 60, 0.05);">
+            <div class="profile-menu-icon" style="background: var(--color-primary-orange);">🧹</div>
+            <div class="profile-menu-text">
+              <h4 style="color: var(--color-primary-orange);">Iniciar Nuevo Pedido</h4>
+              <p>Limpia el carrito y datos anteriores</p>
+            </div>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+
+          <!-- Business Access -->
+          <div class="profile-business-btn" id="businessAccessBtn" onclick="openAdminLogin()">
+            <div class="profile-menu-icon">🏪</div>
+            <div class="profile-menu-text">
+              <h4>Acceso para Negocios</h4>
+              <p>Panel administrativo para comercios afiliados</p>
+            </div>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN VIEW -->
+    <div id="admin-view" class="spa-view" style="display: none;">
+      <div class="admin-spa-wrapper">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar" id="sidebar">
+          <div class="sidebar-brand">
+            <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa" class="sidebar-logo">
+            <span>BarrioYa <small>Admin</small></span>
+          </div>
+          <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard" id="navDashboard">
+              <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-section="orders" id="navOrders">
+              <span class="nav-icon">📦</span> Pedidos
+              <span class="nav-badge" id="ordersBadge">5</span>
+            </a>
+            <a href="#" class="nav-item" data-section="menu" id="navMenu">
+              <span class="nav-icon">📋</span> Mi Menú
+            </a>
+            <a href="#" class="nav-item" data-section="drivers" id="navDrivers">
+              <span class="nav-icon">🛵</span> Domiciliarios
+            </a>
+            <a href="#" class="nav-item" data-section="analytics" id="navAnalytics">
+              <span class="nav-icon">📈</span> Analítica
+            </a>
+          </nav>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <div class="user-avatar">DJ</div>
+              <div>
+                <div class="user-name">Don José</div>
+                <div class="user-role">Panadería · Admin</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Admin Main Content -->
+        <main class="main-content">
+          <header class="topbar">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+              <span></span><span></span><span></span>
+            </button>
+            <div class="topbar-title">
+              <h1 id="pageTitle">Dashboard</h1>
+              <p id="pageSubtitle">Bienvenido de vuelta, Don José 👋</p>
+            </div>
+            <div class="topbar-actions">
+              <button class="topbar-link" id="botDemoBtn" onclick="event.preventDefault(); history.pushState(null,'','#bot-demo'); window.dispatchEvent(new PopStateEvent('popstate'));" style="background: var(--admin-primary, #FF5A3C); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.8rem;">
+                🤖 Probar Simulador de IA
+              </button>
+              <div class="notification-bell" id="notifBell">
+                🔔
+                <span class="notif-dot" id="notifDot"></span>
+              </div>
+              <a href="#home" class="topbar-link" id="adminBackBtn">← Volver al sitio</a>
+            </div>
+          </header>
+
+          <div class="admin-demo-banner">
+            ⚙️ Dashboard de demostración — Datos simulados para ilustrar la experiencia del comercio
+          </div>
+
+          <!-- Dashboard Section -->
+          <section class="content-section active" id="sectionDashboard">
+            <div class="metrics-grid">
+              <div class="metric-card" id="metricOrders">
+                <div class="metric-icon">📦</div>
+                <div class="metric-body">
+                  <div class="metric-value" id="totalOrders">23</div>
+                  <div class="metric-label">Pedidos hoy</div>
+                </div>
+                <div class="metric-trend up">↑ 12%</div>
+              </div>
+              <div class="metric-card" id="metricRevenue">
+                <div class="metric-icon">💰</div>
+                <div class="metric-body">
+                  <div class="metric-value" id="totalRevenue">$345.000</div>
+                  <div class="metric-label">Ingresos hoy</div>
+                </div>
+                <div class="metric-trend up">↑ 8%</div>
+              </div>
+              <div class="metric-card" id="metricAvg">
+                <div class="metric-icon">📊</div>
+                <div class="metric-body">
+                  <div class="metric-value" id="avgOrder">$15.000</div>
+                  <div class="metric-label">Ticket promedio</div>
+                </div>
+                <div class="metric-trend neutral">→ 0%</div>
+              </div>
+              <div class="metric-card" id="metricDrivers">
+                <div class="metric-icon">🛵</div>
+                <div class="metric-body">
+                  <div class="metric-value" id="activeDrivers">3</div>
+                  <div class="metric-label">Domiciliarios activos</div>
+                </div>
+                <div class="metric-trend up">● Online</div>
+              </div>
+            </div>
+            <div class="charts-grid">
+              <div class="chart-card">
+                <h3>📈 Pedidos por hora</h3>
+                <canvas id="ordersChart"></canvas>
+              </div>
+              <div class="chart-card">
+                <h3>🥧 Productos más vendidos</h3>
+                <canvas id="productsChart"></canvas>
+              </div>
+            </div>
+            <div class="table-card">
+              <div class="table-header">
+                <h3>📋 Pedidos recientes</h3>
+                <div class="table-filters">
+                  <button class="filter-btn active" data-filter="all">Todos</button>
+                  <button class="filter-btn" data-filter="nuevo">Nuevos</button>
+                  <button class="filter-btn" data-filter="preparando">En preparación</button>
+                  <button class="filter-btn" data-filter="enviado">Enviados</button>
+                </div>
+              </div>
+              <div class="orders-table-wrapper">
+                <table class="orders-table" id="ordersTable">
+                  <thead>
+                    <tr>
+                      <th>Pedido</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ordersTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Orders Section -->
+          <section class="content-section" id="sectionOrders">
+            <div class="orders-board">
+              <div class="board-column" id="boardNuevo">
+                <div class="board-column-header"><h3>🆕 Nuevos</h3><span class="board-count" id="countNuevo">0</span></div>
+                <div class="board-cards" id="cardsNuevo"></div>
+              </div>
+              <div class="board-column" id="boardPreparando">
+                <div class="board-column-header"><h3>👨‍🍳 Preparando</h3><span class="board-count" id="countPreparando">0</span></div>
+                <div class="board-cards" id="cardsPreparando"></div>
+              </div>
+              <div class="board-column" id="boardEnviado">
+                <div class="board-column-header"><h3>🛵 Enviados</h3><span class="board-count" id="countEnviado">0</span></div>
+                <div class="board-cards" id="cardsEnviado"></div>
+              </div>
+              <div class="board-column" id="boardEntregado">
+                <div class="board-column-header"><h3>✅ Entregados</h3><span class="board-count" id="countEntregado">0</span></div>
+                <div class="board-cards" id="cardsEntregado"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Menu Section -->
+          <section class="content-section" id="sectionMenu">
+            <div class="menu-management">
+              <div class="menu-header-row">
+                <h3>📋 Gestionar mi menú</h3>
+                <button class="btn-add" id="addProductBtn">+ Agregar producto</button>
+              </div>
+              <div class="menu-grid" id="menuGrid"></div>
+            </div>
+          </section>
+
+          <!-- Drivers Section -->
+          <section class="content-section" id="sectionDrivers">
+            <div class="drivers-grid" id="driversGrid"></div>
+          </section>
+
+          <!-- Analytics Section -->
+          <section class="content-section" id="sectionAnalytics">
+            <div class="analytics-grid">
+              <div class="chart-card full-width">
+                <h3>📊 Ingresos últimos 7 días</h3>
+                <canvas id="revenueChart"></canvas>
+              </div>
+              <div class="chart-card">
+                <h3>🕐 Horas pico</h3>
+                <canvas id="peakChart"></canvas>
+              </div>
+              <div class="chart-card">
+                <h3>⭐ Satisfacción del cliente</h3>
+                <div class="satisfaction-display">
+                  <div class="sat-score">4.8</div>
+                  <div class="sat-stars">⭐⭐⭐⭐⭐</div>
+                  <div class="sat-label">Basado en 156 calificaciones</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Toast -->
+          <div class="toast" id="toast">
+            <div class="toast-icon">🔔</div>
+            <div class="toast-content">
+              <div class="toast-title" id="toastTitle">Nuevo pedido</div>
+              <div class="toast-msg" id="toastMsg">Pedido #BY-0430 recibido</div>
+            </div>
+            <button class="toast-close" id="toastClose">✕</button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- BOT DEMO VIEW -->
+    <div id="bot-demo-view" class="spa-view" style="display: none;">
+      <div class="bot-page">
+        <div class="bot-demo-banner">
+          🤖 Demo interactiva — Prueba el Bot de WhatsApp de BarrioYa (simulación)
+        </div>
+        <div class="bot-layout">
+          <aside class="bot-sidebar">
+            <div class="sidebar-header"><h3>BarrioYa Bot</h3></div>
+            <div class="sidebar-info">
+              <div class="bot-avatar-large">
+                <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa Bot">
+              </div>
+              <h4>BarrioYa Bot</h4>
+              <p>Bot inteligente para pedidos hiperlocales en tu barrio</p>
+            </div>
+            <div class="sidebar-features">
+              <h5>Capacidades del Bot</h5>
+              <div class="feature-item"><span>🗣️</span> Entiende lenguaje natural</div>
+              <div class="feature-item"><span>🛒</span> Arma tu carrito de compras</div>
+              <div class="feature-item"><span>📍</span> Autocompletado de dirección</div>
+              <div class="feature-item"><span>💳</span> Confirma costo total</div>
+              <div class="feature-item"><span>📦</span> Enlace de seguimiento</div>
+              <div class="feature-item"><span>🤖</span> Powered by NLP/LLM</div>
+            </div>
+          </aside>
+
+          <div class="bot-chat-area">
+            <div class="bot-chat-topbar">
+              <div class="avatar">
+                <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa">
+              </div>
+              <div class="contact-info">
+                <h4>BarrioYa Bot</h4>
+                <p class="typing-indicator" id="typingIndicator">escribiendo...</p>
+                <p class="status-text" id="statusText">● en línea</p>
+              </div>
+              <button class="bot-back-btn" onclick="history.pushState(null,'','#admin'); window.dispatchEvent(new PopStateEvent('popstate'));">← Volver al Admin</button>
+            </div>
+
+            <div class="bot-messages-container" id="messagesContainer"></div>
+            <div id="quickRepliesContainer"></div>
+
+            <div class="bot-chat-input-area">
+              <input type="text" class="bot-chat-input" id="chatInput" placeholder="Escribe tu mensaje..." autocomplete="off">
+              <button class="bot-send-btn" id="sendBtn" aria-label="Enviar mensaje">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
+  <!-- ═══════════════════ PIN MODAL ═══════════════════ -->
+  <div class="pin-overlay" id="pinModal">
+    <div class="pin-card">
+      <div class="pin-icon">🔐</div>
+      <h2>Acceso para Negocios</h2>
+      <p>Ingresa tu PIN de 4 dígitos para acceder al panel administrativo</p>
+      <div class="pin-inputs">
+        <input type="number" class="pin-digit" maxlength="1" min="0" max="9" id="pin1" autofocus>
+        <input type="number" class="pin-digit" maxlength="1" min="0" max="9" id="pin2">
+        <input type="number" class="pin-digit" maxlength="1" min="0" max="9" id="pin3">
+        <input type="number" class="pin-digit" maxlength="1" min="0" max="9" id="pin4">
+      </div>
+      <div class="pin-error-msg" id="pinError"></div>
+      <button class="pin-submit-btn" id="pinSubmitBtn">Ingresar</button>
+      <button class="pin-cancel-btn" id="pinCancelBtn">Cancelar</button>
+    </div>
+  </div>
+
   <!-- ═══════════════════ BOTTOM NAVIGATION ═══════════════════ -->
-  <nav class="bottom-nav">
+  <nav class="bottom-nav" id="bottomNav">
     <a href="#home" class="bottom-nav-item active">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Inicio</span>
@@ -888,7 +1263,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
       <span>Carrito</span>
     </a>
-    <a href="#profile" class="bottom-nav-item" onclick="event.preventDefault(); alert('Sección Perfil próximamente');">
+    <a href="#profile" class="bottom-nav-item">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>Perfil</span>
     </a>
@@ -914,9 +1289,59 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 
+  <!-- Admin Login Modal -->
+  <div id="adminModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;">
+    <div class="modal-content" style="background: var(--color-bg-light); padding: 2.5rem; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+      <h3 style="margin-bottom: 0.5rem; color: var(--color-text-dark);">Acceso de Negocio</h3>
+      <p style="margin-bottom: 1.5rem; color: var(--color-text-light); font-size: 0.9rem;">Ingresa tu PIN de seguridad para entrar al panel.</p>
+      <input type="password" id="adminPin" placeholder="PIN de 4 dígitos" maxlength="4" style="width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid #ddd; font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem; margin-bottom: 1.5rem; outline: none; transition: border-color 0.3s ease;">
+      <div style="display: flex; gap: 1rem;">
+        <button onclick="closeAdminLogin()" class="btn btn-secondary" style="flex: 1;">Cancelar</button>
+        <button onclick="validateAdminPin()" class="btn btn-primary" style="flex: 1;">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openAdminLogin() {
+      // Usamos el pinModal original en vez del adminModal redundante
+      const modal = document.getElementById('pinModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+      }
+    }
+    window.openAdminLogin = openAdminLogin;
+    function closeAdminLogin() {
+      const modal = document.getElementById('adminModal');
+      modal.style.opacity = '0';
+      modal.style.pointerEvents = 'none';
+      setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+    function validateAdminPin() {
+      const pin = document.getElementById('adminPin').value;
+      if (pin === '1234') {
+        window.location.href = './admin/index.html';
+      } else {
+        alert('❌ PIN Incorrecto');
+        document.getElementById('adminPin').value = '';
+      }
+    }
+    // Para limpiar el pedido anterior y empezar de cero
+    window.startNewOrder = function() {
+      if (window.cartManager) {
+        window.cartManager.clear();
+        alert('🧹 Pedido anterior limpiado. Puedes iniciar uno nuevo.');
+        window.location.hash = '#servicios';
+      }
+    }
+  </script>
+
   <!-- Scripts -->
-  <script src="js/main.js?v=3"></script>
-  <script src="js/cart.js?v=3"></script>
+  <script src="js/config.js?v=21"></script>
+  <script src="js/main.js?v=21"></script>
+  <script src="js/cart.js?v=21"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -931,9 +1356,11 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
-  <script src="js/tracking.js?v=3"></script>
-  <script src="js/checkout.js?v=3"></script>
-  <script src="js/menu-page.js?v=3"></script>
-  <script src="js/router.js?v=3"></script>
+  <script src="js/tracking.js?v=21"></script>
+  <script src="js/checkout.js?v=21"></script>
+  <script src="js/menu-page.js?v=21"></script>
+  <script src="admin/admin.js?v=21"></script>
+  <script src="js/bot-demo.js?v=21"></script>
+  <script src="js/router.js?v=21"></script>
 </body>
 </html>

@@ -11,23 +11,23 @@
 
   <title>Checkout — BarrioYa</title>
   <link rel="icon" type="image/png" href="BarrioYalogo.png">
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/styles.css?v=21">
+  <link rel="stylesheet" href="css/cart.css?v=21">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#00C853">
+  <meta name="theme-color" content="#FFFFFF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="BarrioYa">
-  <link rel="apple-touch-icon" href="BarrioYalogo.png">
+  <link rel="apple-touch-icon" href="assets/favicon-barrioya.png">
 
   <style>
     .checkout-page {
       padding-top: 100px;
       padding-bottom: 4rem;
       min-height: 100vh;
-      background: var(--color-bg);
+      background: #F8FAFC;
     }
 
     .checkout-layout {
@@ -343,32 +343,53 @@
       display: none;
       grid-column: 1 / -1;
       text-align: center;
-      padding: 3rem 1rem;
-      animation: fadeSlide 0.5s ease;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 30px;
+      box-shadow: var(--shadow-lg);
+      max-width: 600px;
+      margin: 2rem auto;
+      animation: successFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .checkout-success.show { display: block; }
 
-    .success-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      animation: float 3s ease-in-out infinite;
+    @keyframes successFadeIn {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .success-icon-container {
+      width: 80px;
+      height: 80px;
+      background: rgba(0, 200, 83, 0.1);
+      color: var(--color-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2.5rem;
+      animation: iconPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes iconPop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
     }
 
     .checkout-success h2 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 800;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--color-text-dark);
     }
 
     .checkout-success p {
       color: var(--color-text-light);
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
 
     .demo-banner {
@@ -570,9 +591,9 @@
 
       <!-- Success State -->
       <div class="checkout-success" id="checkoutSuccess">
-        <div class="success-icon">✅</div>
+        <div class="success-icon-container">✓</div>
         <h2>¡Pago exitoso!</h2>
-        <p>Tu pedido #BY-2026-0429 ha sido confirmado. Carlos está preparándose para recogerlo.</p>
+        <p id="successMessage">Tu pedido ha sido confirmado. Un repartidor está preparándose para recogerlo.</p>
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
           <a href="tracking.html" class="btn btn-primary" id="successTrackingBtn">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -591,16 +612,17 @@
       <h2>¡La App viene pronto!</h2>
       <p>Estamos construyendo algo increíble para tu barrio. Mientras tanto, pide todo lo que necesites por WhatsApp.</p>
       <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20unirme%20a%20la%20lista%20de%20espera%20de%20la%20App"
-         class="btn btn-whatsapp" target="_blank" rel="noopener" style="margin-bottom: var(--space-md); width: 100%;">
+         class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer" style="margin-bottom: var(--space-md); width: 100%;">
         Unirme a la lista de espera
       </a>
       <button class="btn btn-secondary" id="closeWaitlist" style="width: 100%;">Cerrar</button>
     </div>
   </div>
 
-  <script src="js/main.js"></script>
-  <script src="js/cart.js"></script>
-  <script src="js/checkout.js"></script>
+  <script src="js/config.js?v=21"></script>
+  <script src="js/main.js?v=21"></script>
+  <script src="js/cart.js?v=21"></script>
+  <script src="js/checkout.js?v=21"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

@@ -129,41 +129,65 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('closeModal');
 
   if (affiliationForm) {
-    affiliationForm.addEventListener('submit', (e) => {
-      // Simple validation
-      let isValid = true;
-      const requiredFields = affiliationForm.querySelectorAll('[required]');
-
-      requiredFields.forEach(field => {
-        const errorEl = field.parentElement.querySelector('.form-error');
-        
-        if (!field.value.trim()) {
-          field.classList.add('error');
-          if (errorEl) errorEl.classList.add('show');
-          isValid = false;
-        } else {
-          field.classList.remove('error');
-          if (errorEl) errorEl.classList.remove('show');
-        }
-      });
-
-      if (!isValid) {
-        e.preventDefault();
-        return;
-      }
-
-      // If using Formspree (form has action attribute), let it submit natively
-      if (affiliationForm.getAttribute('action') && affiliationForm.getAttribute('action').includes('formspree')) {
-        // Allow native form submission to Formspree
-        return;
-      }
-
-      // Fallback: show success modal for non-Formspree forms
+    affiliationForm.addEventListener('submit', async (e) => {
+      // 1. Prevenir el comportamiento por defecto Inmediatamente
       e.preventDefault();
-      if (successModal) {
-        successModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        affiliationForm.reset();
+      
+      // 2. Ejecutar la validación nativa de forma segura
+      if (!affiliationForm.checkValidity()) {
+          // Muestra los globos de error nativos sin bloquear el JS
+          affiliationForm.reportValidity(); 
+          return; // Detenemos la ejecución si hay errores
+      }
+
+      const submitBtn = affiliationForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      
+      // UI state: Loading
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
+
+      // If using Formspree
+      const action = affiliationForm.getAttribute('action');
+      if (action && action.includes('formspree')) {
+        try {
+          const formData = new FormData(affiliationForm);
+          const response = await fetch(action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            showSuccess();
+          } else {
+            const data = await response.json();
+            throw new Error(data.error || 'Error al enviar el formulario');
+          }
+        } catch (error) {
+          console.error('Formspree error:', error);
+          alert('Hubo un problema al enviar tu solicitud. Por favor intenta de nuevo o contáctanos por WhatsApp.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+        return;
+      }
+
+      // Fallback: show success modal simulado
+      setTimeout(() => {
+          showSuccess();
+      }, 1000);
+
+      function showSuccess() {
+        if (successModal) {
+          successModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+          affiliationForm.reset();
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
       }
     });
 
@@ -192,21 +216,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Waitlist Modal Handling ──
+  // ── Modal Handling (Universal) ──
   const waitlistModal = document.getElementById('waitlistModal');
   const closeWaitlistBtn = document.getElementById('closeWaitlist');
 
+  // Open Waitlist
+  document.querySelectorAll('.open-waitlist').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (waitlistModal) {
+        waitlistModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  // Close Modals (Waitlist)
   if (closeWaitlistBtn && waitlistModal) {
-    closeWaitlistBtn.addEventListener('click', () => {
+    const closeWaitlist = () => {
       waitlistModal.classList.remove('active');
       document.body.style.overflow = '';
-    });
-
+    };
+    closeWaitlistBtn.addEventListener('click', closeWaitlist);
     waitlistModal.addEventListener('click', (e) => {
-      if (e.target === waitlistModal) {
-        waitlistModal.classList.remove('active');
-        document.body.style.overflow = '';
-      }
+      if (e.target === waitlistModal) closeWaitlist();
     });
   }
 
@@ -241,6 +274,25 @@ document.addEventListener('DOMContentLoaded', () => {
         heroImage.style.transform = `translateY(${scrolled * 0.1}px)`;
       }
     }, { passive: true });
-  }
+  // ── Checkout Reset Function ──
+  window.limpiarCheckout = function() {
+    // 1. Vaciar el carrito (localStorage y memoria)
+    if (window.cartManager) {
+      window.cartManager.clear();
+    }
+
+    // 2. Limpiar el formulario de pago
+    const buyerName = document.getElementById('buyerName');
+    const buyerPhone = document.getElementById('buyerPhone');
+    const buyerEmail = document.getElementById('buyerEmail');
+    if (buyerName) buyerName.value = '';
+    if (buyerPhone) buyerPhone.value = '';
+    if (buyerEmail) buyerEmail.value = '';
+
+    // 3. Resetear selección de método de pago
+    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+    const defaultMethod = document.getElementById('methodNequi');
+    if (defaultMethod) defaultMethod.classList.add('selected');
+  };
 
 });

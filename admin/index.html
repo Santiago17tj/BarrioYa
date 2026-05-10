@@ -10,7 +10,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <link rel="stylesheet" href="/admin/admin.css?v=5">
+  <link rel="stylesheet" href="../css/styles.css?v=20">
+  <link rel="stylesheet" href="admin.css?v=20">
 </head>
 <body>
 
@@ -38,6 +39,9 @@
       <a href="#" class="nav-item" data-section="analytics" id="navAnalytics">
         <span class="nav-icon">📈</span> Analítica
       </a>
+      <a href="../bot-demo.html" class="nav-item" style="margin-top: 2rem; background: var(--color-primary-orange); color: white; border-radius: 10px;">
+        <span class="nav-icon">🤖</span> Simulador Bot IA
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -63,11 +67,11 @@
         <p id="pageSubtitle">Bienvenido de vuelta, Don José 👋</p>
       </div>
       <div class="topbar-actions">
-        <div class="notification-bell" id="notifBell">
+        <div class="notification-bell" id="notifBell" title="Notificaciones">
           🔔
           <span class="notif-dot" id="notifDot"></span>
         </div>
-        <a href="../index.html" class="topbar-link">← Volver al sitio</a>
+        <a href="../index.html" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">← Volver a la App</a>
       </div>
     </header>
 
@@ -244,6 +248,7 @@
     </div>
   </main>
 
-  <script src="/admin/admin.js?v=4"></script>
+  <script src="../js/config.js?v=20"></script>
+  <script src="admin.js?v=20"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ def bust_img(filepath):
         content = f.read()
 
     # Append cache buster to hero-mockup.png
-    content = re.sub(r'assets/images/hero-mockup\.png(?:\?v=\d+)?', r'assets/images/hero-mockup.png?v=2', content)
+    content = re.sub(r'assets/images/hero-mockup\.png(?:\?v=\d+)?', r'assets/images/hero-mockup.png?v=3', content)
     
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)

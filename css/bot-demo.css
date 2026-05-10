@@ -1,0 +1,383 @@
+/* ==========================================================
+   BarrioYa — Bot Demo Styles (SPA Integrated)
+   WhatsApp-style chat simulator
+   ========================================================== */
+
+.bot-page {
+  padding-top: 0;
+  min-height: 100vh;
+  background: #0B1423;
+}
+
+.bot-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: calc(100vh - 60px);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.bot-sidebar {
+  background: #0F1B2E;
+  border-right: 1px solid #1d2f52;
+  display: flex;
+  flex-direction: column;
+}
+
+.bot-sidebar .sidebar-header {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1d2f52;
+}
+
+.bot-sidebar .sidebar-header h3 {
+  color: #E9EDEF;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.bot-sidebar .sidebar-info {
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.bot-sidebar .bot-avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  overflow: hidden;
+  border: 3px solid var(--color-primary-orange, #FF5A3C);
+  background: linear-gradient(135deg, var(--color-primary-orange, #FF5A3C), #E04E32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bot-sidebar .bot-avatar-large img {
+  width: 60%;
+  height: auto;
+  filter: brightness(10);
+}
+
+.bot-sidebar .sidebar-info h4 {
+  color: #E9EDEF;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.bot-sidebar .sidebar-info p {
+  color: #8696A0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.bot-sidebar .sidebar-features {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #1d2f52;
+  flex: 1;
+}
+
+.bot-sidebar .sidebar-features h5 {
+  color: var(--color-primary-orange, #FF5A3C);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.bot-sidebar .feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  color: #D1D7DB;
+  font-size: 0.85rem;
+}
+
+.bot-sidebar .feature-item span:first-child {
+  font-size: 1.1rem;
+}
+
+/* ── Chat Area ── */
+.bot-chat-area {
+  display: flex;
+  flex-direction: column;
+  background: #0B1423;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cpattern id='p' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 20h40M20 0v40' stroke='%23ffffff' stroke-width='0.3' opacity='0.03'/%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23p)' width='200' height='200'/%3E%3C/svg%3E");
+}
+
+.bot-chat-topbar {
+  background: #162440;
+  padding: 0.7rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid #1d2f52;
+}
+
+.bot-chat-topbar .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--color-primary-orange, #FF5A3C), #E04E32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.bot-chat-topbar .avatar img {
+  width: 100%;
+  height: auto;
+  filter: brightness(10);
+}
+
+.bot-chat-topbar .contact-info h4 {
+  color: #E9EDEF;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.bot-chat-topbar .contact-info p {
+  color: #8696A0;
+  font-size: 0.75rem;
+}
+
+.bot-chat-topbar .typing-indicator {
+  display: none;
+  color: var(--color-primary-orange, #FF5A3C);
+  font-size: 0.75rem;
+}
+
+.bot-chat-topbar .typing-indicator.show { display: block; }
+
+.bot-back-btn {
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+.bot-back-btn:hover {
+  color: white;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ── Messages ── */
+.bot-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 4rem 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  scroll-behavior: smooth;
+}
+
+.bot-msg {
+  max-width: 75%;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  position: relative;
+  animation: botMsgIn 0.3s ease;
+}
+
+@keyframes botMsgIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bot-msg.bot {
+  background: #162440;
+  color: #E9EDEF;
+  align-self: flex-start;
+  border-top-left-radius: 0;
+}
+
+.bot-msg.user {
+  background: #1a3058;
+  color: #E9EDEF;
+  align-self: flex-end;
+  border-top-right-radius: 0;
+}
+
+.bot-msg .time {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.bot-msg strong { color: var(--color-primary-orange, #FF5A3C); }
+
+.bot-msg .menu-list {
+  margin: 0.5rem 0 0.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.bot-msg .menu-list li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+}
+
+.bot-msg .menu-list li:last-child { border-bottom: none; }
+
+.bot-msg .order-json {
+  background: #0B1423;
+  border-radius: 6px;
+  padding: 0.6rem;
+  margin-top: 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: var(--color-primary-orange, #FF5A3C);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Quick reply buttons */
+.bot-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  animation: botMsgIn 0.3s ease;
+}
+
+.bot-quick-reply-btn {
+  background: transparent;
+  border: 1px solid var(--color-primary-orange, #FF5A3C);
+  color: var(--color-primary-orange, #FF5A3C);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.bot-quick-reply-btn:hover {
+  background: var(--color-primary-orange, #FF5A3C);
+  color: #0B1423;
+}
+
+.bot-quick-reply-btn:active {
+  transform: scale(0.95);
+}
+
+/* ── Input Area ── */
+.bot-chat-input-area {
+  padding: 0.75rem 1rem;
+  background: #162440;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bot-chat-input {
+  flex: 1;
+  background: #1d2f52;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  color: #E9EDEF;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.bot-chat-input::placeholder { color: #8696A0; }
+
+.bot-send-btn {
+  background: var(--color-primary-orange, #FF5A3C);
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.bot-send-btn:hover {
+  background: #E04E32;
+  transform: scale(1.05);
+}
+
+.bot-send-btn:active {
+  transform: scale(0.92);
+}
+
+.bot-send-btn svg { fill: white; }
+
+/* ── Demo Banner ── */
+.bot-demo-banner {
+  background: linear-gradient(135deg, #1d2f52, #162440);
+  padding: 0.6rem 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-accent-yellow, #FFB347);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* ── Typing Bubble ── */
+.bot-typing-bubble {
+  padding: 0.7rem 1rem !important;
+  min-width: 60px;
+}
+
+.bot-typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+}
+
+.bot-typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8696A0;
+  animation: botDotBounce 1.4s ease-in-out infinite;
+}
+
+.bot-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.bot-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes botDotBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .bot-layout {
+    grid-template-columns: 1fr;
+  }
+  .bot-sidebar { display: none; }
+  .bot-messages-container { padding: 1rem; }
+  .bot-msg { max-width: 85%; }
+}

@@ -1,16 +1,34 @@
 import os
 import re
+import shutil
 
 def update_file(filepath, replacements):
-    with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
+    """
+    Actualiza un archivo aplicando reemplazos de regex. 
+    Crea un backup .bak antes de modificar.
+    """
+    if not os.path.exists(filepath):
+        print(f"⚠️ Archivo no encontrado: {filepath}")
+        return
+
+    # Crear backup
+    shutil.copy2(filepath, filepath + '.bak')
     
-    for old, new in replacements.items():
-        content = re.sub(old, new, content)
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-    with open(filepath, 'w', encoding='utf-8') as f:
-        f.write(content)
-    print(f"Updated {filepath}")
+        for old, new in replacements.items():
+            content = re.sub(old, new, content)
+            
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"SUCCESS: Updated {filepath} (Backup created)")
+    except Exception as e:
+        print(f"ERROR processing {filepath}: {e}")
+        # Restaurar desde backup si falla
+        shutil.copy2(filepath + '.bak', filepath)
+        print(f"ROLLBACK: File restored from backup.")
 
 # styles.css replacements
 styles_replacements = {
@@ -61,10 +79,10 @@ update_file('css/tracking.css', tracking_replacements)
 
 # Apply to admin.css
 admin_replacements = {
-    r'--admin-bg:\s*#[0-9A-Fa-f]+;': '--admin-bg: #0B1423;', # Even darker navy for background
-    r'--admin-surface:\s*#[0-9A-Fa-f]+;': '--admin-surface: #0F1B2E;', # Navy blue surface
-    r'--admin-primary:\s*#[0-9A-Fa-f]+;': '--admin-primary: #FF5A3C;', # Orange accent
-    r'--admin-accent:\s*#[0-9A-Fa-f]+;': '--admin-accent: #FFB347;', # Yellow accent
-    r'--admin-info:\s*#[0-9A-Fa-f]+;': '--admin-info: #3B82F6;',
+    r'--admin-bg:\s*#[0-9A-Fa-f]+;': '--admin-bg: #F8FAFC;', # Modo Claro
+    r'--admin-surface:\s*#[0-9A-Fa-f]+;': '--admin-surface: #FFFFFF;',
+    r'--admin-text:\s*#[0-9A-Fa-f]+;': '--admin-text: #0F172A;',
+    r'--admin-border:\s*#[0-9A-Fa-f]+;': '--admin-border: #E2E8F0;',
+    r'--admin-primary:\s*#[0-9A-Fa-f]+;': '--admin-primary: #FF5A3C;',
 }
 update_file('admin/admin.css', admin_replacements)

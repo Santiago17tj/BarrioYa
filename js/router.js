@@ -9,10 +9,22 @@ document.addEventListener('DOMContentLoaded', () => {
     'home': document.getElementById('home-view'),
     'services': document.getElementById('services-view'),
     'checkout': document.getElementById('checkout-view'),
-    'tracking': document.getElementById('tracking-view')
+    'tracking': document.getElementById('tracking-view'),
+    'profile': document.getElementById('profile-view'),
+    'admin': document.getElementById('admin-view'),
+    'bot-demo': document.getElementById('bot-demo-view')
   };
 
   const navItems = document.querySelectorAll('.bottom-nav-item');
+  const bottomNav = document.getElementById('bottomNav');
+  const navbar = document.getElementById('navbar');
+
+  // Views where we hide main nav and bottom bar
+  const fullscreenViews = ['admin', 'bot-demo'];
+  // Views that require PIN auth
+  const protectedViews = ['admin', 'bot-demo'];
+
+  window.adminUnlocked = false;
 
   function updateNav(activeId) {
     navItems.forEach(item => {
@@ -26,17 +38,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderView(hash) {
-    // Si no hay hash o es uno desconocido, por defecto ir a home
     let viewId = hash.replace('#', '').split('?')[0];
-    
-    // Mapeo especial para categorías de servicios (ej. #mascotas -> services-view)
+
+    // Mapeo especial para categorías de servicios
     const validViews = Object.keys(views);
     const serviceCategories = ['domicilios', 'mascotas', 'mandados', 'tecnicos'];
-    
+
     if (serviceCategories.includes(viewId)) {
       viewId = 'services';
     } else if (!validViews.includes(viewId)) {
       viewId = 'home';
+    }
+
+    // Protected view guard
+    if (protectedViews.includes(viewId) && !window.adminUnlocked) {
+      viewId = 'profile';
+      history.replaceState(null, '', '#profile');
     }
 
     // Ocultar todas las vistas
@@ -51,16 +68,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeView = views[viewId];
     if (activeView) {
       activeView.style.display = 'block';
-      // Forzar reflujo para activar animación CSS
       void activeView.offsetWidth;
       activeView.classList.add('active');
     }
 
-    // Actualizar menú inferior
+    // Toggle fullscreen mode (hide navbar + bottom nav)
+    const isFullscreen = fullscreenViews.includes(viewId);
+    if (bottomNav) bottomNav.style.display = isFullscreen ? 'none' : '';
+    if (navbar) navbar.style.display = isFullscreen ? 'none' : '';
+
+    // Update bottom nav
     updateNav(viewId);
 
-    // Si navegó al home o a servicios, scrollear arriba
+    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // If we entered admin and charts exist, re-init them
+    if (viewId === 'admin' && typeof window.initAdminCharts === 'function') {
+      setTimeout(() => window.initAdminCharts(), 200);
+    }
+
+    // Refresh checkout if entering it
+    if (viewId === 'checkout' && typeof window.renderOrderFromCart === 'function') {
+      window.renderOrderFromCart();
+    }
   }
 
   // Interceptar clicks en enlaces locales
@@ -69,26 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!link) return;
 
     const href = link.getAttribute('href');
-    
-    // Ignorar links externos o que apuntan a protocolos como wa.me
+
+    // Ignorar links externos
     if (!href || href.startsWith('http') || href.startsWith('tel') || href.startsWith('mailto')) return;
 
-    // Si el link apunta a un HTML antiguo (ej. servicios.html#mascotas) interceptar y transformar
+    // EXCEPCIÓN: Si el enlace apunta a un archivo .html, navega normalmente
     if (href.includes('.html')) {
-      e.preventDefault();
-      
-      let targetHash = 'home';
-      if (href.includes('servicios.html')) {
-        const parts = href.split('#');
-        targetHash = parts.length > 1 ? parts[1] : 'services';
-      } else if (href.includes('checkout.html')) {
-        targetHash = 'checkout';
-      } else if (href.includes('tracking.html')) {
-        targetHash = 'tracking';
-      }
+      window.location.href = href;
+      return; // Detenemos el router SPA aquí
+    }
 
-      history.pushState(null, '', `#${targetHash}`);
-      renderView(`#${targetHash}`);
+    // Hash links
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      history.pushState(null, '', href);
+      renderView(href);
     }
   });
 
@@ -96,6 +122,80 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('popstate', () => {
     renderView(window.location.hash);
   });
+
+  // ═══════════════════ PIN MODAL LOGIC ═══════════════════
+  const pinModal = document.getElementById('pinModal');
+  const pinDigits = [
+    document.getElementById('pin1'),
+    document.getElementById('pin2'),
+    document.getElementById('pin3'),
+    document.getElementById('pin4')
+  ];
+  const pinError = document.getElementById('pinError');
+  const pinSubmitBtn = document.getElementById('pinSubmitBtn');
+  const pinCancelBtn = document.getElementById('pinCancelBtn');
+
+  // Auto-focus next input on digit entry
+  pinDigits.forEach((input, idx) => {
+    if (!input) return;
+    input.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (val.length > 1) e.target.value = val.slice(-1);
+      if (val && idx < 3) pinDigits[idx + 1].focus();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+        pinDigits[idx - 1].focus();
+      }
+      if (e.key === 'Enter') {
+        validatePin();
+      }
+    });
+  });
+
+  function validatePin() {
+    const pin = pinDigits.map(d => d.value).join('');
+    if (pin === '1234') {
+      // Success!
+      window.adminUnlocked = true;
+      pinModal.classList.remove('active');
+      pinDigits.forEach(d => { d.value = ''; d.classList.remove('error'); });
+      pinError.textContent = '';
+      history.pushState(null, '', '#admin');
+      renderView('#admin');
+    } else {
+      // Error
+      pinError.textContent = 'PIN incorrecto. Intenta de nuevo.';
+      pinDigits.forEach(d => {
+        d.classList.add('error');
+        d.value = '';
+      });
+      pinDigits[0].focus();
+      setTimeout(() => {
+        pinDigits.forEach(d => d.classList.remove('error'));
+      }, 600);
+    }
+  }
+
+  if (pinSubmitBtn) pinSubmitBtn.addEventListener('click', validatePin);
+  if (pinCancelBtn) {
+    pinCancelBtn.addEventListener('click', () => {
+      pinModal.classList.remove('active');
+      pinDigits.forEach(d => { d.value = ''; d.classList.remove('error'); });
+      pinError.textContent = '';
+    });
+  }
+
+  // Close pin modal on overlay click
+  if (pinModal) {
+    pinModal.addEventListener('click', (e) => {
+      if (e.target === pinModal) {
+        pinModal.classList.remove('active');
+        pinDigits.forEach(d => { d.value = ''; });
+        pinError.textContent = '';
+      }
+    });
+  }
 
   // Render inicial
   renderView(window.location.hash);
