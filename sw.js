@@ -3,7 +3,7 @@
    Estrategias: Cache First (assets), Network First (HTML)
    ========================================================== */
 
-const CACHE_NAME = 'barrioYa-v6';
+const CACHE_NAME = 'barrioYa-v8';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

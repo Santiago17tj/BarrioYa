@@ -156,6 +156,40 @@
 .bot-send-btn svg path { fill: #fff !important; }
 
 /* Banner top */
+/* ── BOT LAYOUT: FULLSCREEN ── */
+body.bot-page,
+.bot-page {
+  background: #ECE5DD !important;
+  min-height: 100vh !important;
+  padding-top: 0 !important;
+}
+.bot-layout {
+  display: grid !important;
+  grid-template-columns: 320px 1fr !important;
+  max-width: none !important;
+  width: 100vw !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.bot-chat-area {
+  min-height: 100vh !important;
+  width: 100% !important;
+}
+.bot-messages-container {
+  padding: 1.5rem 2rem !important;
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+}
+@media (max-width: 800px) {
+  .bot-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .bot-sidebar { display: none !important; }
+}
+
 .bot-demo-banner {
   background: linear-gradient(135deg, #00C853, #FFB400) !important;
   color: #fff !important;

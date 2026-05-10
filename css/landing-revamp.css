@@ -629,7 +629,91 @@ h1, h2, h3, h4, h5 {
   box-shadow: 0 18px 40px rgba(0,200,83,0.18) !important;
 }
 
-/* --- Hide old PIN button if duplicate --- */
+/* --- Layout: aprovechar pantallas anchas --- */
+.container {
+  max-width: 1400px !important;
+}
+@media (min-width: 1280px) {
+  .container { padding: 0 2.5rem !important; }
+}
+@media (min-width: 1600px) {
+  .container { max-width: 1520px !important; }
+}
+
+/* Hero: ocupar más alto y mejor distribución horizontal */
+.hero {
+  min-height: 100vh;
+  padding-top: 100px;
+  padding-bottom: 4rem;
+}
+.hero > .container {
+  width: 100% !important;
+  max-width: 1600px !important;
+  gap: 2rem !important;
+}
+@media (min-width: 900px) {
+  .hero > .container {
+    gap: 5rem !important;
+    align-items: center;
+    padding: 2rem 3rem 3rem !important;
+  }
+  .hero-content {
+    max-width: none !important;
+    flex: 1.1;
+  }
+  .phone-mockup-wrap {
+    flex-shrink: 0;
+    flex: 1;
+    max-width: 460px !important;
+  }
+}
+@media (min-width: 1280px) {
+  .phone-mockup-wrap { max-width: 480px !important; }
+  .hero h1 { font-size: clamp(3.2rem, 5.2vw, 5.5rem) !important; }
+}
+@media (min-width: 1600px) {
+  .hero > .container { padding: 2rem 5rem 3rem !important; }
+}
+
+/* Bot demo: pantalla completa */
+.bot-page {
+  padding-top: 0 !important;
+  min-height: 100vh;
+}
+.bot-layout {
+  max-width: 100% !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  grid-template-columns: 340px 1fr !important;
+}
+@media (max-width: 800px) {
+  .bot-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .bot-sidebar { display: none !important; }
+}
+.bot-chat-area {
+  min-height: 100vh;
+}
+.bot-messages-container {
+  padding: 1.5rem 3rem 1.5rem 2rem !important;
+}
+
+/* Tracking: ocupar full width */
+.tracking-page .container,
+.tracking-layout {
+  max-width: 100% !important;
+}
+.tracking-layout {
+  grid-template-columns: 1fr 420px !important;
+}
+@media (min-width: 1600px) {
+  .tracking-layout { grid-template-columns: 1fr 460px !important; }
+}
+
+/* Hide old PIN button if duplicate --- */
 
 /* --- Footer --- */
 .footer {
