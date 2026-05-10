@@ -92,6 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Secciones que viven DENTRO de la vista 'home' (anchors, no vistas SPA)
+  const homeSectionIds = ['inicio','servicios','negocios','como-funciona','cobertura','whatsapp','testimonios','contacto','impacto'];
+
   // Interceptar clicks en enlaces locales
   document.body.addEventListener('click', (e) => {
     const link = e.target.closest('a');
@@ -110,6 +113,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hash links
     if (href.startsWith('#')) {
+      const hashId = href.slice(1).split('?')[0];
+
+      // Si es una sección de home → asegurar home view + scroll suave (sin renderView)
+      if (homeSectionIds.includes(hashId)) {
+        e.preventDefault();
+        const homeView = views.home;
+        const isOnHome = homeView && homeView.classList.contains('active');
+        if (!isOnHome) {
+          history.pushState(null, '', '#home');
+          renderView('#home');
+        }
+        // Scroll suave a la sección
+        const doScroll = () => {
+          const target = document.getElementById(hashId);
+          if (target) {
+            const navOffset = (navbar && navbar.offsetHeight) ? navbar.offsetHeight + 8 : 0;
+            const top = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+            window.scrollTo({ top, behavior: 'smooth' });
+          }
+        };
+        if (isOnHome) doScroll();
+        else setTimeout(doScroll, 220);
+        return;
+      }
+
       e.preventDefault();
       history.pushState(null, '', href);
       renderView(href);

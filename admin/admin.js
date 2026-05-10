@@ -423,6 +423,171 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════
+  // SECCIONES SECUNDARIAS (Pedidos kanban · Menú · Domiciliarios · Analytics)
+  // ══════════════════════════════
+
+  function statusKey(estado) {
+    const s = (estado || '').toLowerCase();
+    if (s === 'recibido' || s === 'nuevo') return 'Nuevo';
+    if (s === 'preparando' || s === 'en_preparacion') return 'Preparando';
+    if (s === 'enviado' || s === 'en_camino') return 'Enviado';
+    if (s === 'entregado' || s === 'completado') return 'Entregado';
+    return null;
+  }
+
+  function renderOrdersBoard(orders) {
+    const buckets = { Nuevo: [], Preparando: [], Enviado: [], Entregado: [] };
+    orders.forEach(o => {
+      const k = statusKey(o.estado);
+      if (k) buckets[k].push(o);
+    });
+
+    Object.keys(buckets).forEach(key => {
+      const countEl = document.getElementById('count' + key);
+      const cardsEl = document.getElementById('cards' + key);
+      if (countEl) countEl.textContent = buckets[key].length;
+      if (!cardsEl) return;
+
+      if (buckets[key].length === 0) {
+        cardsEl.innerHTML = '<div class="empty-state-mini">Sin pedidos</div>';
+        return;
+      }
+
+      cardsEl.innerHTML = buckets[key].slice(0, 10).map(o => {
+        const items = (o.pedido_items || []).map(it => `${it.cantidad}× ${it.nombre_item}`).join(', ');
+        const cliente = (o.datos_cliente && o.datos_cliente.nombre) || o.id_comercio || '—';
+        const fecha = o.fecha_creacion
+          ? new Date(o.fecha_creacion).toLocaleString('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+          : '';
+        return `
+          <article class="board-card">
+            <div class="board-card-head">
+              <span class="board-card-id">${o.id || ''}</span>
+              <span class="board-card-total">${fmtMoney(o.total || 0)}</span>
+            </div>
+            <div class="board-card-customer">${cliente}</div>
+            <div class="board-card-items">${items || 'Sin items'}</div>
+            <div class="board-card-meta">${fecha}</div>
+          </article>`;
+      }).join('');
+    });
+
+    // Badge sidebar = pedidos activos (no entregados)
+    const badge = document.getElementById('ordersBadge');
+    if (badge) {
+      const active = buckets.Nuevo.length + buckets.Preparando.length + buckets.Enviado.length;
+      badge.textContent = active;
+      badge.style.display = active === 0 ? 'none' : '';
+    }
+  }
+
+  async function renderMenuGrid() {
+    const grid = document.getElementById('menuGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="empty-state-mini">Cargando menú…</div>';
+    try {
+      const res = await fetch(`${API}/api/catalogo`);
+      if (!res.ok) throw new Error('catalogo error');
+      const data = await res.json();
+      let businesses = data.businesses || [];
+      if (!isAdmin && user.id_comercio) {
+        businesses = businesses.filter(b => b.id === user.id_comercio);
+      }
+      const items = businesses.flatMap(b => (b.items || []).map(it => ({ ...it, _biz: b.name, _bizId: b.id })));
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="empty-state-mini">Aún no hay productos en tu menú.</div>';
+        return;
+      }
+      grid.innerHTML = items.map(it => `
+        <article class="menu-card">
+          <div class="menu-card-emoji">${it.emoji || '🛍️'}</div>
+          <div class="menu-card-info">
+            <h4>${it.name}</h4>
+            <p class="menu-card-biz">${it._biz}</p>
+            <p class="menu-card-price">${fmtMoney(it.price || 0)}</p>
+          </div>
+          <span class="menu-card-type">${it.type === 'service' ? 'Servicio' : 'Producto'}</span>
+        </article>`).join('');
+    } catch (e) {
+      grid.innerHTML = '<div class="empty-state-mini">⚠️ No se pudo cargar el menú.</div>';
+    }
+  }
+
+  function renderDriversGrid() {
+    const grid = document.getElementById('driversGrid');
+    if (!grid) return;
+    // Demo data — en producción vendría de /api/domiciliarios
+    const drivers = [
+      { name: 'Carlos M.', zona: 'Cabecera del Llano', orders: 12, rating: 4.9, online: true, emoji: '🛵' },
+      { name: 'Laura P.', zona: 'San Francisco', orders: 8, rating: 4.8, online: true, emoji: '🚲' },
+      { name: 'Andrés R.', zona: 'La Concordia', orders: 15, rating: 4.7, online: false, emoji: '🛵' },
+      { name: 'Mariana G.', zona: 'Cabecera del Llano', orders: 6, rating: 5.0, online: true, emoji: '🚶' }
+    ];
+    grid.innerHTML = drivers.map(d => `
+      <article class="driver-card ${d.online ? 'driver-online' : 'driver-offline'}">
+        <div class="driver-avatar">${d.emoji}</div>
+        <div class="driver-info">
+          <h4>${d.name}</h4>
+          <p class="driver-zona">📍 ${d.zona}</p>
+          <div class="driver-stats">
+            <span>📦 ${d.orders} pedidos</span>
+            <span>⭐ ${d.rating}</span>
+          </div>
+        </div>
+        <span class="driver-status">${d.online ? '● En línea' : '○ Offline'}</span>
+      </article>`).join('');
+  }
+
+  function renderAnalyticsExtras(summary) {
+    // Peak chart (re-uses summary.orders_by_hour — flat array of 24 counts)
+    const ctxPeak = document.getElementById('peakChart');
+    if (ctxPeak && summary && Array.isArray(summary.orders_by_hour) && window.Chart) {
+      if (window._peakChart) window._peakChart.destroy();
+      const labels = Array.from({length: 24}, (_, i) => `${i}h`);
+      const data = summary.orders_by_hour;
+      const max = Math.max(...data, 1);
+      const colors = data.map(v => v >= max * 0.7 ? '#00C853' : (v > 0 ? '#FFB400' : '#27272A'));
+      window._peakChart = new Chart(ctxPeak, {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4 }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#71717A', maxTicksLimit: 12 } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { precision: 0 } }
+          }
+        }
+      });
+    }
+
+    // Re-render revenue chart in analytics section (separate canvas)
+    const ctxRev = document.getElementById('revenueChart');
+    if (ctxRev && summary && Array.isArray(summary.revenue_by_day) && window.Chart) {
+      if (window._revChart) window._revChart.destroy();
+      const labels = summary.revenue_by_day.map(d => d.label || d.date);
+      const data = summary.revenue_by_day.map(d => d.revenue);
+      const grad = ctxRev.getContext('2d').createLinearGradient(0, 0, 0, 240);
+      grad.addColorStop(0, 'rgba(0,200,83,0.35)');
+      grad.addColorStop(1, 'rgba(0,200,83,0)');
+      window._revChart = new Chart(ctxRev, {
+        type: 'line',
+        data: { labels, datasets: [{ data, borderColor: '#00C853', backgroundColor: grad, fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#71717A' } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k', color: '#71717A' } }
+          }
+        }
+      });
+    }
+  }
+
+  // ══════════════════════════════
   // LOAD & RENDER
   // ══════════════════════════════
   async function loadDashboard() {
@@ -437,6 +602,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStatusDonut(summary);
     renderPodium(summary);
     renderRecentOrders(allOrders);
+    renderOrdersBoard(allOrders);
+    renderAnalyticsExtras(summary);
+    renderMenuGrid();
+    renderDriversGrid();
   }
 
   loadDashboard();
@@ -458,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStatusDonut(summary);
     renderPodium(summary);
     renderRecentOrders(allOrders);
+    renderOrdersBoard(allOrders);
   }, 30000);
 
   // ── Filtros de tabla ──
