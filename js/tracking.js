@@ -5,6 +5,78 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ── Order Summary: render último pedido o estado vacío ──
+  function fmtPrice(p) { return '$' + (p || 0).toLocaleString('es-CO'); }
+  function renderOrderSummary() {
+    const wrap = document.getElementById('orderSummaryItems');
+    if (!wrap) return;
+
+    // Prioridad: barrioya_last_order (pedido confirmado) > barrioya_cart (sesión activa)
+    let order = null;
+    try {
+      const lastOrder = JSON.parse(localStorage.getItem('barrioya_last_order') || 'null');
+      if (lastOrder && Array.isArray(lastOrder.items) && lastOrder.items.length) {
+        order = lastOrder;
+      } else {
+        const cart = JSON.parse(localStorage.getItem('barrioya_cart') || 'null');
+        if (cart && Array.isArray(cart.items) && cart.items.length) {
+          const subtotal = cart.items.reduce((s, it) => s + (it.price * it.quantity), 0);
+          order = {
+            items: cart.items.map(it => ({ name: it.name, quantity: it.quantity, price: it.price })),
+            subtotal,
+            delivery: 2500,
+            total: subtotal + 2500,
+            shop: cart.shop || ''
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('[tracking] No se pudo leer pedido:', e);
+    }
+
+    if (!order || !order.items.length) {
+      wrap.innerHTML = `
+        <div class="empty-order-msg">
+          <p>📭 Aún no tienes un pedido reciente.</p>
+          <a href="servicios.html" class="btn btn-primary" style="margin-top: 1rem;">Hacer un pedido</a>
+        </div>`;
+      return;
+    }
+
+    const itemsHTML = order.items.map(it => `
+      <div class="order-item">
+        <div>${it.name} <span class="qty">x${it.quantity}</span></div>
+        <div>${fmtPrice(it.price * it.quantity)}</div>
+      </div>`).join('');
+
+    wrap.innerHTML = `
+      ${order.shop ? `<div class="order-shop">🏪 ${order.shop}</div>` : ''}
+      ${itemsHTML}
+      <div class="order-item" style="color: var(--color-text-light);">
+        <div>Envío</div>
+        <div>${fmtPrice(order.delivery || 2500)}</div>
+      </div>
+      <div class="order-total">
+        <div>Total</div>
+        <div>${fmtPrice(order.total)}</div>
+      </div>`;
+  }
+
+  renderOrderSummary();
+
+  // Botón "Nuevo pedido" → limpia cart + last_order y va a servicios
+  const clearBtn = document.getElementById('clearOrderBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (!confirm('¿Iniciar un pedido nuevo? Se borrará el pedido actual.')) return;
+      try {
+        localStorage.removeItem('barrioya_cart');
+        localStorage.removeItem('barrioya_last_order');
+      } catch (e) {}
+      window.location.href = 'servicios.html';
+    });
+  }
+
   // ── Bucaramanga Coordinates ──
   // Origin: Panadería Don José (Cabecera area)
   const ORIGIN = { lat: 7.1180, lng: -73.1140 };

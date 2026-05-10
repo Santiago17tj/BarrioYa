@@ -211,6 +211,23 @@ document.addEventListener('DOMContentLoaded', () => {
       payBtn.style.background = '#00C853';
       payBtn.innerHTML = `¡Pedido Confirmado!`;
 
+      // Guardar último pedido para tracking
+      try {
+        const cartSnapshot = window.cartManager.getItems ? window.cartManager.getItems() : (window.cartManager.items || []);
+        const items = cartSnapshot.map(it => ({ name: it.name, quantity: it.quantity, price: it.price }));
+        const subtotal = items.reduce((s, it) => s + (it.price * it.quantity), 0);
+        const lastOrder = {
+          id: orderId,
+          items,
+          subtotal,
+          delivery: orderData.costo_envio || 2500,
+          total: orderData.total || (subtotal + 2500),
+          shop: orderData.shop_name || orderData.id_comercio || '',
+          fecha: new Date().toISOString()
+        };
+        localStorage.setItem('barrioya_last_order', JSON.stringify(lastOrder));
+      } catch (e) { console.warn('[checkout] no se pudo guardar last_order', e); }
+
       await new Promise(resolve => setTimeout(resolve, 800));
 
       // 1. Limpiar datos

@@ -3,7 +3,7 @@
    Estrategias: Cache First (assets), Network First (HTML)
    ========================================================== */
 
-const CACHE_NAME = 'barrioYa-v5';
+const CACHE_NAME = 'barrioYa-v6';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -20,6 +20,7 @@ const STATIC_ASSETS = [
   '/css/tracking.css',
   '/css/bot-demo.css',
   '/css/landing-revamp.css',
+  '/css/bot-demo-light.css',
   // JS
   '/js/config.js',
   '/js/main.js',

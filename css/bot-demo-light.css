@@ -1,0 +1,165 @@
+/* ==========================================================
+   BarrioYa — Bot Demo · LIGHT THEME OVERRIDE
+   Sobrescribe css/bot-demo.css para alinear con el nuevo
+   sistema verde/amber/light de la landing.
+   ========================================================== */
+
+.bot-page {
+  background:
+    radial-gradient(ellipse at 80% 10%, rgba(255,180,0,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(0,200,83,0.15) 0%, transparent 55%),
+    linear-gradient(180deg, #FFFBF0 0%, #FFFFFF 100%) !important;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+.bot-layout {
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.08) !important;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 20px !important;
+}
+
+/* ── Sidebar ── */
+.bot-sidebar {
+  background: #FFFFFF !important;
+  border-right: 1px solid rgba(0,200,83,0.12) !important;
+}
+.bot-sidebar .sidebar-header {
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+}
+.bot-sidebar .sidebar-header h3 {
+  color: #1F2937 !important;
+  font-family: 'Outfit', sans-serif;
+}
+
+.bot-sidebar .bot-avatar-large {
+  background: linear-gradient(135deg, #00C853, #FFB400) !important;
+  border: 3px solid #fff !important;
+  box-shadow: 0 8px 20px rgba(0,200,83,0.25);
+  width: 92px !important;
+  height: 92px !important;
+}
+.bot-sidebar .bot-avatar-large img {
+  filter: brightness(0) invert(1) !important;
+  width: 50% !important;
+}
+.bot-sidebar .sidebar-info h4 {
+  color: #1F2937 !important;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem !important;
+}
+.bot-sidebar .sidebar-info p {
+  color: #4B5563 !important;
+}
+
+.bot-sidebar .sidebar-features {
+  border-top: 1px solid rgba(0,0,0,0.06) !important;
+}
+.bot-sidebar .sidebar-features h5 {
+  color: #00963E !important;
+  font-family: 'Outfit', sans-serif;
+}
+.bot-sidebar .feature-item {
+  color: #1F2937 !important;
+  font-weight: 500;
+  border-bottom: 1px dashed rgba(0,0,0,0.05);
+}
+.bot-sidebar .feature-item:last-child { border-bottom: none; }
+
+/* ── Chat Area · WhatsApp-like light ── */
+.bot-chat-area {
+  background: #ECE5DD !important;
+  background-image:
+    linear-gradient(rgba(236,229,221,0.85), rgba(236,229,221,0.85)),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.025) 0 2px, transparent 2px 8px) !important;
+}
+
+.bot-chat-topbar {
+  background: #075E54 !important;
+  border-bottom: none !important;
+  color: #fff;
+}
+.bot-chat-topbar .avatar {
+  background: #00C853 !important;
+  box-shadow: 0 0 0 2px #fff inset;
+}
+.bot-chat-topbar .avatar img { filter: brightness(0) invert(1) !important; }
+.bot-chat-topbar .contact-info h4 {
+  color: #fff !important;
+  font-family: 'Outfit', sans-serif;
+}
+.bot-chat-topbar .contact-info p { color: rgba(255,255,255,0.85) !important; }
+.bot-chat-topbar .typing-indicator { color: #FFE082 !important; }
+.bot-chat-topbar .status-text { color: rgba(255,255,255,0.85) !important; }
+
+.bot-back-btn {
+  color: #fff !important;
+  background: rgba(255,255,255,0.15) !important;
+  border-radius: 999px !important;
+  font-weight: 600;
+}
+.bot-back-btn:hover { background: rgba(255,255,255,0.28) !important; }
+
+/* ── Messages bubbles · light ── */
+.bot-msg {
+  background: #fff !important;
+  color: #1F2937 !important;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+  border-radius: 10px !important;
+}
+.bot-msg.user, .bot-msg.sent {
+  background: #DCF8C6 !important;
+  color: #1F2937 !important;
+  align-self: flex-end;
+}
+.bot-msg .msg-time, .bot-msg .timestamp {
+  color: #6B7280 !important;
+}
+
+/* Quick replies pills */
+#quickRepliesContainer .quick-reply,
+#quickRepliesContainer button {
+  background: #fff !important;
+  color: #00963E !important;
+  border: 1px solid rgba(0,200,83,0.25) !important;
+  border-radius: 999px !important;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+}
+#quickRepliesContainer button:hover {
+  background: #00C853 !important;
+  color: #fff !important;
+  border-color: #00C853 !important;
+}
+
+/* Input bar */
+.bot-chat-input-area {
+  background: #F0F2F5 !important;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.bot-chat-input {
+  background: #fff !important;
+  color: #1F2937 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  font-family: 'Outfit', sans-serif;
+}
+.bot-chat-input::placeholder { color: #9CA3AF !important; }
+.bot-send-btn {
+  background: #00C853 !important;
+  color: #fff !important;
+  box-shadow: 0 6px 16px rgba(0,200,83,0.35) !important;
+  transition: transform 0.2s ease;
+}
+.bot-send-btn:hover { transform: scale(1.08); background: #00E05D !important; }
+.bot-send-btn svg path { fill: #fff !important; }
+
+/* Banner top */
+.bot-demo-banner {
+  background: linear-gradient(135deg, #00C853, #FFB400) !important;
+  color: #fff !important;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  border-radius: 0 !important;
+}

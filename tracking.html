@@ -14,14 +14,21 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
 
+  <!-- Fonts: Outfit + Phosphor Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin="" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=21">
-  <link rel="stylesheet" href="css/tracking.css?v=21">
+  <link rel="stylesheet" href="css/styles.css?v=23">
+  <link rel="stylesheet" href="css/tracking.css?v=23">
+  <link rel="stylesheet" href="css/landing-revamp.css?v=23">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -37,7 +44,7 @@
   <nav class="navbar scrolled" id="navbar">
     <div class="container">
       <a href="index.html" aria-label="BarrioYa - Inicio">
-        <img src="/assets/BarrioYalogo.png" alt="BarrioYa Logo" class="navbar-logo">
+        <img src="assets/logo-horizontal.png?v=23" alt="BarrioYa Logo" class="navbar-logo">
       </a>
 
       <div class="navbar-links" id="navbarLinks">
@@ -140,28 +147,19 @@
           </div>
         </div>
 
-        <!-- Order Summary -->
-        <div class="order-summary">
-          <h3>Resumen del pedido</h3>
-          <div class="order-item">
-            <div>Empanadas de carne <span class="qty">x3</span></div>
-            <div>$6.000</div>
+        <!-- Order Summary (dynamic) -->
+        <div class="order-summary" id="orderSummaryWrap">
+          <div class="order-summary-header">
+            <h3>Resumen del pedido</h3>
+            <button id="clearOrderBtn" class="btn-clear-order" title="Iniciar un pedido nuevo">
+              🗑️ Nuevo pedido
+            </button>
           </div>
-          <div class="order-item">
-            <div>Jugo de lulo <span class="qty">x2</span></div>
-            <div>$5.000</div>
-          </div>
-          <div class="order-item">
-            <div>Pan de bono <span class="qty">x4</span></div>
-            <div>$4.000</div>
-          </div>
-          <div class="order-item" style="color: var(--color-text-light);">
-            <div>Envío</div>
-            <div>$2.500</div>
-          </div>
-          <div class="order-total">
-            <div>Total</div>
-            <div>$17.500</div>
+          <div id="orderSummaryItems">
+            <div class="empty-order-msg">
+              <p>📭 Aún no tienes un pedido reciente.</p>
+              <a href="servicios.html" class="btn btn-primary" style="margin-top: 1rem;">Hacer un pedido</a>
+            </div>
           </div>
         </div>
       </div>
