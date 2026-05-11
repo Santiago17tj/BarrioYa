@@ -16,9 +16,15 @@ Documentación Swagger UI: http://localhost:8000/docs
 Documentación ReDoc:      http://localhost:8000/redoc
 """
 
+import sys
+import os
 import logging
 import uvicorn
 from fastapi import FastAPI
+
+# Asegurar que el directorio actual esté en el path para Vercel
+sys.path.append(os.path.dirname(__file__))
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from config.settings import (
