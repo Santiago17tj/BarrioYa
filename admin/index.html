@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
   <meta name="description" content="Panel de administración para negocios afiliados a BarrioYa.">
   <title>Dashboard — BarrioYa Admin</title>
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
@@ -17,12 +18,13 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <link rel="stylesheet" href="../css/styles.css?v=21">
-  <link rel="stylesheet" href="admin.css?v=21">
+  <link rel="stylesheet" href="../css/styles.css?v=30">
+  <link rel="stylesheet" href="admin.css?v=30">
+  <link rel="stylesheet" href="../css/landing-revamp.css?v=30">
 
   <!-- Auth: redirige a login.html si no hay sesión válida -->
-  <script src="../js/config.js?v=21"></script>
-  <script src="../js/auth.js?v=21"></script>
+  <script src="../js/config.js?v=30"></script>
+  <script src="../js/auth.js?v=30"></script>
   <script>
     if (!window.barrioyaAuth.isAuthenticated()) {
       window.location.href = '/admin/login.html';
@@ -350,6 +352,6 @@
     </div>
   </main>
 
-  <script src="admin.js?v=21"></script>
+  <script src="admin.js?v=30"></script>
 </body>
 </html>
