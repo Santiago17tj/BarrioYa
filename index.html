@@ -359,7 +359,7 @@
           </div>
           <h3>Escribe por WhatsApp</h3>
           <p>Sin descargas, sin registros. Solo abre WhatsApp y dile a nuestro bot qué necesitas en lenguaje natural.</p>
-          <a href="#bot-demo" class="step-cta" data-testid="step-cta-whatsapp">
+          <a href="bot-demo.html" class="step-cta" data-testid="step-cta-whatsapp">
             Abrir chat <i class="ph-bold ph-arrow-right"></i>
           </a>
         </article>
@@ -390,7 +390,7 @@
       </div>
 
       <div class="steps-final-cta animate-on-scroll">
-        <a href="#bot-demo" class="btn btn-primary" data-testid="how-final-cta">
+        <a href="bot-demo.html" class="btn btn-primary" data-testid="how-final-cta">
           <i class="ph-fill ph-whatsapp-logo" style="font-size:20px;"></i>
           Probar el bot ahora
         </a>
@@ -496,36 +496,47 @@
   </section>
 
   <!-- ═══════════════════ COBERTURA ═══════════════════ -->
-  <section class="coverage section" id="cobertura">
+  <section class="coverage-v2 section" id="cobertura">
     <div class="container">
       <h2 class="section-title fade-in">Nuestra <span class="highlight">cobertura</span></h2>
       <p class="section-subtitle fade-in">Empezamos en Bucaramanga, el corazón de Santander. Pronto llegaremos a más ciudades.</p>
 
-      <div class="coverage-inner">
-        <div class="coverage-map fade-in-left">
-          <div class="coverage-map-visual">
-            <div class="coverage-map-icon">🏙️</div>
-            <div class="coverage-map-title">Bucaramanga</div>
-            <div class="coverage-map-subtitle">Mercado piloto · Comunas 5, 14 y 15</div>
+      <div class="coverage-hero fade-in">
+        <div class="coverage-map-card">
+          <div class="coverage-radar">
+            <div class="radar-ring radar-ring-1"></div>
+            <div class="radar-ring radar-ring-2"></div>
+            <div class="radar-ring radar-ring-3"></div>
+            <div class="radar-center">📍</div>
           </div>
+          <h3>Bucaramanga</h3>
+          <p>Mercado piloto · Comunas 5, 14 y 15</p>
+          <div class="coverage-live-badge"><span class="pulse-dot-green"></span> Zona activa</div>
         </div>
 
-        <div class="coverage-stats fade-in-right">
-          <div class="coverage-stat-card">
-            <div class="coverage-stat-value">+2.000</div>
-            <div class="coverage-stat-label">Negocios potenciales</div>
+        <div class="coverage-stats-grid">
+          <div class="cov-stat-card">
+            <div class="cov-stat-number">+2.000</div>
+            <div class="cov-stat-label">Negocios potenciales</div>
+            <div class="cov-stat-bar"><div class="cov-stat-fill" style="width:85%"></div></div>
           </div>
-          <div class="coverage-stat-card">
-            <div class="coverage-stat-value">3</div>
-            <div class="coverage-stat-label">Comunas piloto</div>
+          <div class="cov-stat-card">
+            <div class="cov-stat-number">3</div>
+            <div class="cov-stat-label">Comunas piloto</div>
+            <div class="cov-stat-bar"><div class="cov-stat-fill" style="width:30%"></div></div>
           </div>
-          <div class="coverage-stat-card">
-            <div class="coverage-stat-value">2 km</div>
-            <div class="coverage-stat-label">Radio de cobertura</div>
+          <div class="cov-stat-card">
+            <div class="cov-stat-number">2 km</div>
+            <div class="cov-stat-label">Radio de cobertura</div>
+            <div class="cov-stat-bar"><div class="cov-stat-fill" style="width:60%"></div></div>
           </div>
-
-          <div class="coverage-expansion">
-            <p><strong>Próxima expansión (2026):</strong><br>Cúcuta · Floridablanca · Barrancabermeja</p>
+          <div class="cov-expansion">
+            <div class="cov-expansion-title">🚀 Próxima expansión (2026)</div>
+            <div class="cov-expansion-cities">
+              <span>Cúcuta</span>
+              <span>Floridablanca</span>
+              <span>Barrancabermeja</span>
+            </div>
           </div>
         </div>
       </div>
@@ -533,37 +544,49 @@
   </section>
 
   <!-- ═══════════════════ TESTIMONIOS ═══════════════════ -->
-  <section class="testimonials section" id="testimonios">
+  <section class="testimonials-v2 section" id="testimonios">
     <div class="container">
       <h2 class="section-title fade-in">Historias del <span class="highlight">barrio</span></h2>
       <p class="section-subtitle fade-in">Así es como BarrioYa hace la vida más fácil en el barrio</p>
 
-      <div class="testimonials-grid">
-        <div class="testimonial-card fade-in" id="testimonial-maria">
-          <div class="testimonial-avatar maria">👩‍💼</div>
-          <h4>María</h4>
-          <div class="testimonial-role">Profesional · Barrio Cabecera</div>
-          <blockquote>
-            "Llego cansada del trabajo y lo último que quiero es salir. Con BarrioYa pido del restaurante del barrio y en 15 minutos tengo mi cena en la puerta. ¡Es como tener el barrio en el celular!"
-          </blockquote>
+      <div class="testimonials-showcase fade-in">
+        <div class="testi-card testi-card--featured">
+          <div class="testi-quote-icon">❝</div>
+          <blockquote>"Llego cansada del trabajo y lo último que quiero es salir. Con BarrioYa pido del restaurante del barrio y en 15 minutos tengo mi cena en la puerta. ¡Es como tener el barrio en el celular!"</blockquote>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background: linear-gradient(135deg, #FF6F00, #FF9800);">👩‍💼</div>
+            <div>
+              <div class="testi-name">María</div>
+              <div class="testi-role">Profesional · Barrio Cabecera</div>
+            </div>
+          </div>
+          <div class="testi-stars">⭐⭐⭐⭐⭐</div>
         </div>
 
-        <div class="testimonial-card fade-in" id="testimonial-josue">
-          <div class="testimonial-avatar josue">👨‍💻</div>
-          <h4>Josué</h4>
-          <div class="testimonial-role">Home office · Barrio La Concordia</div>
-          <blockquote>
-            "Trabajo desde casa y no puedo sacar a pasear a Rocky todos los días. El paseador de BarrioYa vive a 3 cuadras y ya se conocen. También me hacen mandados cuando no puedo salir."
-          </blockquote>
+        <div class="testi-card">
+          <div class="testi-quote-icon">❝</div>
+          <blockquote>"Trabajo desde casa y no puedo sacar a pasear a Rocky todos los días. El paseador de BarrioYa vive a 3 cuadras y ya se conocen. También me hacen mandados cuando no puedo salir."</blockquote>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background: linear-gradient(135deg, #00C853, #69F0AE);">👨‍💻</div>
+            <div>
+              <div class="testi-name">Josué</div>
+              <div class="testi-role">Home office · Barrio La Concordia</div>
+            </div>
+          </div>
+          <div class="testi-stars">⭐⭐⭐⭐⭐</div>
         </div>
 
-        <div class="testimonial-card fade-in" id="testimonial-empresa">
-          <div class="testimonial-avatar empresa">🏢</div>
-          <h4>3 Minutos</h4>
-          <div class="testimonial-role">Empresa · Gestión de entregas internas</div>
-          <blockquote>
-            "Necesitábamos una solución local para entregas internas rápidas. BarrioYa nos conecta con mandaderos confiables del mismo sector. Eficiente y económico."
-          </blockquote>
+        <div class="testi-card">
+          <div class="testi-quote-icon">❝</div>
+          <blockquote>"Necesitábamos una solución local para entregas internas rápidas. BarrioYa nos conecta con mandaderos confiables del mismo sector. Eficiente y económico."</blockquote>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background: linear-gradient(135deg, #3B82F6, #60A5FA);">🏢</div>
+            <div>
+              <div class="testi-name">3 Minutos</div>
+              <div class="testi-role">Empresa · Gestión de entregas internas</div>
+            </div>
+          </div>
+          <div class="testi-stars">⭐⭐⭐⭐⭐</div>
         </div>
       </div>
     </div>
