@@ -5,6 +5,11 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ── Page Load Animation ── trigger fade-in
+  requestAnimationFrame(() => {
+    document.body.classList.add('page-loaded');
+  });
+
   // ── Navbar Scroll Effect ──
   const navbar = document.getElementById('navbar');
   
@@ -62,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Scroll Animations (IntersectionObserver) ──
-  const animatedElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .animate-on-scroll');
+  const animatedElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .animate-on-scroll, .reveal-3d, .reveal-scale, .reveal-fade-up');
 
   // Counter animation helper
   const animateCounter = (el) => {

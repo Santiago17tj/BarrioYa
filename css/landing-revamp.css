@@ -1540,3 +1540,189 @@ h1, h2, h3, h4, h5 {
     display: none;
   }
 }
+
+/* =============================================
+   1. PAGE LOAD ANIMATION - Global Entrance
+   ============================================= */
+body {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+body.page-loaded {
+  opacity: 1;
+}
+.page-entrance {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+body.page-loaded .page-entrance {
+  opacity: 1;
+  transform: translateY(0);
+}
+body.page-loaded .page-entrance:nth-child(1) { transition-delay: 0.1s; }
+body.page-loaded .page-entrance:nth-child(2) { transition-delay: 0.2s; }
+body.page-loaded .page-entrance:nth-child(3) { transition-delay: 0.3s; }
+body.page-loaded .page-entrance:nth-child(4) { transition-delay: 0.4s; }
+
+/* =============================================
+   3. ENHANCED SCROLL ANIMATIONS - 3D Depth
+   ============================================= */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px) scale(0.97);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.reveal-3d {
+  opacity: 0;
+  transform: perspective(800px) rotateX(8deg) translateY(30px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-3d.visible {
+  opacity: 1;
+  transform: perspective(800px) rotateX(0deg) translateY(0);
+}
+.reveal-fade-up {
+  opacity: 0;
+  transform: translateY(25px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children > *:nth-child(1) { transition-delay: 0s; }
+.stagger-children > *:nth-child(2) { transition-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { transition-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { transition-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { transition-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { transition-delay: 0.3s; }
+
+/* =============================================
+   2. AFILIADOS / LOGIN - Glassmorphism Pages
+   ============================================= */
+.glass-page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #0f1b2e;
+  overflow: hidden;
+}
+.glass-page-bg .gp-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.5;
+  animation: gp-drift 20s ease-in-out infinite alternate;
+}
+.glass-page-bg .gp-blob-1 {
+  width: 45vw; height: 45vw;
+  background: rgba(0, 200, 83, 0.35);
+  top: -15%; left: -10%;
+}
+.glass-page-bg .gp-blob-2 {
+  width: 40vw; height: 40vw;
+  background: rgba(255, 180, 0, 0.25);
+  bottom: -15%; right: -10%;
+  animation-delay: -7s;
+}
+.glass-page-bg .gp-blob-3 {
+  width: 25vw; height: 25vw;
+  background: rgba(0, 150, 255, 0.15);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -14s;
+}
+@keyframes gp-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, 10%) scale(1.05); }
+  66% { transform: translate(-3%, -8%) scale(0.97); }
+  100% { transform: translate(2%, 5%) scale(1.02); }
+}
+.glass-form-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(20, 28, 45, 0.65) !important;
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  padding: 3rem 2.5rem !important;
+  color: #e6e8ee !important;
+}
+.glass-form-card .form-header h1,
+.glass-form-card .form-header p { color: #e6e8ee !important; }
+.glass-form-card .highlight { color: #00C853 !important; }
+.glass-form-card label { color: #a0aec0 !important; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.glass-form-card .form-input,
+.glass-form-card .form-select,
+.glass-form-card .form-textarea {
+  background: rgba(15, 17, 21, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #e6e8ee !important;
+  border-radius: 12px !important;
+  padding: 0.85rem 1rem !important;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.glass-form-card .form-input:focus,
+.glass-form-card .form-select:focus,
+.glass-form-card .form-textarea:focus {
+  border-color: #00C853 !important;
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.15) !important;
+  outline: none;
+}
+.glass-form-card .form-input::placeholder,
+.glass-form-card .form-textarea::placeholder { color: #4a5568 !important; }
+.glass-form-card .form-radio span { color: #a0aec0 !important; }
+.glass-form-card .required { color: #f56565 !important; }
+.glass-form-card .btn-primary {
+  background: linear-gradient(135deg, #00C853 0%, #00A744 100%) !important;
+  color: #0F1115 !important;
+  font-weight: 700;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+  font-size: 1rem;
+  border: none;
+  box-shadow: 0 12px 30px rgba(0, 200, 83, 0.25);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.glass-form-card .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0, 200, 83, 0.35); }
+.glass-form-card .btn-whatsapp { border-radius: 12px !important; }
+.glass-page .form-page { background: transparent !important; min-height: 100vh; display: flex; align-items: center; }
+.glass-page .navbar { background: rgba(15, 27, 46, 0.8) !important; backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.glass-page .navbar a,
+.glass-page .navbar .navbar-links a { color: #e6e8ee !important; }
+.glass-page .footer { background: rgba(10, 19, 34, 0.9) !important; position: relative; z-index: 1; }
+.admin-login-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+.admin-login-bg .al-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  animation: gp-drift 18s ease-in-out infinite alternate;
+}
+.admin-login-bg .al-blob-1 { width: 50vw; height: 50vw; background: rgba(0, 200, 83, 0.3); top: -20%; left: -15%; }
+.admin-login-bg .al-blob-2 { width: 40vw; height: 40vw; background: rgba(255, 180, 0, 0.2); bottom: -20%; right: -10%; animation-delay: -6s; }
+@media (max-width: 768px) {
+  .glass-form-card { padding: 2rem 1.5rem !important; margin: 1rem; }
+}
