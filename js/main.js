@@ -3,8 +3,7 @@
    Interactividad: navbar, menú móvil, scroll, animaciones, form
    ========================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-
+const initApp = () => {
   // ── Page Load Animation ── trigger fade-in
   requestAnimationFrame(() => {
     document.body.classList.add('page-loaded');
@@ -14,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navbar = document.getElementById('navbar');
   
   const handleNavbarScroll = () => {
+    if (!navbar) return;
     if (window.scrollY > 50) {
       navbar.classList.add('scrolled');
     } else {
@@ -21,8 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  window.addEventListener('scroll', handleNavbarScroll, { passive: true });
-  handleNavbarScroll(); // Initial check
+  if (navbar) {
+    window.addEventListener('scroll', handleNavbarScroll, { passive: true });
+    handleNavbarScroll(); // Initial check
+  }
+
 
   // ── Mobile Menu Toggle ──
   const navbarToggle = document.getElementById('navbarToggle');
@@ -323,5 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultMethod = document.getElementById('methodNequi');
     if (defaultMethod) defaultMethod.classList.add('selected');
   };
+}; // end initApp
 
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
