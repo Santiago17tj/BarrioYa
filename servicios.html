@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
   <meta name="description" content="Servicios BarrioYa: domicilios, paseo de mascotas, mandados y técnicos del hogar. Todo desde tu barrio en Bucaramanga.">
   <meta name="keywords" content="BarrioYa servicios, domicilios barrio, paseo mascotas, mandados, técnicos hogar Bucaramanga">
 
@@ -18,9 +19,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="css/styles.css?v=23">
-  <link rel="stylesheet" href="css/cart.css?v=23">
-  <link rel="stylesheet" href="css/landing-revamp.css?v=23">
+  <link rel="stylesheet" href="css/styles.css?v=31">
+  <link rel="stylesheet" href="css/cart.css?v=31">
+  <link rel="stylesheet" href="css/landing-revamp.css?v=31">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -36,7 +37,7 @@
   <nav class="navbar" id="navbar">
     <div class="container">
       <a href="index.html" aria-label="BarrioYa - Inicio">
-        <img src="assets/logo-horizontal.png?v=23" alt="BarrioYa Logo" class="navbar-logo">
+        <img src="assets/BarrioYalogo.png?v=31" alt="BarrioYa Logo" class="navbar-logo">
       </a>
 
       <div class="navbar-links" id="navbarLinks">
@@ -75,24 +76,20 @@
       <p class="section-subtitle fade-in">Todo lo que tu barrio puede ofrecerte, al alcance de un toque o un mensaje de WhatsApp.</p>
 
       <!-- Domicilios -->
-      <div class="service-detail fade-in" id="domicilios">
-        <div class="service-detail-icon delivery" style="background: linear-gradient(135deg, #E8F5E9, #C8E6C9);">
-          🛒
+      <div class="svc-detail-card fade-in" id="domicilios">
+        <div class="svc-detail-media">
+          <video autoplay loop muted playsinline preload="metadata">
+            <source src="assets/video-domicilios.mp4" type="video/mp4">
+          </video>
+          <div class="svc-detail-overlay"></div>
         </div>
-        <div class="service-detail-content">
+        <div class="svc-detail-body">
+          <div class="svc-detail-badge">🛒 Servicio estrella</div>
           <h2>Domicilios</h2>
-          <p>
-            Pide lo que necesites de las panaderías, tiendas, restaurantes y negocios de tu barrio. Con BarrioYa, tu pedido llega directo a tu puerta porque todo está a menos de 2 km de distancia.
-          </p>
-          <p>
-            No necesitas grandes plataformas con tiempos de espera eternos. Aquí los negocios son los de tu esquina, los que ya conoces y confías. Tú pides, nosotros llevamos.
-          </p>
-          <p>
-            Ya sea el desayuno de la panadería de la esquina, el almuerzo del restaurante favorito o los productos del minimercado, todo llega rápido y sin complicaciones.
-          </p>
-          <div class="service-price">💰 Desde $2.000 COP por envío</div>
-          <a href="index.html#bot-demo" 
-             class="btn btn-primary" id="ctaDomicilios">
+          <p>Pide lo que necesites de las panaderías, tiendas, restaurantes y negocios de tu barrio. Tu pedido llega directo a tu puerta porque todo está a menos de 2 km.</p>
+          <p>No necesitas grandes plataformas con tiempos de espera eternos. Aquí los negocios son los de tu esquina, los que ya conoces y confías.</p>
+          <div class="svc-detail-price">💰 Desde $2.000 COP por envío</div>
+          <a href="bot-demo.html" class="btn btn-primary" id="ctaDomicilios">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             Pedir domicilio
           </a>
@@ -100,22 +97,19 @@
       </div>
 
       <!-- Mascotas -->
-      <div class="service-detail fade-in" id="mascotas">
-        <div class="service-detail-icon pets" style="background: linear-gradient(135deg, #FFF3E0, #FFE0B2);">
-          🐾
+      <div class="svc-detail-card svc-detail-card--reverse fade-in" id="mascotas">
+        <div class="svc-detail-media">
+          <video autoplay loop muted playsinline preload="metadata">
+            <source src="assets/video-mascotas.mp4" type="video/mp4">
+          </video>
+          <div class="svc-detail-overlay"></div>
         </div>
-        <div class="service-detail-content">
+        <div class="svc-detail-body">
+          <div class="svc-detail-badge">🐾 Cuidadores verificados</div>
           <h2>Mascotas</h2>
-          <p>
-            Tu peludo también merece lo mejor. Conéctate con paseadores de mascotas verificados que viven cerca de ti. Ellos conocen las rutas del barrio y cuidan a tu mascota como propia.
-          </p>
-          <p>
-            ¿No puedes sacar a pasear a tu perro hoy? ¿Necesitas que alguien lo cuide mientras sales? Nuestros paseadores y cuidadores están a pocas cuadras y listos para ayudar.
-          </p>
-          <p>
-            Servicio confiable, cercano y humano. Porque en el barrio todos nos conocemos.
-          </p>
-          <div class="service-price">💰 Desde $8.000 COP por paseo</div>
+          <p>Tu peludo también merece lo mejor. Conéctate con paseadores de mascotas verificados que viven cerca de ti. Ellos conocen las rutas del barrio y cuidan a tu mascota como propia.</p>
+          <p>Servicio confiable, cercano y humano. Porque en el barrio todos nos conocemos.</p>
+          <div class="svc-detail-price">💰 Desde $8.000 COP por paseo</div>
           <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20necesito%20un%20paseador%20de%20mascotas" 
              class="btn btn-primary" target="_blank" rel="noopener noreferrer" id="ctaMascotas">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -125,22 +119,17 @@
       </div>
 
       <!-- Mandados -->
-      <div class="service-detail fade-in" id="mandados">
-        <div class="service-detail-icon errands" style="background: linear-gradient(135deg, #E3F2FD, #BBDEFB);">
-          🏃
+      <div class="svc-detail-card fade-in" id="mandados">
+        <div class="svc-detail-media">
+          <img src="assets/img-mandados.png" alt="Mandados BarrioYa" loading="lazy">
+          <div class="svc-detail-overlay"></div>
         </div>
-        <div class="service-detail-content">
+        <div class="svc-detail-body">
+          <div class="svc-detail-badge">🏃 Rapidito</div>
           <h2>Mandados</h2>
-          <p>
-            ¿No puedes salir? ¿Tienes una diligencia urgente? Nuestros mandaderos del barrio se encargan por ti. Desde pagar recibos hasta recoger paquetes, hacer filas o comprar lo que necesites.
-          </p>
-          <p>
-            Es como tener un vecino de confianza siempre disponible. Solo dile qué necesitas por WhatsApp o la app, y listo. Simple, rápido y económico.
-          </p>
-          <p>
-            Ideal para personas que trabajan desde casa, adultos mayores o cualquiera que necesite una mano extra en el día a día.
-          </p>
-          <div class="service-price">💰 Desde $3.000 COP por mandado</div>
+          <p>¿No puedes salir? Nuestros mandaderos del barrio se encargan por ti. Desde pagar recibos hasta recoger paquetes, hacer filas o comprar lo que necesites.</p>
+          <p>Ideal para personas que trabajan desde casa, adultos mayores o cualquiera que necesite una mano extra.</p>
+          <div class="svc-detail-price">💰 Desde $3.000 COP por mandado</div>
           <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20necesito%20hacer%20un%20mandado" 
              class="btn btn-primary" target="_blank" rel="noopener noreferrer" id="ctaMandados">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -150,22 +139,19 @@
       </div>
 
       <!-- Técnicos & Tutores -->
-      <div class="service-detail fade-in" id="tecnicos">
-        <div class="service-detail-icon tech" style="background: linear-gradient(135deg, #F3E5F5, #E1BEE7);">
-          🔧
+      <div class="svc-detail-card svc-detail-card--reverse fade-in" id="tecnicos">
+        <div class="svc-detail-media">
+          <video autoplay loop muted playsinline preload="metadata">
+            <source src="assets/video-tecnicos.mp4" type="video/mp4">
+          </video>
+          <div class="svc-detail-overlay"></div>
         </div>
-        <div class="service-detail-content">
+        <div class="svc-detail-body">
+          <div class="svc-detail-badge">🔧 Profesionales</div>
           <h2>Técnicos & Tutores</h2>
-          <p>
-            ¿Se dañó la llave? ¿Necesitas un electricista? ¿Tu hijo necesita refuerzo en matemáticas? Encuentra técnicos del hogar y tutores académicos que viven en tu zona.
-          </p>
-          <p>
-            Plomeros, electricistas, cerrajeros, técnicos de electrodomésticos, tutores de refuerzo escolar y más. Todos verificados y de tu mismo barrio, lo que significa respuesta rápida y precios justos.
-          </p>
-          <p>
-            Sin intermediarios costosos, sin esperas largas. Conéctate directamente con el profesional que necesitas.
-          </p>
-          <div class="service-price">💰 Desde $15.000 COP por servicio</div>
+          <p>¿Se dañó la llave? ¿Necesitas un electricista? ¿Tu hijo necesita refuerzo en matemáticas? Encuentra técnicos del hogar y tutores académicos de tu zona.</p>
+          <p>Sin intermediarios costosos, sin esperas largas. Conéctate directamente con el profesional que necesitas.</p>
+          <div class="svc-detail-price">💰 Desde $15.000 COP por servicio</div>
           <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20necesito%20un%20t%C3%A9cnico%20del%20hogar" 
              class="btn btn-primary" target="_blank" rel="noopener noreferrer" id="ctaTecnicos">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -195,7 +181,7 @@
           <h2 class="section-title fade-in" style="color: white;">¿Listo para probar <span style="color: var(--color-accent);">BarrioYa</span>?</h2>
           <p class="section-subtitle fade-in">Escríbenos por WhatsApp y pide lo que necesites. Sin descargas, sin registro, sin complicaciones.</p>
           <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;" class="fade-in">
-            <a href="index.html#bot-demo" 
+            <a href="bot-demo.html" 
                class="btn btn-accent" id="serviciosWhatsappCta">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               Pedir por WhatsApp
@@ -214,7 +200,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="/assets/BarrioYalogo.png" alt="BarrioYa Logo" class="footer-logo">
+          <img src="/assets/BarrioYalogo.png?v=31" alt="BarrioYa Logo" class="footer-logo">
           <p>La Superapp del Barrio. Conectamos a tu comunidad con servicios hiperlocales en Bucaramanga.</p>
         </div>
 
@@ -263,7 +249,7 @@
       <div class="modal-icon">🚀</div>
       <h2>¡La App viene pronto!</h2>
       <p>Estamos construyendo algo increíble para tu barrio. Mientras tanto, pide todo lo que necesites por WhatsApp.</p>
-      <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20unirme%20a%20la%20lista%20 de%20espera%20de%20la%20App" 
+      <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20unirme%20a%20la%20lista%20de%20espera%20de%20la%20App" 
          class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer" style="margin-bottom: var(--space-md); width: 100%;">
         Unirme a la lista de espera
       </a>
@@ -272,16 +258,16 @@
   </div>
 
   <!-- WhatsApp Float -->
-  <a href="index.html#bot-demo" 
-     class="whatsapp-float" id="whatsappFloat" rel="noopener noreferrer" aria-label="Contactar por WhatsApp Bot">
+  <a href="bot-demo.html" 
+     class="whatsapp-float" id="whatsappFloat" aria-label="Contactar por WhatsApp Bot">
     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 
-  <script src="js/config.js?v=23"></script>
-  <script src="js/main.js?v=23"></script>
-  <script src="js/auth.js?v=23"></script>
-  <script src="js/cart.js?v=23"></script>
-  <script src="js/menu-page.js?v=23"></script>
+  <script src="js/config.js?v=31"></script>
+  <script src="js/main.js?v=31"></script>
+  <script src="js/auth.js?v=31"></script>
+  <script src="js/cart.js?v=31"></script>
+  <script src="js/menu-page.js?v=31"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
