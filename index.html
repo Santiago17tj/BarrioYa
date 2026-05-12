@@ -12,7 +12,7 @@
   <meta property="og:description" content="Todo tu barrio en una sola app. Domicilios, mascotas, mandados y más en Bucaramanga.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://barrioya.com">
-  <meta property="og:image" content="assets/images/hero-mockup.png?v=31">
+  <meta property="og:image" content="assets/images/hero-mockup.png?v=32">
 
   <title>BarrioYa — La Superapp del Barrio | Bucaramanga</title>
 
@@ -32,14 +32,14 @@
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=31">
-  <link rel="stylesheet" href="css/cart.css?v=31">
-  <link rel="stylesheet" href="css/tracking.css?v=31">
-  <link rel="stylesheet" href="css/profile.css?v=31">
-  <link rel="stylesheet" href="admin/admin.css?v=31">
-  <link rel="stylesheet" href="css/bot-demo.css?v=31">
-  <link rel="stylesheet" href="css/landing-revamp.css?v=31">
-  <link rel="stylesheet" href="css/bot-demo-light.css?v=31">
+  <link rel="stylesheet" href="css/styles.css?v=32">
+  <link rel="stylesheet" href="css/cart.css?v=32">
+  <link rel="stylesheet" href="css/tracking.css?v=32">
+  <link rel="stylesheet" href="css/profile.css?v=32">
+  <link rel="stylesheet" href="admin/admin.css?v=32">
+  <link rel="stylesheet" href="css/bot-demo.css?v=32">
+  <link rel="stylesheet" href="css/landing-revamp.css?v=32">
+  <link rel="stylesheet" href="css/bot-demo-light.css?v=32">
 
   <!-- Chart.js (for Admin Dashboard) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -71,7 +71,7 @@
   <nav class="navbar" id="navbar">
     <div class="container">
       <a href="index.html" aria-label="BarrioYa - Inicio" data-testid="navbar-logo-link">
-        <img src="assets/BarrioYalogo.png?v=31" alt="BarrioYa Logo" class="navbar-logo" data-testid="navbar-logo">
+        <img src="assets/BarrioYalogo.png?v=32" alt="BarrioYa Logo" class="navbar-logo" data-testid="navbar-logo">
       </a>
 
       <div class="navbar-links" id="navbarLinks">
@@ -401,35 +401,67 @@
 
   <!-- ═══════════════════ WHATSAPP ═══════════════════ -->
   <section class="whatsapp-section section" id="whatsapp">
-    <div class="container">
-      <div class="whatsapp-inner">
-        <div>
-          <h2 class="section-title fade-in">¿Ya pides por WhatsApp?<br><span style="color: var(--color-accent);">Nosotros lo hacemos mejor</span></h2>
-          <p class="section-subtitle fade-in">No necesitas descargar nada. Escríbenos por WhatsApp, dinos qué necesitas y nosotros nos encargamos del resto. Así de simple.</p>
-          <a href="https://wa.me/573046279171?text=Hola%20BarrioYa%2C%20quiero%20probar%20el%20servicio" 
-             class="btn btn-accent fade-in" id="whatsappCta" target="_blank" rel="noopener">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Probar ahora por WhatsApp
-          </a>
+    <!-- Fondo Animado Abstracto -->
+    <div class="wa-bg-blobs">
+      <div class="wa-blob wa-blob-1"></div>
+      <div class="wa-blob wa-blob-2"></div>
+    </div>
+    
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="whatsapp-inner wa-glass-container">
+        
+        <div class="wa-text-content">
+          <div class="wa-online-badge fade-in">
+            <span class="wa-dot"></span> Bot en línea - Responde en &lt; 5s
+          </div>
+          <h2 class="section-title fade-in" style="color: white; line-height: 1.2;">¿Ya pides por WhatsApp?<br><span style="color: var(--color-accent); font-weight: 800;">Nosotros lo hacemos mejor</span></h2>
+          <p class="section-subtitle fade-in" style="color: rgba(255,255,255,0.85);">No necesitas descargar nada. Escríbenos por WhatsApp, dinos qué necesitas y nosotros nos encargamos del resto. Así de simple.</p>
+          
+          <div class="wa-cta-group fade-in">
+            <a href="bot-demo.html" class="btn btn-accent" id="whatsappCta">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Probar ahora por WhatsApp
+            </a>
+            
+            <!-- QR para pantallas grandes -->
+            <div class="wa-qr-box hidden-mobile">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://barrioya-theta.vercel.app/bot-demo.html&color=00c853&bgcolor=ffffff&margin=1" alt="QR Code BarrioYa" class="wa-qr-img">
+              <div class="wa-qr-text">Escanea para<br>probar en tu celular</div>
+            </div>
+          </div>
         </div>
 
-        <div class="whatsapp-mockup fade-in-right">
-          <div class="chat-header">
-            <div class="chat-avatar">
-              <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa">
+        <div class="whatsapp-mockup-wrapper fade-in-right">
+          <!-- Flotantes 3D -->
+          <div class="wa-float-icon icon-scooter">🛵</div>
+          <div class="wa-float-icon icon-package">📦</div>
+          <div class="wa-float-icon icon-burger">🍔</div>
+          
+          <div class="whatsapp-mockup">
+            <div class="chat-header">
+              <div class="chat-avatar">
+                <img src="assets/BarrioYalogo.png?v=32" alt="BarrioYa">
+              </div>
+              <div>
+                <div class="chat-name">BarrioYa</div>
+                <div class="chat-status">● En línea</div>
+              </div>
             </div>
-            <div>
-              <div class="chat-name">BarrioYa</div>
-              <div class="chat-status">● En línea</div>
+            <div class="chat-messages wa-animated-chat">
+              <div class="chat-bubble sent msg-1">Hola, quiero pedir un domicilio de la panadería del barrio 🍞</div>
+              <div class="chat-typing typing-1">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+              <div class="chat-bubble received msg-2">¡Hola! 👋 Claro, ¿de cuál panadería? Te muestro las opciones cercanas a tu ubicación.</div>
+              <div class="chat-bubble sent msg-3">La de Don José, por favor</div>
+              <div class="chat-typing typing-2">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+              <div class="chat-bubble received msg-4">¡Perfecto! Tu pedido estará en tu puerta en ~15 minutos 🚀</div>
             </div>
-          </div>
-          <div class="chat-messages">
-            <div class="chat-bubble sent">Hola, quiero pedir un domicilio de la panadería del barrio 🍞</div>
-            <div class="chat-bubble received">¡Hola! 👋 Claro, ¿de cuál panadería? Te muestro las opciones cercanas a tu ubicación.</div>
-            <div class="chat-bubble sent">La de Don José, por favor</div>
-            <div class="chat-bubble received">¡Perfecto! Tu pedido estará en tu puerta en ~15 minutos 🚀</div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -598,7 +630,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="assets/BarrioYalogo.png?v=31" alt="BarrioYa Logo" class="footer-logo" data-testid="footer-logo" style="filter: brightness(1.05) contrast(1.05); background:#fff; padding:8px 14px; border-radius:12px; max-height:54px;">
+          <img src="assets/BarrioYalogo.png?v=32" alt="BarrioYa Logo" class="footer-logo" data-testid="footer-logo" style="filter: brightness(1.05) contrast(1.05); background:#fff; padding:8px 14px; border-radius:12px; max-height:54px;">
           <p>La Superapp del Barrio. Conectamos a tu comunidad con servicios hiperlocales en Bucaramanga.</p>
           <div class="footer-badges">
             <a href="#" class="footer-badge" aria-label="Descargar en App Store">
@@ -1433,10 +1465,10 @@
   </nav>
 
   <!-- Scripts -->
-  <script src="js/config.js?v=31"></script>
-  <script src="js/main.js?v=31"></script>
-  <script src="js/auth.js?v=31"></script>
-  <script src="js/cart.js?v=31"></script>
+  <script src="js/config.js?v=32"></script>
+  <script src="js/main.js?v=32"></script>
+  <script src="js/auth.js?v=32"></script>
+  <script src="js/cart.js?v=32"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1475,10 +1507,10 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
-  <script src="js/tracking.js?v=31"></script>
-  <script src="js/checkout.js?v=31"></script>
-  <script src="js/menu-page.js?v=31"></script>
-  <script src="js/bot-demo.js?v=31"></script>
-  <script src="js/router.js?v=31"></script>
+  <script src="js/tracking.js?v=32"></script>
+  <script src="js/checkout.js?v=32"></script>
+  <script src="js/menu-page.js?v=32"></script>
+  <script src="js/bot-demo.js?v=32"></script>
+  <script src="js/router.js?v=32"></script>
 </body>
 </html>
