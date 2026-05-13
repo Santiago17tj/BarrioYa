@@ -123,6 +123,53 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─────────────────────────────────────────────────────────
+  // 3. ANIMACIONES GLOBALES (Servicios, Afiliados, etc.)
+  // ─────────────────────────────────────────────────────────
+  const globalElements = document.querySelectorAll('.section-title, .service-detail, .impact-item, .afiliados-hero h1, .afiliados-hero p');
+  if (globalElements.length > 0) {
+    globalElements.forEach(el => {
+      // Ignoramos si ya está animado por el Hero del index para evitar conflicto
+      if (!el.closest('.hero-content')) {
+        gsap.fromTo(el, 
+          { y: 50, opacity: 0 },
+          {
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              once: true
+            },
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "expo.out",
+            clearProps: "all"
+          }
+        );
+      }
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // 4. ANIMACIONES ESPECÍFICAS: BOT-DEMO.HTML
+  // ─────────────────────────────────────────────────────────
+  // Aislamos el bot-demo para no romper la IA del chat
+  const botLayout = document.querySelector('.bot-layout');
+  if (botLayout) {
+    const demoElements = ['.demo-banner', '.bot-sidebar', '.chat-topbar', '.chat-input-area'];
+    
+    gsap.set(demoElements, { y: 30, opacity: 0 });
+    gsap.to(demoElements, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.2,
+      ease: "expo.out",
+      clearProps: "all",
+      delay: 0.3
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────
   // ESTABILIDAD: Refrescar ScrollTrigger al final del Preloader
   // ─────────────────────────────────────────────────────────
   // Como el preloader oculta el scroll temporalmente en index.html,
