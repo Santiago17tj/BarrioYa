@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Comercios - BarrioYa</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+  
+  <!-- Tipografía Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Atropos.js CSS (Para Parallax 3D) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@2.0.2/atropos.min.css" />
+  
+  <!-- CSS Base de la plataforma -->
+  <link rel="stylesheet" href="css/styles.css?v=34">
+  <link rel="stylesheet" href="css/landing-revamp.css?v=34">
+  
+  <style>
+    /* Reset & Base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Outfit', sans-serif;
+      background-color: #0F1B2E; /* Fallback */
+      overflow-x: hidden;
+    }
+    
+    /* Layout Split Screen con Fondo Global */
+    .split-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      background: linear-gradient(135deg, #0B1221 0%, #1A2E4C 100%);
+      position: relative;
+    }
+    
+    /* Left Panel: Glassmorphism Form */
+    .split-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem;
+      position: relative;
+      z-index: 10;
+      
+      /* Glassmorphism Effect */
+      background: rgba(15, 27, 46, 0.4);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 20px 0 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .login-container {
+      max-width: 420px;
+      margin: 0 auto;
+      width: 100%;
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    .brand-logo {
+      margin-bottom: 3rem;
+      display: inline-block;
+    }
+    .brand-logo img {
+      height: 40px;
+      filter: brightness(0) invert(1); /* Logo en blanco */
+    }
+    
+    .login-header h1 {
+      font-size: 2.2rem;
+      color: #FFFFFF;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .login-header p {
+      color: #94A3B8;
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    
+    /* Form Styles Adaptados a Dark Glass */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #CBD5E1;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #00C853;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.15);
+    }
+    .form-control::placeholder {
+      color: #64748B;
+    }
+    
+    .forgot-pass {
+      display: block;
+      text-align: right;
+      font-size: 0.85rem;
+      color: #00C853;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: -0.5rem;
+      margin-bottom: 2rem;
+      transition: color 0.2s;
+    }
+    .forgot-pass:hover {
+      color: #00E65F;
+    }
+    
+    .btn-submit {
+      width: 100%;
+      padding: 1.1rem;
+      background: linear-gradient(135deg, #00C853 0%, #00963E 100%);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+      transform: skewX(-25deg);
+      transition: left 0.5s ease;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 200, 83, 0.4);
+    }
+    .btn-submit:hover::after {
+      left: 150%;
+    }
+    
+    /* Right Panel: Atropos 3D Experience */
+    .split-right {
+      flex: 1.2;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem;
+    }
+    
+    /* Atropos container needs to take full width/height */
+    .atropos-right {
+      width: 100%;
+      height: 100%;
+      max-height: 80vh;
+    }
+    
+    /* Abstract shapes for background (inside Atropos) */
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+    }
+    .bg-shape-1 {
+      width: 400px; height: 400px;
+      background: #00C853;
+      top: 10%; right: 10%;
+    }
+    .bg-shape-2 {
+      width: 300px; height: 300px;
+      background: #FFB300;
+      bottom: 10%; left: 10%;
+    }
+    .bg-shape-3 {
+      width: 250px; height: 250px;
+      background: #FF5A3C;
+      top: 40%; left: 30%;
+      filter: blur(100px);
+      opacity: 0.4;
+    }
+    
+    /* 3D Icons */
+    .float-icon {
+      position: absolute;
+      font-size: 4rem;
+      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+    }
+    .icon-1 { top: 15%; left: 20%; }
+    .icon-2 { bottom: 25%; right: 15%; font-size: 5rem; }
+    
+    .welcome-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      color: white;
+      padding: 2rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .welcome-content h2 {
+      font-size: 2.8rem;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .welcome-content h2 span {
+      color: #00C853;
+      text-shadow: 0 0 20px rgba(0, 200, 83, 0.4);
+    }
+    .welcome-content p {
+      font-size: 1.15rem;
+      color: #CBD5E1;
+      line-height: 1.6;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    /* Responsive Mobile */
+    @media (max-width: 992px) {
+      .split-layout {
+        flex-direction: column-reverse;
+      }
+      .split-left {
+        flex: none;
+        padding: 3rem 2rem;
+        min-height: 60vh;
+        border-radius: 32px 32px 0 0;
+        border-right: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .split-right {
+        flex: none;
+        min-height: 50vh;
+        padding: 2rem;
+      }
+      .welcome-content {
+        padding: 1.5rem;
+        border-radius: 20px;
+      }
+      .welcome-content h2 {
+        font-size: 2rem;
+      }
+      .bg-shape {
+        filter: blur(50px);
+      }
+      .bg-shape-1 { width: 200px; height: 200px; }
+      .bg-shape-2 { width: 150px; height: 150px; }
+    }
+  </style>
+</head>
+<body class="page-loaded">
+  <div class="split-layout">
+    
+    <!-- Mitad Izquierda: Formulario (Glassmorphism) -->
+    <main class="split-left">
+      <div class="login-container">
+        <a href="/" class="brand-logo">
+          <!-- Se usa el logo SVG. Si no lo encuentra, usa la img -->
+          <img src="assets/logo-barrioya-horizontal.svg" alt="BarrioYa Logo" onerror="this.onerror=null; this.src='assets/BarrioYalogo.png'; this.style.filter='brightness(0) invert(1)';">
+        </a>
+        
+        <div class="login-header">
+          <h1>¡Hola de nuevo!</h1>
+          <p>Ingresa tus datos para acceder al panel de tu comercio.</p>
+        </div>
+        
+        <form id="comerciosLoginForm" onsubmit="event.preventDefault(); window.location.href='admin/index.html';">
+          <div class="form-group">
+            <label for="email">Correo Electrónico</label>
+            <input type="email" id="email" class="form-control" placeholder="comercio@ejemplo.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+          </div>
+          
+          <a href="#" class="forgot-pass">¿Olvidaste tu contraseña?</a>
+          
+          <button type="submit" class="btn-submit">Acceder al Panel</button>
+        </form>
+      </div>
+    </main>
+    
+    <!-- Mitad Derecha: Fondo Inmersivo 3D con Atropos -->
+    <aside class="split-right">
+      <!-- Contenedor Atropos -->
+      <div class="atropos atropos-right">
+        <div class="atropos-scale">
+          <div class="atropos-rotate">
+            <div class="atropos-inner">
+              
+              <!-- Elementos de fondo que reaccionan sutilmente (negativo se mueve al revés) -->
+              <div class="bg-shape bg-shape-1" data-atropos-offset="-5"></div>
+              <div class="bg-shape bg-shape-2" data-atropos-offset="-3"></div>
+              <div class="bg-shape bg-shape-3" data-atropos-offset="-1"></div>
+              
+              <!-- Iconos 3D flotantes -->
+              <div class="float-icon icon-1" data-atropos-offset="2">🏪</div>
+              <div class="float-icon icon-2" data-atropos-offset="4">🚀</div>
+              
+              <!-- Tarjeta de Contenido que resalta hacia adelante -->
+              <div class="welcome-content" data-atropos-offset="8">
+                <h2 data-atropos-offset="12">Impulsa tu negocio <span>en todo el barrio.</span></h2>
+                <p data-atropos-offset="6">Gestiona tus pedidos, actualiza tu menú y conéctate con miles de vecinos que buscan lo mejor de su zona.</p>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+  </div>
+
+  <!-- Atropos.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/atropos@2.0.2/atropos.min.js"></script>
+  <script>
+    // Iniciar el efecto 3D Parallax en la parte derecha
+    document.addEventListener('DOMContentLoaded', () => {
+      const myAtropos = Atropos({
+        el: '.atropos-right',
+        activeOffset: 40,
+        shadowScale: 1.05,
+        highlight: false // Desactivamos highlight automático porque usamos nuestro propio glassmorphism
+      });
+    });
+  </script>
+
+  <!-- GSAP Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="js/gsap-animations.js?v=34"></script>
+</body>
+</html>

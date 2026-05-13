@@ -3,7 +3,51 @@
    Interactividad: navbar, menú móvil, scroll, animaciones, form
    ========================================================== */
 
-const initApp = () => {
+/* ═══════════════════════════════════════════════════════════
+   PRELOADER INITIALIZATION – Splash Screen
+   ═══════════════════════════════════════════════════════════ */
+
+const initPreloader = () => {
+  const preloader = document.getElementById('preloader');
+  const body = document.body;
+
+  if (!preloader) return;
+
+  // Set body overflow hidden while preloader is active
+  body.classList.add('preloader-active');
+
+  // Function to fade out preloader
+  const fadeOutPreloader = () => {
+    preloader.classList.add('fade-out');
+    
+    // Remove preloader-active class and restore scroll after animation
+    setTimeout(() => {
+      body.classList.remove('preloader-active');
+      body.style.overflow = '';
+    }, 800); // Match transition duration
+  };
+
+  // Trigger preloader fade-out after page load (2.5 seconds)
+  const preloaderDuration = 2500; // 2.5 seconds
+
+  // If page is already loaded (cached)
+  if (document.readyState === 'complete') {
+    setTimeout(fadeOutPreloader, preloaderDuration);
+  } else {
+    // Wait for page load
+    window.addEventListener('load', () => {
+      setTimeout(fadeOutPreloader, preloaderDuration);
+    }, { once: true });
+  }
+};
+
+// Initialize preloader immediately
+initPreloader();
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN APP INITIALIZATION
+   ═══════════════════════════════════════════════════════════ */
+
   // ── Page Load Animation ── trigger fade-in
   requestAnimationFrame(() => {
     document.body.classList.add('page-loaded');

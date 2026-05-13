@@ -2053,3 +2053,240 @@ button {
 
 
 .navbar-logo { max-height: 40px; width: auto; }
+
+/* ═══════════════════════════════════════════════════════════
+   PRELOADER / SPLASH SCREEN – BarrioYa Neighborhood Theme
+   ═══════════════════════════════════════════════════════════ */
+
+/* Preloader Container */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-bg-light);
+  background: linear-gradient(135deg, var(--color-bg-light) 0%, #FFFBF0 100%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              pointer-events 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade Out Animation */
+#preloader.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Preloader Content Wrapper */
+.preloader-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* SVG Barrio Animation */
+.barrio-svg {
+  width: 200px;
+  height: 200px;
+  max-width: 90vw;
+  filter: drop-shadow(0 4px 16px rgba(255, 90, 60, 0.15));
+}
+
+/* SVG Elements – Stroke Animation */
+.barrio-svg .building-outline,
+.barrio-svg .roof-left,
+.barrio-svg .roof-center,
+.barrio-svg .roof-right {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: drawStroke 1.2s ease-out forwards;
+}
+
+.barrio-svg .building-left .building-outline {
+  animation-delay: 0s;
+}
+
+.barrio-svg .building-center .building-outline {
+  animation-delay: 0.2s;
+}
+
+.barrio-svg .building-right .building-outline {
+  animation-delay: 0.4s;
+}
+
+.barrio-svg .roof-left {
+  animation-delay: 0.6s;
+}
+
+.barrio-svg .roof-center {
+  animation-delay: 0.8s;
+}
+
+.barrio-svg .roof-right {
+  animation-delay: 1s;
+}
+
+/* Building Details (Doors, Windows) */
+.barrio-svg rect:not(.building-outline),
+.barrio-svg polygon:not(.roof-left):not(.roof-center):not(.roof-right) {
+  opacity: 0;
+  animation: fadeInElement 0.6s ease-out forwards;
+  animation-delay: 1.2s;
+}
+
+/* Scooter Animation – Bounce & Movement */
+.scooter-group {
+  animation: scooterBounce 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both;
+}
+
+.scooter-body,
+.wheel,
+.handlebars,
+.rider-head,
+.package {
+  opacity: 0;
+  animation: fadeInElement 0.6s ease-out forwards;
+  animation-delay: 1.2s;
+}
+
+/* Loading Text */
+.preloader-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.loading-text {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  letter-spacing: 0.5px;
+}
+
+/* Loading Dots Animation */
+.loading-dots {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary-orange);
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ── Animations ── */
+
+/* Draw Stroke Animation (SVG lines) */
+@keyframes drawStroke {
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Fade In Element */
+@keyframes fadeInElement {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scooter Bounce Movement */
+@keyframes scooterBounce {
+  0% {
+    transform: translateX(-40px) translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(20px) translateY(-10px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Bounce Dots */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-12px);
+    opacity: 0.7;
+  }
+}
+
+/* Slide Up Animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Body Overflow Hidden while Preloader is Active */
+body.preloader-active {
+  overflow: hidden;
+}
+
+/* Reduce Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  #preloader,
+  .preloader-content,
+  .barrio-svg,
+  .scooter-group,
+  .loading-dots span {
+    animation: none !important;
+    transition: opacity 0.1s ease !important;
+  }
+}
