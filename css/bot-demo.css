@@ -381,3 +381,97 @@
   .bot-messages-container { padding: 1rem; }
   .bot-msg { max-width: 85%; }
 }
+/* ==========================================================
+   Premium Order Card Styles
+   ========================================================== */
+.premium-order-card {
+  background-color: #FFFBF0; /* soft cream background */
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-top: 1rem;
+  color: #0F1B2E;
+  font-family: 'Outfit', sans-serif;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.order-card-header {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.order-id {
+  font-size: 0.8rem;
+  color: #64748B;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.order-card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0F1B2E;
+}
+
+.order-card-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.item-qty {
+  font-weight: 700;
+  color: #FF5A3C;
+  width: 25px;
+}
+
+.item-name {
+  flex: 1;
+  color: #334155;
+  padding-right: 1rem;
+}
+
+.item-price {
+  font-weight: 500;
+  color: #0F1B2E;
+}
+
+.order-totals {
+  margin-top: 1rem;
+  border-top: 1px dashed #CBD5E1;
+  padding-top: 0.8rem;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: #64748B;
+  margin-bottom: 0.4rem;
+}
+
+.highlight-total {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #00C853; /* success green */
+  margin-top: 0.5rem;
+}
+
+.order-card-footer {
+  margin-top: 1rem;
+  background: #F8FAFC;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+.delivery-info p {
+  margin: 0.2rem 0;
+  color: #334155;
+}

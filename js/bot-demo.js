@@ -60,6 +60,56 @@ document.addEventListener('DOMContentLoaded', () => {
     return '$' + price.toLocaleString('es-CO');
   }
 
+  // ── Render Premium Order Card ──
+  function renderOrderCard(orderData) {
+    let itemsHtml = '';
+    orderData.items.forEach(item => {
+      itemsHtml += `
+        <div class="order-card-item">
+          <span class="item-qty">${item.cantidad}x</span>
+          <span class="item-name">${item.producto}</span>
+          <span class="item-price">${formatPrice(item.precio)}</span>
+        </div>`;
+    });
+
+    return `
+      <div class="premium-order-card">
+        <div class="order-card-header">
+          <span class="order-id">${orderData.pedido}</span>
+          <h3>🏠 ${orderData.negocio}</h3>
+        </div>
+        
+        <div class="order-card-body">
+          <div class="order-items-list">
+            ${itemsHtml}
+          </div>
+          
+          <div class="order-totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>${formatPrice(orderData.subtotal)}</span>
+            </div>
+            <div class="total-row">
+              <span>Envío</span>
+              <span>${formatPrice(orderData.envio)}</span>
+            </div>
+            <div class="total-row highlight-total">
+              <span>Total a Pagar</span>
+              <span>${formatPrice(orderData.total)}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="order-card-footer">
+          <div class="delivery-info">
+            <p><strong>📍 Entrega:</strong> ${escapeHtml(orderData.direccion)}</p>
+            <p><strong>🛵 Tiempo est.:</strong> ~15 min</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   // ── Message Rendering ──
   function smoothScrollToBottom() {
     messagesContainer.scrollTo({
@@ -371,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     await botReply(`📍 Dirección: <strong>${escapeHtml(deliveryAddress)}</strong>`, 800, true);
 
-    // Build order summary JSON
+    // Build order summary JSON (now passed to the visual card renderer)
     const orderJson = {
       pedido: `#BY-${Date.now().toString().slice(-6)}`,
       negocio: selectedBusiness.name,
@@ -383,14 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
       metodo_pago: 'Contra entrega / Nequi'
     };
 
-    const summaryHtml = `📋 <strong>Resumen de tu pedido:</strong>
-
-🏪 ${selectedBusiness.name}
-📍 ${escapeHtml(deliveryAddress)}
-💰 Total: <strong>${formatPrice(total)}</strong>
-⏱️ Tiempo estimado: ~15 min
-
-<div class="order-json">${JSON.stringify(orderJson, null, 2)}</div>`;
+    const summaryHtml = `📋 <strong>Resumen de tu pedido:</strong><br><br>${renderOrderCard(orderJson)}`;
 
     await botReply(summaryHtml, 1500, true);
     await botReply('¿Confirmas el pedido? 🎯', 800);
