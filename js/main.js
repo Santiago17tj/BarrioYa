@@ -48,6 +48,8 @@ initPreloader();
    MAIN APP INITIALIZATION
    ═══════════════════════════════════════════════════════════ */
 
+const initApp = () => {
+
   // ── Page Load Animation ── trigger fade-in
   requestAnimationFrame(() => {
     document.body.classList.add('page-loaded');
